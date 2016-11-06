@@ -3,6 +3,6 @@ package demo;
 
 public class Main {
 	public static void main(String[] args) {
-		new Simulator(2);
+		new Simulator(1);
 	}
 }

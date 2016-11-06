@@ -4,79 +4,89 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
+import threading.AgentRunnable;
+import threading.AgentThreadManager;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Actuator;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
-import agent.SmartMeterAgentActuator_SIM;
-import agent.SmartMeterAgentBody_SIM;
-import agent.SmartMeterAgentBrain_SIM;
-import agent.SmartMeterAgentMind_SIM;
-import agent.SmartMeterAgentSensor_SIM;
+import agent.IPCommunicationActuator;
+import agent.IPCommunicationSensor;
+import agent.SmartMeterAgentActuator;
+import agent.SmartMeterAgentBody;
+import agent.SmartMeterAgentBrain;
+import agent.SmartMeterAgentMind;
+import agent.SmartMeterAgentSensor;
 import agent.actions.RecordAction;
-import environment.HouseAppearance_SIM;
-import environment.HousePhysics_SIM;
-import environment.HouseSpace_SIM;
-import environment.HouseEnvironment_SIM;
-import environment.communication.module.CommunicationModule;
+import environment.HouseEnvironment;
+import environment.HouseEnvironmentAppearance;
+import environment.HouseEnvironmentSpace;
+import environment.HousePhysics;
+import environment.NationalGridUniversePhysics;
+import environment.NationalGridUniverse;
+import environment.NationalGridUniverseSpace;
 
 public class Simulator {
 
 	public static final Set<Class<? extends AbstractAction>> HOUSEACTIONS = new HashSet<>();
+	public static final Set<Class<? extends AbstractAction>> UNIVERSEACTIONS = new HashSet<>();
 	private int totalHouses = 0;
+	private static final int SERVERPORT = 8888;
+	private static final String SERVERNAME = "localhost";
+	private static final Boolean IPCommunication = false;
 
-	public Set<HouseEnvironment_SIM> houses = new HashSet<>();
+	public Set<HouseEnvironment> houses = new HashSet<>();
 
 	public Simulator(int numberOfHouses) {
 		HOUSEACTIONS.add(RecordAction.class);
-
-		Set<Body> agent = new HashSet<>();
-		agent.add(createSmartMeterAgent());
-		CommunicationModule module = new CommunicationModule(8888,
-				numberOfHouses);
-		HouseEnvironment_SIM house = new HouseEnvironment_SIM(
-				new HouseSpace_SIM(module), HOUSEACTIONS, agent,
-				new HousePhysics_SIM(), true, new HouseAppearance_SIM(
-						++totalHouses));
-		house.start();
-
-		for (int i = 0; i < numberOfHouses; i++) {
-			HouseEnvironment_SIM h = createHouse();
-			houses.add(h);
-			h.start();
+		AgentThreadManager manager = new AgentThreadManager();
+		NationalGridUniverse universe = createNationalGridUniverse(numberOfHouses);
+		for(HouseEnvironment h : universe.getHouseSubEnvironments()) {
+			manager.addAgent(new AgentRunnable(h.getSmartMeterAgent().getMind()));
 		}
-
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		houses.forEach(new Consumer<HouseEnvironment_SIM>() {
-			@Override
-			public void accept(HouseEnvironment_SIM h) {
-				System.out.println(h.getState().getModule().connectionStatus());
-			}
-		});
-		System.out.println(house.getState().getModule().connectionStatus());
+		manager.start();
 	}
 
-	public HouseEnvironment_SIM createHouse() {
-		Set<Body> agent = new HashSet<>();
-		agent.add(createSmartMeterAgent());
-		CommunicationModule module = new CommunicationModule("localhost", 8888);
-		return new HouseEnvironment_SIM(new HouseSpace_SIM(module),
-				HOUSEACTIONS, agent, new HousePhysics_SIM(), true,
-				new HouseAppearance_SIM(++totalHouses));
+	public NationalGridUniverse createNationalGridUniverse(int numberOfHouses) {
+		List<HouseEnvironment> houses = new ArrayList<HouseEnvironment>();
+		for(int i = 0; i < numberOfHouses; i++) {
+			houses.add(doHouseEnvironment());
+		}
+		NationalGridUniverse u = new NationalGridUniverse(new NationalGridUniverseSpace(),
+				UNIVERSEACTIONS, new HashSet<Body>(),
+				new NationalGridUniversePhysics(), houses);
+		return u;
 	}
 
-	public SmartMeterAgentBody_SIM createSmartMeterAgent() {
+	public HouseEnvironment doHouseEnvironment() {
+		HouseEnvironment h = createHouse();
+		SmartMeterAgentBody a = h.getSmartMeterAgent();
+		((SmartMeterAgentActuator) a.getSmartMeterActuator())
+				.addObserver(h);
+		h.addObserver(a.getSensors().get(0));
+		return h;
+	}
+
+	private HouseEnvironment createHouse() {
+		Set<Body> agent = new HashSet<>();
+		agent.add(createSmartMeterAgent());
+		return new HouseEnvironment(new HouseEnvironmentSpace(HouseModel), HOUSEACTIONS,
+				agent, new HousePhysics(), true,
+				new HouseEnvironmentAppearance(++totalHouses));
+	}
+
+	private SmartMeterAgentBody createSmartMeterAgent() {
 		List<Sensor> sensors = new ArrayList<Sensor>();
-		sensors.add(new SmartMeterAgentSensor_SIM());
+		sensors.add(new SmartMeterAgentSensor());
 		List<Actuator> actuators = new ArrayList<Actuator>();
-		actuators.add(new SmartMeterAgentActuator_SIM());
-		return new SmartMeterAgentBody_SIM(sensors, actuators,
-				new SmartMeterAgentMind_SIM(), new SmartMeterAgentBrain_SIM());
+		actuators.add(new SmartMeterAgentActuator());
+		if (IPCommunication) {
+			sensors.add(new IPCommunicationSensor(SERVERNAME, SERVERPORT));
+			actuators.add(new IPCommunicationActuator(SERVERNAME, SERVERPORT));
+		}
+		return new SmartMeterAgentBody(sensors, actuators,
+				new SmartMeterAgentMind(HOUSEACTIONS),
+				new SmartMeterAgentBrain());
 	}
 }

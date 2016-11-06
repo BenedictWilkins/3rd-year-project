@@ -12,8 +12,8 @@ public class CommunicationModule {
 	 * @param hostname
 	 * @param port
 	 */
-	public CommunicationModule(String hostName, Integer port) {
-		state = new CommunicationModuleStateClient(hostName, port);
+	public CommunicationModule(String hostName, Integer port, Class<? extends CommunicationMode> mode) {
+		state = new CommunicationModuleStateClient(hostName, port, mode);
 		this.isServer = false;
 	}
 
@@ -22,8 +22,8 @@ public class CommunicationModule {
 	 * @param port
 	 * @param maxConnections
 	 */
-	public CommunicationModule(Integer port, Integer maxConnections) {
-		state = new CommunicationModuleStateServer(port, maxConnections);
+	public CommunicationModule(Integer port, Integer maxConnections,  Class<? extends CommunicationMode> mode) {
+		state = new CommunicationModuleStateServer(port, maxConnections, mode);
 		this.isServer = true;
 	}
 	

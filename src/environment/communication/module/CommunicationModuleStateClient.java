@@ -5,36 +5,32 @@ import java.net.Socket;
 
 public class CommunicationModuleStateClient extends CommunicationModuleState {
 
-	private Socket socket = null;
 	private String hostName = null;
 	private Integer port = null;
-
-	public CommunicationModuleStateClient(String hostName, Integer port) {
+	private Socket socket = null;
+	
+	public CommunicationModuleStateClient(String hostName, Integer port, Class<? extends CommunicationMode> mode) {
+		super(mode);
 		this.port = port;
 		this.hostName = hostName;
 	}
+	@Override
+	protected ConnectionStatusClient connectionStatus() {
+		return new ConnectionStatusClient(socket);
+	}
 
 	@Override
-	public void run() {
+	public void start() {
 		try {
 			System.out.println("Running Communication module as client...");
 			System.out.println("Attempting to connect to " + hostName
 					+ " on port: " + port);
 			socket = new Socket(hostName, port);
-			System.out.println("Connected to: "
+			System.out.println("Client Connected to: "
 					+ socket.getRemoteSocketAddress());
+			super.run(socket);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void taredown() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	protected ConnectionStatusClient connectionStatus() {
-		return new ConnectionStatusClient(socket);
 	}
 }

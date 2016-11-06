@@ -16,20 +16,22 @@ public class CommunicationModuleStateServer extends CommunicationModuleState {
 	private boolean waitingOnConnections;
 	private String address = null;
 
-	public CommunicationModuleStateServer(Integer port, Integer maxConnections) {
+	public CommunicationModuleStateServer(Integer port, Integer maxConnections, Class<? extends CommunicationMode> mode) {
+		super(mode);
 		this.port = port;
 		this.maxConnections = maxConnections;
 	}
+	
 
 	@Override
-	public void run() {
+	public void start() {
 		ServerDaemon sd = new ServerDaemon();
 		sd.setDaemon(true);
 		sd.start();
 	}
-
-	@Override
-	public void taredown() {
+	
+	private void activateSocket(Socket socket) {
+		super.run(socket);
 	}
 
 	private class ServerDaemon extends Thread {
@@ -45,20 +47,34 @@ public class CommunicationModuleStateServer extends CommunicationModuleState {
 					System.out.println("Waiting on port: " + port);
 					Socket s = server.accept();
 					sockets.add(s);
-					System.out.println("Connected to: "
+					System.out.println("Server Connected to: "
 							+ s.getRemoteSocketAddress());
+					activateSocket(s);
 				}
+				System.out.println("MAXIMUM CONNECTIONS REACHED");
+				postProcessing();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			waitingOnConnections = false;
 		}
 	}
+	
+	private void postProcessing() {
+		System.out.println("POST PROCESSING");
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("DONE");
+	}
+	
 
 	@Override
 	protected ConnectionStatusServer connectionStatus() {
 		return new ConnectionStatusServer(address, sockets,
 				waitingOnConnections, maxConnections);
 	}
-
 }

@@ -2,32 +2,34 @@ package environment;
 
 import java.util.Set;
 
-import environment.communication.CommunicationEnvironment;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
+import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.appearances.SimpleEnvironmentAppearance;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import agent.SmartMeterAgentBody_SIM;
+import agent.SmartMeterAgentBody;
+import agent.SmartMeterAgentSensor;
+import agent.actions.HouseEvent;
 
 /**
  * Simulated environment that represents a house-hold. A single
- * {@link SmartMeterAgentBody_SIM} may be placed in this {@link HouseEnvironment_SIM}.
+ * {@link SmartMeterAgentBody} may be placed in this {@link HouseEnvironment}.
  * 
  * @author Benedict Wilkins
  *
  */
-public class HouseEnvironment_SIM extends CommunicationEnvironment {
+public class HouseEnvironment extends AbstractEnvironment {
 
-	public HouseEnvironment_SIM(HouseSpace_SIM state,
+	public HouseEnvironment(HouseEnvironmentSpace state,
 			Set<Class<? extends AbstractAction>> admissibleActions,
 			Set<Body> bodies, Physics physics, Boolean bounded,
 			SimpleEnvironmentAppearance appearance) {
 		super(state, admissibleActions, bodies, physics, bounded, appearance);
 	}
 	
-	private SmartMeterAgentBody_SIM getSmartMeterAgent() {
-		return (SmartMeterAgentBody_SIM) this.getBodies().toArray()[0];
+	public SmartMeterAgentBody getSmartMeterAgent() {
+		return (SmartMeterAgentBody) this.getBodies().toArray()[0];
 	}
 
 	@Override
@@ -37,7 +39,8 @@ public class HouseEnvironment_SIM extends CommunicationEnvironment {
 
 	@Override
 	public void update(CustomObservable o, Object arg) {
-		// TODO Auto-generated method stub
-		
+		HouseEvent e = (HouseEvent)arg;
+		Result r = e.attempt(getPhysics(), getState());
+		notifyObservers(r, SmartMeterAgentSensor.class);
 	}
 }

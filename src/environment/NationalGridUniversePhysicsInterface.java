@@ -4,9 +4,9 @@ import agent.actions.RecordAction;
 import agent.actions.ReportAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
+import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 
-public interface HousePhysicsInterface_SIM {
-	
+public interface NationalGridUniversePhysicsInterface extends Physics {
 	// RecordAction methods
 	public boolean isPossible(RecordAction action, Space context);
 	public boolean isNecessary(RecordAction action, Space context);
