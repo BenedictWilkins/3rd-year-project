@@ -26,16 +26,6 @@ pn <- na.omit(pn)
 #split data set into groups
 split <- split(pn, pn$Acorn_grouped)
 
-#plot showing seasonality
-groupedMeans <- lapply(split, function(x) GroupedMeans(x))
-groupedMeans$Affluent$DateTime <- strptime(groupedMeans$Affluent$DateTime, "%Y-%m-%d %H:%M:%S")
-msq <- seq(1, length(groupedMeans$Affluent$Mean), 24)
-x <- groupedMeans$Affluent$DateTime[msq]
-y <- groupedMeans$Affluent$Mean[msq]
-plot(x,y, xlab="Date/Time", ylab="KWH per half hour")
-lo <- lowess(x,y,f=3/10)
-lines(lo, col='red', lwd=2)
-
 groupedDay <- lapply(split, function(x) GroupDays(x))
 
 plot(as.numeric(groupedDay$`ACORN-U`$`DateTime$X2`),groupedDay$`ACORN-U`$Mean, ylab="Mean KWH per half hour", xlab="Time in halfhour intervals")
@@ -53,16 +43,47 @@ plot(as.numeric(groupedDayComfortable$`DateTime$X2`),groupedDay$Comfortable$Mean
 mean(groupedDay$Affluent$KWH[[1]])
 plot(dnorm(seq(-4,4, length = 100),0,0.5), type="l")
 
-write.table(split$`ACORN-U`, "~/RWorkspace/3rd year project data analysis/acorn-u.txt", sep=" ", row.names=FALSE)
-write.table(split$Adversity, "~/RWorkspace/3rd year project data analysis/adversity.txt", sep=" ", row.names=FALSE)
-write.table(split$Affluent, "~/RWorkspace/3rd year project data analysis/affluent.txt", sep=" ", row.names=FALSE)
-write.table(split$Comfortable, "~/RWorkspace/3rd year project data analysis/comfortable.txt", sep=" ", row.names=FALSE)
+write.table(split$`ACORN-U`, "./acorn-u.txt", sep=" ", row.names=FALSE)
+write.table(split$Adversity, "./adversity.txt", sep=" ", row.names=FALSE)
+write.table(split$Affluent, "./affluent.txt", sep=" ", row.names=FALSE)
+write.table(split$Comfortable, "./comfortable.txt", sep=" ", row.names=FALSE)
 
-write.table(groupedDay$`ACORN-U`[,-2], "~/RWorkspace/3rd year project data analysis/gmAcorn-u.txt", sep=" ", row.names=FALSE)
-write.table(groupedDay$Adversity[,-2], "~/RWorkspace/3rd year project data analysis/gmAdversity.txt", sep=" ", row.names=FALSE)
-write.table(groupedDay$Affluent[,-2], "~/RWorkspace/3rd year project data analysis/gmAffluent.txt", sep=" ", row.names=FALSE)
-write.table(groupedDay$Comfortable[,-2], "~/RWorkspace/3rd year project data analysis/gmComfortable.txt", sep=" ", row.names=FALSE)
+write.table(groupedDay$`ACORN-U`[,-2], "./gmAcorn-u.txt", sep=" ", row.names=FALSE)
+write.table(groupedDay$Adversity[,-2], "./gmAdversity.txt", sep=" ", row.names=FALSE)
+write.table(groupedDay$Affluent[,-2], "./gmAffluent.txt", sep=" ", row.names=FALSE)
+write.table(groupedDay$Comfortable[,-2], "./gmComfortable.txt", sep=" ", row.names=FALSE)
 
+#seasonality of 2013 combined groups
+pn2013 <- subset(pn, grepl("2013", pn$DateTime))
+sp2013 <- split(pn2013, pn2013$Acorn_grouped)
+gm2013 <- lapply(sp2013, function(x) GroupedMeans(x))
+par(mfrow=c(2,2))
+plotSeasonality(gm2013$`ACORN-U`$DateTime, gm2013$`ACORN-U`$Mean, "Acorn-U")
+plotSeasonality(gm2013$Adversity$DateTime, gm2013$Adversity$Mean, "Adversity")
+plotSeasonality(gm2013$Affluent$DateTime, gm2013$Affluent$Mean, "Affluent")
+plotSeasonality(gm2013$Comfortable$DateTime, gm2013$Comfortable$Mean, "Comfortable")
 
+#seasonality of 2013 all groups
+par(mfrow=c(1,1))
+pngm2013 <- GroupedMeans(pn2013);
+plotSeasonality(pngm2013$DateTime, pngm2013$Mean, "AllGroups");
 
+#seasonality of all years all groupss
+pngm <- GroupedMeans(pn)
+s <- plotSeasonality(pngm$DateTime, pngm$Mean, "AllGroups");
+colnames(s) <- c("Date", "Mean KWH per half hour per day")
+View(s)
+write.table(s, "./gmSeasonality.txt", sep=" ", row.names=FALSE)
 
+plotSeasonality <- function(td, m, name) {
+  days <- sapply(td, substring, 0, 10)
+  t <- cbind(days, m)
+  agg <- aggregate(as.numeric(t[,2]), list(t[,1]), mean)
+  agg[,1] <- as.Date(agg[,1],format="%Y-%m-%d")
+  x <- agg[,1]
+  y <- agg[,2]
+  plot(x,y, xlab="Date", ylab="mean KWH per half per day", ylim=(c(0,0.5)), main=name)
+  lo <- lowess(x,y,f=3/10)
+  lines(lo, col='red', lwd=2)
+  return(agg)
+}
