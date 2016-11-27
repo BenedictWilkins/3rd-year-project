@@ -8,73 +8,72 @@ import java.util.Set;
 
 public class CommunicationModuleStateServer extends CommunicationModuleState {
 
-	private Integer port = null;
-	private ServerSocket server = null;
-	private Set<Socket> sockets = new HashSet<Socket>();
+  private Integer port = null;
+  private ServerSocket server = null;
+  private Set<Socket> sockets = new HashSet<Socket>();
 
-	private Integer maxConnections = null;
-	private boolean waitingOnConnections;
-	private String address = null;
+  private Integer maxConnections = null;
+  private boolean waitingOnConnections;
+  private String address = null;
 
-	public CommunicationModuleStateServer(Integer port, Integer maxConnections, Class<? extends CommunicationMode> mode) {
-		super(mode);
-		this.port = port;
-		this.maxConnections = maxConnections;
-	}
-	
+  public CommunicationModuleStateServer(Integer port, Integer maxConnections,
+      Class<? extends CommunicationMode> mode) {
+    super(mode);
+    this.port = port;
+    this.maxConnections = maxConnections;
+  }
 
-	@Override
-	public void start() {
-		ServerDaemon sd = new ServerDaemon();
-		sd.setDaemon(true);
-		sd.start();
-	}
-	
-	private void activateSocket(Socket socket) {
-		super.run(socket);
-	}
+  @Override
+  public void start() {
+    ServerDaemon sd = new ServerDaemon();
+    sd.setDaemon(true);
+    sd.start();
+  }
 
-	private class ServerDaemon extends Thread {
-		@Override
-		public void run() {
-			try {
-				waitingOnConnections = true;
-				System.out.println("Running Communication module as server...");
-				server = new ServerSocket(port);
-				address = server.getInetAddress().toString() + ":"
-						+ server.getLocalPort();
-				for (int i = 0; i < maxConnections; i++) {
-					System.out.println("Waiting on port: " + port);
-					Socket s = server.accept();
-					sockets.add(s);
-					System.out.println("Server Connected to: "
-							+ s.getRemoteSocketAddress());
-					activateSocket(s);
-				}
-				System.out.println("MAXIMUM CONNECTIONS REACHED");
-				postProcessing();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			waitingOnConnections = false;
-		}
-	}
-	
-	private void postProcessing() {
-		System.out.println("POST PROCESSING");
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("DONE");
-	}
-	
+  private void activateSocket(Socket socket) {
+    super.run(socket);
+  }
 
-	@Override
-	protected ConnectionStatusServer connectionStatus() {
-		return new ConnectionStatusServer(address, sockets,
-				waitingOnConnections, maxConnections);
-	}
+  private class ServerDaemon extends Thread {
+    @Override
+    public void run() {
+      try {
+        waitingOnConnections = true;
+        System.out.println("Running Communication module as server...");
+        server = new ServerSocket(port);
+        address = server.getInetAddress().toString() + ":"
+            + server.getLocalPort();
+        for (int i = 0; i < maxConnections; i++) {
+          System.out.println("Waiting on port: " + port);
+          Socket socket = server.accept();
+          sockets.add(socket);
+          System.out.println("Server Connected to: "
+              + socket.getRemoteSocketAddress());
+          activateSocket(socket);
+        }
+        System.out.println("MAXIMUM CONNECTIONS REACHED");
+        postProcessing();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      waitingOnConnections = false;
+    }
+  }
+
+  private void postProcessing() {
+    System.out.println("POST PROCESSING");
+    try {
+      Thread.sleep(2000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    System.out.println("DONE");
+  }
+
+  @Override
+  protected ConnectionStatusServer connectionStatus() {
+    return new ConnectionStatusServer(address, sockets, waitingOnConnections,
+        maxConnections);
+  }
 }

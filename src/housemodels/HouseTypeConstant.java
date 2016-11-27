@@ -1,6 +1,6 @@
 package housemodels;
 
-public enum HouseType {
+public enum HouseTypeConstant {
 
 	/**
 	 * Note that the values given to each type is the a mean value calculated
@@ -26,7 +26,7 @@ public enum HouseType {
 	private Double mean = null;
 	private Double modifier = null;
 
-	private HouseType(Double mean, Double standardDeviation) {
+	private HouseTypeConstant(Double mean, Double standardDeviation) {
 		this.setMean(mean);
 		this.setStandardDeviation(standardDeviation);
 	}

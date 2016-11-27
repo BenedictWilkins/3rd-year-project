@@ -1,5 +1,7 @@
 package housemodels;
 
+import utilities.DateTimeInterface;
+
 public interface HouseModel {
-	public Double getReading();
+	public Double getReading(DateTimeInterface time);
 }

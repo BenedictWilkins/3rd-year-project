@@ -9,51 +9,52 @@ import java.util.Set;
 
 public abstract class CommunicationModuleState {
 
-	private Map<Class<? extends CommunicationMode>, Set<CommunicationMode>> classReference;
-	private Class<? extends CommunicationMode> mode;
-	private Set<CommunicationMode> receivers = null;
-	private Set<CommunicationMode> senders = null;
+  private Map<Class<? extends CommunicationMode>, Set<CommunicationMode>> classReference;
+  private Class<? extends CommunicationMode> mode;
+  private Set<CommunicationMode> receivers = null;
+  private Set<CommunicationMode> senders = null;
 
-	protected CommunicationModuleState(Class<? extends CommunicationMode> mode) {
-		this.mode = mode;
-		receivers = new HashSet<>();
-		senders = new HashSet<>();
-		classReference = new HashMap<>();
-		classReference.put(CommunicationModeReceiver.class, receivers);
-		classReference.put(CommunicationModeSender.class, senders);
-	}
-	
-	protected Class<? extends CommunicationMode> getMode() {
-		return this.mode;
-	}
+  protected CommunicationModuleState(Class<? extends CommunicationMode> mode) {
+    this.mode = mode;
+    receivers = new HashSet<>();
+    senders = new HashSet<>();
+    classReference = new HashMap<>();
+    classReference.put(CommunicationModeReceiver.class, receivers);
+    classReference.put(CommunicationModeSender.class, senders);
+  }
 
-	public void run(Socket socket) {
-		if (mode == null) {
-			System.out.println("Set up as: CommunicationSender/ReceiverMode");
-			doMultiMode();
-		} else {
-			System.out.println("Set up as: " + mode.getSimpleName());
-			doMode(socket, mode);
-		}
-	}
-	
-	public abstract void start();
+  protected Class<? extends CommunicationMode> getMode() {
+    return this.mode;
+  }
 
-	private void doMultiMode() {
+  public void run(Socket socket) {
+    if (mode == null) {
+      System.out.println("Set up as: CommunicationSender/ReceiverMode");
+      doMultiMode();
+    } else {
+      System.out.println("Set up as: " + mode.getSimpleName());
+      doMode(socket, mode);
+    }
+  }
 
-	}
-	
-	private void doMode(Socket socket, Class<? extends CommunicationMode> c) {
-		try {
-			Constructor<? extends CommunicationMode> con = c.getConstructor(Socket.class);
-			CommunicationMode mode = con.newInstance(socket);
-			classReference.get(c).add(mode);
-			mode.setDaemon(false);
-			mode.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+  public abstract void start();
 
-	protected abstract ConnectionStatus connectionStatus();
+  private void doMultiMode() {
+
+  }
+
+  private void doMode(Socket socket, Class<? extends CommunicationMode> modeClass) {
+    try {
+      Constructor<? extends CommunicationMode> con = modeClass
+          .getConstructor(Socket.class);
+      CommunicationMode mode = con.newInstance(socket);
+      classReference.get(modeClass).add(mode);
+      mode.setDaemon(false);
+      mode.start();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  protected abstract ConnectionStatus connectionStatus();
 }

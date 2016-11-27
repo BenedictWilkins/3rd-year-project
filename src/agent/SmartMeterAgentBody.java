@@ -1,116 +1,228 @@
 package agent;
 
+import agent.actions.HouseEvent;
+import agent.actions.IpCommunicationAction;
+import agent.general.GeneralAgentBody;
+import environment.HouseEnvironment;
+import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
+import uk.ac.rhul.cs.dice.gawl.interfaces.appearances.AbstractAgentAppearance;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractActuator;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgent;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgentBrain;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgentMind;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Actuator;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Brain;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
+import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
+
 import java.util.Iterator;
 import java.util.List;
 
-import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgent;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Actuator;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
-import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import agent.actions.HouseEvent;
-import agent.actions.IPCommunicationAction;
-
 /**
+ * The {@link Body} implementation for a Smart Meter Agent. <br>
+ * Extends: {@link GeneralAgentBody}.
  * 
  * @author Benedict Wilkins
  *
  */
-public class SmartMeterAgentBody extends AbstractAgent {
+public class SmartMeterAgentBody extends GeneralAgentBody<SmartMeterAgentBrain> {
 
-	private BrainHandler brainHandler;
+  // changes depending what actuator/sensors are in use
+  private BrainHandler brainHandler;
 
-	public SmartMeterAgentBody(List<Sensor> sensors, List<Actuator> actuators,
-			SmartMeterAgentMind mind, SmartMeterAgentBrain brain) {
-		super(null, sensors, actuators, mind, brain);
-		if(getIPCommunicationActuator() == null) {
-			brainHandler = new NormalBrainHandler();
-		} else {
-			brainHandler = new IPBrainHandler();
-		}
-	}
+  /**
+   * Constructor. See:
+   * {@link AbstractAgent#AbstractAgent(AbstractAgentAppearance, List, List, AbstractAgentMind, AbstractAgentBrain)}
+   * .
+   */
+  public SmartMeterAgentBody(List<Sensor> sensors, List<Actuator> actuators,
+      SmartMeterAgentMind mind, SmartMeterAgentBrain brain) {
+    super(null, sensors, actuators, mind, brain, SmartMeterAgentBrain.class);
+    if (getIpCommunicationActuator() == null) {
+      brainHandler = new NormalBrainHandler();
+    } else {
+      brainHandler = new IpBrainHandler();
+    }
+  }
 
-	@Override
-	public Object simulate() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+  /**
+   * Unused.
+   */
+  @Override
+  public Object simulate() {
+    return null;
+  }
 
-	@Override
-	public void update(CustomObservable o, Object arg) {
-		if (o instanceof SmartMeterAgentBrain) {
-			handleBrainMessage(arg);
-		} else if (o instanceof SmartMeterAgentSensor) {
-			handleSensorMessage(arg);
-		}
-	}
+  @Override
+  public void update(CustomObservable observable, Object arg) {
+    if (this.getBrainclass().isAssignableFrom(observable.getClass())) {
+      handleBrainMessage(arg);
+    } else if (CommunicationSensor.class
+        .isAssignableFrom(observable.getClass())) {
+      handleSensorMessage(arg);
+    }
+  }
 
-	private Object getComponent(Class<?> c, List<?> l) {
-		Iterator<?> iter = l.iterator();
-		while (iter.hasNext()) {
-			Object a = iter.next();
-			if (c.isInstance(a)) {
-				return a;
-			}
-		}
-		return null;
-	}
+  /**
+   * Gets a specific component of the agent from the given list of components.
+   * 
+   * @param type
+   *          class of the component to find
+   * @param components
+   *          to search
+   * @return the component if found, null if not
+   */
+  private Object getComponent(Class<?> type, List<?> components) {
+    Iterator<?> iter = components.iterator();
+    while (iter.hasNext()) {
+      Object obj = iter.next();
+      if (type.isInstance(obj)) {
+        return obj;
+      }
+    }
+    return null;
+  }
 
-	public Sensor getSensor(Class<? extends Sensor> c) {
-		return (Sensor) getComponent(c, getSensors());
-	}
+  /**
+   * Getter for a {@link Sensor}. See
+   * {@link SmartMeterAgentBody#getComponent(Class, List)}
+   * 
+   * @param sensorClass
+   *          the runtime class of the {@link Sensor}
+   * @return the {@link Sensor} if found, null if not
+   */
+  public Sensor getSensor(Class<? extends Sensor> sensorClass) {
+    return (Sensor) getComponent(sensorClass, getSensors());
+  }
 
-	public Actuator getActuator(Class<? extends Actuator> c) {
-		return (Actuator) getComponent(c, getActuators());
-	}
+  /**
+   * Getter for a {@link Actuator}. See
+   * {@link SmartMeterAgentBody#getComponent(Class, List)}
+   * 
+   * @param actuatorClass
+   *          the runtime class of the {@link Actuator}
+   * @return the {@link Actuator} if found, null if not
+   */
+  public Actuator getActuator(Class<? extends Actuator> actuatorClass) {
+    return (Actuator) getComponent(actuatorClass, getActuators());
+  }
 
-	public SmartMeterAgentActuator getSmartMeterActuator() {
-		return (SmartMeterAgentActuator) getActuator(SmartMeterAgentActuator.class);
-	}
+  /**
+   * Getter for a {@link CommunicationActuator}. See
+   * {@link SmartMeterAgentBody#getActuator(Class)}
+   * 
+   * @return the {@link CommunicationActuator} if found, null if not
+   */
+  @SuppressWarnings("unchecked")
+  public CommunicationActuator<SmartMeterAgentBody, HouseEnvironment> getSmartMeterActuator() {
+    return (CommunicationActuator<SmartMeterAgentBody, HouseEnvironment>) getActuator(CommunicationActuator.class);
+  }
 
-	public IPCommunicationActuator getIPCommunicationActuator() {
-		return (IPCommunicationActuator) getActuator(IPCommunicationActuator.class);
-	}
+  /**
+   * Getter for a {@link IpCommunicationActuator}. See
+   * {@link SmartMeterAgentBody#getActuator(Class)}
+   * 
+   * @return the {@link IpCommunicationActuator} if found, null if not
+   */
+  public IpCommunicationActuator getIpCommunicationActuator() {
+    return (IpCommunicationActuator) getActuator(IpCommunicationActuator.class);
+  }
 
-	public SmartMeterAgentSensor getSmartMeterSensor() {
-		return (SmartMeterAgentSensor) getSensor(SmartMeterAgentSensor.class);
-	}
+  /**
+   * Getter for a {@link CommunicationSensor}. See
+   * {@link SmartMeterAgentBody#getSensor(Class)}
+   * 
+   * @return the {@link CommunicationSensor} if found, null if not
+   */
+  @SuppressWarnings("unchecked")
+  public CommunicationSensor<SmartMeterAgentBody, HouseEnvironment> getSmartMeterSensor() {
+    return (CommunicationSensor<SmartMeterAgentBody, HouseEnvironment>) getSensor(CommunicationSensor.class);
+  }
 
-	public IPCommunicationSensor getIPCommunicationSensor() {
-		return (IPCommunicationSensor) getSensor(IPCommunicationSensor.class);
-	}
+  /**
+   * Getter for a {@link IpCommunicationSensor}. See
+   * {@link SmartMeterAgentBody#getSensor(Class)}
+   * 
+   * @return the {@link IpCommunicationSensor} if found, null if not
+   */
+  public IpCommunicationSensor getIpCommunicationSensor() {
+    return (IpCommunicationSensor) getSensor(IpCommunicationSensor.class);
+  }
 
-	private void handleBrainMessage(Object arg) {
-		// create an event and give it to the actuator
-		brainHandler.handle(arg, this);
-	}
+  private void handleBrainMessage(Object arg) {
+    // create an event and give it to the actuator
+    brainHandler.handle(arg, this);
+  }
 
-	private void handleSensorMessage(Object arg) {
-		notifyObservers(arg, SmartMeterAgentBrain.class);
-	}
+  private void handleSensorMessage(Object arg) {
+    notifyObservers(arg, this.getBrainclass());
+  }
 
-	private interface BrainHandler {
-		void handle(Object arg, SmartMeterAgentBody agent);
-	}
+  /*
+   * ************************************ NOTE *******************************
+   * For simulation the BrainHandler will always be Normal. IPCommunication is
+   * unnecessary for agent communication and will only be used if the system is
+   * deployed in a real setting. IP Communication is not fully implemented - a
+   * connection can be set up between two agents but no specific message can be
+   * sent - this will be implemented at a later date. TODO
+   */
 
-	private class NormalBrainHandler implements BrainHandler {
-		@Override
-		public void handle(Object arg, SmartMeterAgentBody agent) {
-			AbstractAction a = (AbstractAction) arg;
-			HouseEvent e = new HouseEvent(a, System.currentTimeMillis(), agent);
-			SmartMeterAgentBody.this.notifyObservers(e, SmartMeterAgentActuator.class);
-		}
-	}
+  /**
+   * A {@link BrainHandler} is used to decide how to process the messages sent
+   * from the {@link Brain} to the {@link Body}. A {@link BrainHandler} should
+   * be used as part of a state design pattern. <br/>
+   * Known Subclasses: <br/>
+   * {@link NormalBrainHandler}, {@link IpBrainHandler}.
+   * 
+   * @author Benedict Wilkins
+   *
+   */
+  private interface BrainHandler {
+    void handle(Object arg, SmartMeterAgentBody agent);
+  }
 
-	private class IPBrainHandler extends NormalBrainHandler {
-		@Override
-		public void handle(Object arg, SmartMeterAgentBody agent) {
-			//create an event and give it to the actuator
-			if(arg instanceof IPCommunicationAction) {
-				SmartMeterAgentBody.this.notifyObservers(arg, IPCommunicationActuator.class);
-			} else {
-				super.handle(arg, agent);
-			}
-		}
-	}
+  /**
+   * An instance of {@link BrainHandler} that is used under normal
+   * circumstances. <br/>
+   * It will be used when the {@link Actuator} uses the
+   * {@link AbstractActuator#update(CustomObservable, Object)} method in a
+   * normal way - using a {@link HouseEvent}. <br/>
+   * Extends: {@link BrainHandler}.
+   * 
+   * @author Benedict Wilkins
+   *
+   */
+  private class NormalBrainHandler implements BrainHandler {
+    @Override
+    public void handle(Object arg, SmartMeterAgentBody agent) {
+      AbstractAction action = (AbstractAction) arg;
+      HouseEvent event = new HouseEvent(action, System.currentTimeMillis(),
+          agent);
+      ((AbstractAction) arg).setActor(SmartMeterAgentBody.this);
+      SmartMeterAgentBody.this.notifyObservers(event,
+          CommunicationActuator.class);
+    }
+  }
+
+  /**
+   * An instance of {@link BrainHandler} that is used when the {@link Actuator}
+   * is a {@link IpCommunicationActuator}. <br/>
+   * Extends: {@link NormalBrainHandler}.
+   * 
+   * @author Benedict Wilkins
+   *
+   */
+  private class IpBrainHandler extends NormalBrainHandler {
+    @Override
+    public void handle(Object arg, SmartMeterAgentBody agent) {
+      // create an event and give it to the actuator
+      if (arg instanceof IpCommunicationAction) {
+        SmartMeterAgentBody.this.notifyObservers(arg,
+            IpCommunicationActuator.class);
+      } else {
+        super.handle(arg, agent);
+      }
+    }
+  }
 }

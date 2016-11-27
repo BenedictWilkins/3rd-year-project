@@ -1,48 +1,82 @@
 package agent;
 
+import agent.SmartMeterAgentBrain.SmartMeterAgentPerceptionWrapper;
+import agent.actions.CommunicationAction;
+import agent.actions.PerceiveAction;
+import agent.actions.TakeReadingAction;
+import agent.general.GeneralAgentMind;
+import environment.communication.module.Address;
+import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
+import uk.ac.rhul.cs.dice.gawl.interfaces.actions.EnvironmentalAction;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Mind;
+import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
+import utilities.DateTimeInterface;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
-import uk.ac.rhul.cs.dice.gawl.interfaces.actions.DefaultActionResult;
-import uk.ac.rhul.cs.dice.gawl.interfaces.actions.EnvironmentalAction;
-import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgentMind;
-import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import agent.actions.RecordAction;
-import agent.actions.ReportAction;
+/**
+ * The {@link Mind} implementation for a Smart Meter Agent. <br>
+ * Extends: {@link AbstactAgent}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
+public class SmartMeterAgentMind extends GeneralAgentMind<SmartMeterAgentBrain> {
 
-public class SmartMeterAgentMind extends AbstractAgentMind {
-	
-	private Set<Class<? extends AbstractAction>> possibleActions;
-	
-	public SmartMeterAgentMind(Set<Class<? extends AbstractAction>> possibleActions) {
-		this.possibleActions = possibleActions;
-	}
+  private Address manager;
 
-	@Override
-	public void perceive(Object perceptionWrapper) {
-		System.out.println("I AM PERCEIVING...");
-	}
+  /**
+   * Constructor.
+   * 
+   * @param possibleActions
+   *          a list of all possible {@link AbstractAction}s this agent can
+   *          perform.
+   */
+  public SmartMeterAgentMind(
+      Set<Class<? extends AbstractAction>> possibleActions, Address manager) {
+    super(SmartMeterAgentBrain.class, possibleActions);
+    this.manager = manager;
+  }
 
-	@Override
-	public EnvironmentalAction decide(Object... parameters) {
-		System.out.println("I AM DECIDING...");
-		return null;
-	}
+  @Override
+  public void perceive(Object perceptionWrapper) {
+    // System.out.println("I AM PERCEIVING...");
+    notifyObservers(new PerceiveAction(), this.getBrainClass());
+  }
 
-	@Override
-	public void execute(EnvironmentalAction action) {
-		System.out.println("I AM EXECUTING...");
-		notifyObservers(new RecordAction(), SmartMeterAgentBrain.class);
-	}
+  private void perceiveContinue(SmartMeterAgentPerceptionWrapper perception) {
+    perception.getMessages();
+    perception
+        .getReadings()
+        .entrySet()
+        .forEach(
+            (Entry<DateTimeInterface, Double> ent) -> System.out
+                .println("READING: " + ent.getValue() + " AT: " + ent.getKey()));
+  }
 
-	@Override
-	public void update(CustomObservable o, Object arg) {
-		if(!(o instanceof SmartMeterAgentBrain) || !(arg instanceof Result)) {
-			return;
-		}
-		//process message from the brain
-		DefaultActionResult r = (DefaultActionResult)arg;
-		System.out.println("MIND RECIEVED: " + r);
-	}
+  @Override
+  public EnvironmentalAction decide(Object... parameters) {
+    // System.out.println("I AM DECIDING...");
+    return null;
+  }
+
+  @Override
+  public void execute(EnvironmentalAction action) {
+    // System.out.println("I AM EXECUTING...");
+    List<Address> recipients = new ArrayList<>();
+    recipients.add(manager);
+    notifyObservers(new TakeReadingAction());
+    // notifyObservers(new CommunicationAction("Hello my name is: ", null,
+    // recipients), this.getBrainClass());
+  }
+
+  @Override
+  public void update(CustomObservable observable, Object arg) {
+    if (SmartMeterAgentPerceptionWrapper.class.isAssignableFrom(arg.getClass())) {
+      perceiveContinue((SmartMeterAgentPerceptionWrapper) arg);
+    }
+  }
 }

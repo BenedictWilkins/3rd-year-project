@@ -24,14 +24,14 @@ public class AgentThreadManager {
 		this.runnables = new HashSet<>();
 	}
 	
-	public void start() {
+	public void start(long cycleTime) {
 		this.simulationStarted = true;
 		while (this.simulationStarted) {
 			doPerceive();
 			doDecide();
 			doExecute();
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(cycleTime);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

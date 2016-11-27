@@ -21,6 +21,8 @@ public class SeriesPlot extends ApplicationFrame {
 		final ChartPanel panel = new ChartPanel(chart);
 		panel.setPreferredSize(new Dimension(560,270));
 		setContentPane(panel);
+		this.setVisible(true);
+		this.pack();
 	}
 
 	public XYDataset createSeries(Double[] data) {

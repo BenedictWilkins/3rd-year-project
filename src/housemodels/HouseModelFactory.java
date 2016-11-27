@@ -2,32 +2,67 @@ package housemodels;
 
 import java.util.Random;
 
+/**
+ * An instance of the Factory design pattern. This factory creates
+ * {@link HouseModel}s.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class HouseModelFactory {
 
-	private static HouseModelFactory factory = new HouseModelFactory();
-	private Random r = new Random();
-	
-	private HouseModelFactory() {
-	}
+  private static HouseModelFactory factory = new HouseModelFactory();
+  private Random random = new Random();
 
-	public ConstantHouseModel createAffluentConstantHouseModel() {
-		return createConstantHouseModel(HouseType.AFFLUENT);
-	}
+  private HouseModelFactory() {
+  }
 
-	public ConstantHouseModel createAdversityConstantHouseModel() {
-		return createConstantHouseModel(HouseType.ADVERSITY);
-	}
+  public CombinedNormalHouseModel createAffluentCombinedNormalHouseModel(
+      Double error) {
+    return createCombinedNormalHouseModel(HouseTypeCombinedNormal.AFFLUENT,
+        error);
+  }
 
-	public ConstantHouseModel createComfortableConstantHouseModel() {
-		return createConstantHouseModel(HouseType.COMFORTABLE);
-	}
+  public CombinedNormalHouseModel createAdversityCombinedNormalHouseModel(
+      Double error) {
+    return createCombinedNormalHouseModel(HouseTypeCombinedNormal.ADVERSITY,
+        error);
+  }
 
-	private ConstantHouseModel createConstantHouseModel(HouseType type) {
-		return new ConstantHouseModel(1 + type.getMean() + r.nextGaussian()
-				* type.getStandardDeviation());
-	}
+  public CombinedNormalHouseModel createComfortableCombinedNormalHouseModel(
+      Double error) {
+    return createCombinedNormalHouseModel(HouseTypeCombinedNormal.COMFORTABLE,
+        error);
+  }
 
-	public static HouseModelFactory getFactory() {
-		return factory;
-	}
+  public CombinedNormalHouseModel createAcornuCombinedNormalHouseModel(
+      Double error) {
+    return createCombinedNormalHouseModel(HouseTypeCombinedNormal.ACORNU, error);
+  }
+
+  private CombinedNormalHouseModel createCombinedNormalHouseModel(
+      HouseTypeCombinedNormal type, Double error) {
+    return new CombinedNormalHouseModel(type, error);
+  }
+
+  public ConstantHouseModel createAffluentConstantHouseModel() {
+    return createConstantHouseModel(HouseTypeConstant.AFFLUENT);
+  }
+
+  public ConstantHouseModel createAdversityConstantHouseModel() {
+    return createConstantHouseModel(HouseTypeConstant.ADVERSITY);
+  }
+
+  public ConstantHouseModel createComfortableConstantHouseModel() {
+    return createConstantHouseModel(HouseTypeConstant.COMFORTABLE);
+  }
+
+  private ConstantHouseModel createConstantHouseModel(HouseTypeConstant type) {
+    return new ConstantHouseModel(1 + type.getMean() + random.nextGaussian()
+        * type.getStandardDeviation());
+  }
+
+  public static HouseModelFactory getFactory() {
+    return factory;
+  }
 }

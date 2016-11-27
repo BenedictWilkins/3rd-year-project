@@ -1,10 +1,13 @@
 package environment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 
+/**
+ * The {@link Space} of a {@link NationalGridUniverse}. TODO!
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class NationalGridUniverseSpace implements Space {
 
 }

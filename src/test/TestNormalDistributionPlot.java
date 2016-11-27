@@ -1,9 +1,6 @@
 package test;
 
 import graph.GeneralXYDataset;
-
-import java.awt.Dimension;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -11,24 +8,34 @@ import org.jfree.ui.ApplicationFrame;
 
 import utilities.MathUtilities;
 
+import java.awt.Dimension;
+
 public class TestNormalDistributionPlot {
 
-	public static void main(String[] args) {
-		Double[] x = MathUtilities.generateSequence(0.0, 10.0, 100);
-		Double[] y = MathUtilities.NormalProbabilityDistributionFunction(x, 5.0, 1.0);
-		for(int i = 0; i < x.length; i++) {
-			System.out.println(x[i] + "," + y[i]);
-		}
-		
-		GeneralXYDataset data = new GeneralXYDataset();
-		data.addSeries(x, y, "NormalSeries");
-		final ApplicationFrame frame = new ApplicationFrame("Test Normal");
-		final JFreeChart chart = ChartFactory.createXYLineChart("Normal", "X", "Y", data); 
-		final ChartPanel panel = new ChartPanel(chart);
-		panel.setPreferredSize(new Dimension(500,270));
-		
-		frame.setContentPane(panel);
-		frame.pack();
-		frame.setVisible(true);
-	}
+  /**
+   * Test entry point.
+   * 
+   * @param args
+   *          none.
+   */
+  public static void main(String[] args) {
+    Double[] xpos = MathUtilities.generateSequence(0.0, 10.0, 100);
+    Double[] ypos = MathUtilities.NormalProbabilityDistributionFunction(xpos,
+        5.0, 1.0);
+    for (int i = 0; i < xpos.length; i++) {
+      System.out.println(xpos[i] + "," + ypos[i]);
+    }
+
+    GeneralXYDataset data = new GeneralXYDataset();
+    data.addSeries(xpos, ypos, "NormalSeries");
+    final ApplicationFrame frame = new ApplicationFrame("Test Normal");
+    final JFreeChart chart = ChartFactory.createXYLineChart("Normal", "X", "Y",
+        data);
+    final ChartPanel panel = new ChartPanel(chart);
+    panel.setPreferredSize(new Dimension(500, 270));
+
+    frame.setContentPane(panel);
+    frame.pack();
+    frame.setVisible(true);
+  }
 }
