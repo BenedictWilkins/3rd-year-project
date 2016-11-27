@@ -7,6 +7,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The state of a {@link CommunicationModule}. <br>
+ * Known subclasses: <br>
+ * {@link CommunicationModuleStateClient},
+ * {@link CommunicationModuleStateServer}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public abstract class CommunicationModuleState {
 
   private Map<Class<? extends CommunicationMode>, Set<CommunicationMode>> classReference;
@@ -27,6 +36,12 @@ public abstract class CommunicationModuleState {
     return this.mode;
   }
 
+  /**
+   * Runs the connection process.
+   * 
+   * @param socket
+   *          that will be used in connection
+   */
   public void run(Socket socket) {
     if (mode == null) {
       System.out.println("Set up as: CommunicationSender/ReceiverMode");
@@ -43,7 +58,8 @@ public abstract class CommunicationModuleState {
 
   }
 
-  private void doMode(Socket socket, Class<? extends CommunicationMode> modeClass) {
+  private void doMode(Socket socket,
+      Class<? extends CommunicationMode> modeClass) {
     try {
       Constructor<? extends CommunicationMode> con = modeClass
           .getConstructor(Socket.class);

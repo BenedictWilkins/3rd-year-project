@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 
 /**
+ * A communication mode representing a reciever. A reciever may only recieve
+ * messages.
  * 
  * @author Benedict Wilkins
  *

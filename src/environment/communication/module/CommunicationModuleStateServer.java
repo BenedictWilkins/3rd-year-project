@@ -6,6 +6,13 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The client state of a {@link CommunicationModule}. <br>
+ * extends {@link CommunicationModuleState}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class CommunicationModuleStateServer extends CommunicationModuleState {
 
   private Integer port = null;
@@ -16,6 +23,16 @@ public class CommunicationModuleStateServer extends CommunicationModuleState {
   private boolean waitingOnConnections;
   private String address = null;
 
+  /**
+   * Constructor.
+   * 
+   * @param port
+   *          to connect to
+   * @param maxConnections
+   *          the server can have
+   * @param mode
+   *          of connection
+   */
   public CommunicationModuleStateServer(Integer port, Integer maxConnections,
       Class<? extends CommunicationMode> mode) {
     super(mode);

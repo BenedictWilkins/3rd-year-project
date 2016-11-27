@@ -2,6 +2,13 @@ package environment.communication.module;
 
 import java.net.Socket;
 
+/**
+ * {@link ConnectionStatus} for a {@link CommunicationModuleStateClient}. <br>
+ * Extends: {@link ConnectionStatus}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class ConnectionStatusClient extends ConnectionStatus {
 
   private static final String TYPE = "CLIENT";
@@ -11,6 +18,12 @@ public class ConnectionStatusClient extends ConnectionStatus {
   private boolean connected;
   private String connection;
 
+  /**
+   * Constructor.
+   * 
+   * @param socket
+   *          representing the connection
+   */
   public ConnectionStatusClient(Socket socket) {
     super(socket.getInetAddress() + ":" + socket.getLocalPort(), TYPE);
     this.connected = socket.isConnected();

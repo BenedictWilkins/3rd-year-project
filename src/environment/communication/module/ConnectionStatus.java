@@ -1,5 +1,13 @@
 package environment.communication.module;
 
+/**
+ * Extend to represent the connection status of a connection. The connection
+ * status should contain useful information about a connection that has been
+ * made.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public abstract class ConnectionStatus {
 
   protected static String CONNECTIONSTATUS = "ConnectionStatus"
@@ -8,6 +16,14 @@ public abstract class ConnectionStatus {
   private String address = null;
   private String type = null;
 
+  /**
+   * Constructor.
+   * 
+   * @param address
+   *          of the connection
+   * @param type
+   *          of connection
+   */
   public ConnectionStatus(String address, String type) {
     this.address = address;
     this.type = type;

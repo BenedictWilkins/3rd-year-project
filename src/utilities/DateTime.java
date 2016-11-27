@@ -2,6 +2,12 @@ package utilities;
 
 import java.util.Objects;
 
+/**
+ * Represents the Date and time in the system.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class DateTime implements DateTimeInterface {
   public static final Integer DAYLENGTH = 48;
   public static final Integer YEARLENGTH = 365;

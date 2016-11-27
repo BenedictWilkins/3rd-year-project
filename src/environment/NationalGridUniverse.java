@@ -66,9 +66,7 @@ public class NationalGridUniverse extends AbstractEnvironment {
     System.out.println("SEND: " + result);
     CustomObserver obs = observables.get(result.getRecipientsIds().get(0));
     // check where the message is going
-    if (HouseEnvironment.class.isAssignableFrom(obs.getClass())) {
-
-    } else {
+    if (!HouseEnvironment.class.isAssignableFrom(obs.getClass())) {
       // send it to a manager
       ((NeighbourhoodAgentBody)obs).getSensors().get(0).update(this, result);
     }

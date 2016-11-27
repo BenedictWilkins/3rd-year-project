@@ -20,7 +20,7 @@ public class TestNormalDistributionPlot {
    */
   public static void main(String[] args) {
     Double[] xpos = MathUtilities.generateSequence(0.0, 10.0, 100);
-    Double[] ypos = MathUtilities.NormalProbabilityDistributionFunction(xpos,
+    Double[] ypos = MathUtilities.normalProbabilityDistributionFunction(xpos,
         5.0, 1.0);
     for (int i = 0; i < xpos.length; i++) {
       System.out.println(xpos[i] + "," + ypos[i]);

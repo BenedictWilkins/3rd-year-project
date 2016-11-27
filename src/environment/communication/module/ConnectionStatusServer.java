@@ -5,6 +5,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
+/**
+ * {@link ConnectionStatus} for a {@link CommunicationModuleStateServer}. <br>
+ * Extends: {@link ConnectionStatus}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class ConnectionStatusServer extends ConnectionStatus {
 
   private static final String TYPE = "SERVER";
@@ -15,6 +22,18 @@ public class ConnectionStatusServer extends ConnectionStatus {
   private boolean waitingOnConnections;
   private Integer maxConnections = null;
 
+  /**
+   * Constructor.
+   * 
+   * @param address
+   *          of the server
+   * @param sockets
+   *          representing all of the connections to/from this server
+   * @param waitingOnConnections
+   *          is the server waiting for more connection
+   * @param maxConnections
+   *          of the server
+   */
   public ConnectionStatusServer(String address, Set<Socket> sockets,
       boolean waitingOnConnections, Integer maxConnections) {
     super(address, TYPE);

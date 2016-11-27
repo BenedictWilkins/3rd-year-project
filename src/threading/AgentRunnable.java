@@ -1,7 +1,14 @@
 package threading;
 
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Agent;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Mind;
 
+/**
+ * Runnable representing an {@link Agent}. Each agent runs in its own thread.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class AgentRunnable implements Runnable {
 
   private Mind agent;

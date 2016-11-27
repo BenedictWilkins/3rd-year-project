@@ -9,7 +9,9 @@ public class CommunicationModule {
    * Client constructor.
    * 
    * @param hostname
+   *          to connect to
    * @param port
+   *          to connect to
    */
   public CommunicationModule(String hostName, Integer port,
       Class<? extends CommunicationMode> mode) {
@@ -21,7 +23,9 @@ public class CommunicationModule {
    * Server constructor.
    * 
    * @param port
+   *          to connect to
    * @param maxConnections
+   *          that the server can make
    */
   public CommunicationModule(Integer port, Integer maxConnections,
       Class<? extends CommunicationMode> mode) {

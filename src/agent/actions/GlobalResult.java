@@ -1,7 +1,6 @@
 package agent.actions;
 
 import environment.communication.module.Address;
-import environment.communication.module.SimulationAddress;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.ActionResult;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.DefaultActionResult;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
@@ -24,6 +23,12 @@ public class GlobalResult extends DefaultActionResult {
 
   private String payload;
 
+  /**
+   * Constructor. See: {@link DefaultActionResult}.
+   * 
+   * @param payload
+   *          a message to send with the result
+   */
   public GlobalResult(String payload, Actor actor, ActionResult result,
       Exception failureReason, List<Address> recipients) {
     super(result, ((PhysicalBody) actor).getId().toString(), failureReason,
@@ -35,7 +40,7 @@ public class GlobalResult extends DefaultActionResult {
   public String toString() {
     return this.getClass().getSimpleName() + ":" + this.getActionResult() + ":"
         + this.getActorId() + System.lineSeparator()
-        + GeneralUtilities.CollectionToString(this.getRecipientsIds())
+        + GeneralUtilities.collectionToString(this.getRecipientsIds())
         + System.lineSeparator() + payload;
   }
 

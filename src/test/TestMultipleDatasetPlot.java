@@ -54,7 +54,7 @@ public class TestMultipleDatasetPlot {
 
     private GeneralXYDataset createNormalDataset(Double mean, Double sd) {
       Double[] xpos = MathUtilities.generateSequence(0.0, 10.0, 100);
-      Double[] ypos = MathUtilities.NormalProbabilityDistributionFunction(xpos, mean,
+      Double[] ypos = MathUtilities.normalProbabilityDistributionFunction(xpos, mean,
           sd);
       GeneralXYDataset data = new GeneralXYDataset();
       data.addSeries(xpos, ypos, "Series: " + index);

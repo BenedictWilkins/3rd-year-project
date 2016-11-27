@@ -6,13 +6,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Use this class to read data from a text file into a {@link DataFrame}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class DataReader {
 
   private BufferedReader reader;
-
-  public DataReader() {
-
-  }
 
   /**
    * Creates a {@link DataFrame} from a text file.

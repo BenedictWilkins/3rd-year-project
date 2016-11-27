@@ -19,6 +19,10 @@ import environment.NationalGridUniverse;
 import environment.NationalGridUniversePhysics;
 import environment.NationalGridUniverseSpace;
 import environment.communication.module.SimulationAddress;
+
+import housemodels.CombinedNormalHouseModel;
+import housemodels.TimeDateTracker;
+
 import threading.AgentRunnable;
 import threading.AgentThreadManager;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
@@ -26,8 +30,6 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Action;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Actuator;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
-import housemodels.CombinedNormalHouseModel;
-import housemodels.TimeDateTracker;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -149,7 +151,8 @@ public class Simulator {
       CombinedNormalHouseModel model) {
     HouseEnvironment house = createHouse(model);
     SmartMeterAgentBody agent = house.getSmartMeterAgent();
-    ((CommunicationActuator<?,?>) agent.getSmartMeterActuator()).addObserver(house);
+    ((CommunicationActuator<?, ?>) agent.getSmartMeterActuator())
+        .addObserver(house);
     house.addObserver(agent.getSensors().get(0));
     house.getAppearance().setName(name);
     agent.setId(name);

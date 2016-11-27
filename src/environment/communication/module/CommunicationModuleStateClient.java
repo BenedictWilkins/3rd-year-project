@@ -3,12 +3,29 @@ package environment.communication.module;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * The client state of a {@link CommunicationModule}. <br>
+ * extends {@link CommunicationModuleState}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class CommunicationModuleStateClient extends CommunicationModuleState {
 
   private String hostName = null;
   private Integer port = null;
   private Socket socket = null;
 
+  /**
+   * Constructor.
+   * 
+   * @param hostName
+   *          to connect to
+   * @param port
+   *          to connect to
+   * @param mode
+   *          of connection
+   */
   public CommunicationModuleStateClient(String hostName, Integer port,
       Class<? extends CommunicationMode> mode) {
     super(mode);

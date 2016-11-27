@@ -1,6 +1,8 @@
 package graph;
 
+import housemodels.CombinedNormalHouseModel;
 import housemodels.HouseTypeCombinedNormal;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -14,6 +16,13 @@ import utilities.MathUtilities;
 import java.awt.Color;
 import java.awt.Dimension;
 
+/**
+ * This class allows manual fitting of a house model. Specifically a
+ * {@link CombinedNormalHouseModel}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class DataFitter {
 
   /**
