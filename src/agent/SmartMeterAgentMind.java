@@ -1,7 +1,6 @@
 package agent;
 
 import agent.SmartMeterAgentBrain.SmartMeterAgentPerceptionWrapper;
-import agent.actions.CommunicationAction;
 import agent.actions.PerceiveAction;
 import agent.actions.TakeReadingAction;
 import agent.general.GeneralAgentMind;
