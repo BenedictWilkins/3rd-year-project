@@ -1,6 +1,7 @@
 package graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,7 +17,6 @@ public class DataFrame {
   private String printformat;
 
   private List<String[]> data;
-  @SuppressWarnings("unused")
   private Class<?>[] coltypes;
   private String[] headers;
 
@@ -55,9 +55,9 @@ public class DataFrame {
    */
   public void addRow(String[] row) throws IllegalArgumentException {
     checkRowSize(row);
-    for (int i = 0; i < row.length; i++) {
+    // for (int i = 0; i < row.length; i++) {
 
-    }
+    // }
     // check for types
     data.add(row);
   }
@@ -115,7 +115,8 @@ public class DataFrame {
   // TODO tdd
   private void checkRowSize(String[] row) throws IllegalArgumentException {
     if (row.length != getNumColumns()) {
-      throw new IllegalArgumentException(ERRMESSAGES[0]);
+      throw new IllegalArgumentException(ERRMESSAGES[0]
+          + System.lineSeparator() + "ROW: " + Arrays.toString(row));
     }
   }
 }

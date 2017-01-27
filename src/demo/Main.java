@@ -1,7 +1,7 @@
 package demo;
 
-import housemodels.CombinedNormalHouseModel;
-import housemodels.HouseModelFactory;
+import housemodels.House;
+import housemodels.HouseFactory;
 
 /**
  * Entry point into the system.
@@ -18,10 +18,10 @@ public class Main {
    *          none
    */
   public static void main(String[] args) {
-    double error = 1.0;
-    CombinedNormalHouseModel[] models = new CombinedNormalHouseModel[2];
-    models[0] = HouseModelFactory.getFactory().createAffluentCombinedNormalHouseModel(error);
-    models[1] = HouseModelFactory.getFactory().createAffluentCombinedNormalHouseModel(error);
+    double error = 0.05;
+    House[] models = new House[2];
+    models[0] = HouseFactory.getFactory().createAffluentHouse(error);
+    models[1] = HouseFactory.getFactory().createAdversityHouse(error);
     new Simulator(models);
   }
 }

@@ -1,68 +1,72 @@
 package housemodels;
 
-import java.util.Random;
+import utilities.CombinedNormalDistribution;
+import utilities.DateTime;
+import utilities.MathUtilities;
 
-/**
- * An instance of the Factory design pattern. This factory creates
- * {@link HouseModel}s.
- * 
- * @author Benedict Wilkins
- *
- */
 public class HouseModelFactory {
 
-  private static HouseModelFactory factory = new HouseModelFactory();
-  private Random random = new Random();
+  private static final HouseModelFactory instance = new HouseModelFactory();
 
-  private HouseModelFactory() {
+  /**
+   * Creates a new AcornU house model based on
+   * {@link CombinedNormalDistribution}. The house model has default 48
+   * intervals (1 for each half hour in 24 hours).
+   * 
+   * @return created AcornU house model.
+   */
+  public HouseModelCombinedNormalAcornU createHouseModelCombinedNormalAcornU() {
+    HouseModelCombinedNormalAcornU model = new HouseModelCombinedNormalAcornU();
+    dayLengthCompute(model);
+    return model;
   }
 
-  public CombinedNormalHouseModel createAffluentCombinedNormalHouseModel(
-      Double error) {
-    return createCombinedNormalHouseModel(HouseTypeCombinedNormal.AFFLUENT,
-        error);
+  /**
+   * Creates a new Adversity house model based on
+   * {@link CombinedNormalDistribution}. The house model has default 48
+   * intervals (1 for each half hour in 24 hours).
+   * 
+   * @return created Adversity house model.
+   */
+  public HouseModelCombinedNormalAdversity createHouseModelCombinedNormalAdversity() {
+    HouseModelCombinedNormalAdversity model = new HouseModelCombinedNormalAdversity();
+    dayLengthCompute(model);
+    return model;
   }
 
-  public CombinedNormalHouseModel createAdversityCombinedNormalHouseModel(
-      Double error) {
-    return createCombinedNormalHouseModel(HouseTypeCombinedNormal.ADVERSITY,
-        error);
+  /**
+   * Creates a new Affluent house model based on
+   * {@link CombinedNormalDistribution}. The house model has default 48
+   * intervals (1 for each half hour in 24 hours).
+   * 
+   * @return created Affluent house model.
+   */
+  public HouseModelCombinedNormalAffluent createHouseModelCombinedNormalAffluent() {
+    HouseModelCombinedNormalAffluent model = new HouseModelCombinedNormalAffluent();
+    dayLengthCompute(model);
+    return model;
   }
 
-  public CombinedNormalHouseModel createComfortableCombinedNormalHouseModel(
-      Double error) {
-    return createCombinedNormalHouseModel(HouseTypeCombinedNormal.COMFORTABLE,
-        error);
+  /**
+   * Creates a new Comfortable house model based on
+   * {@link CombinedNormalDistribution}. The house model has default 48
+   * intervals (1 for each half hour in 24 hours).
+   * 
+   * @return created Comfortable house model.
+   */
+  public HouseModelCombinedNormalComfortable createHouseModelCombinedNormalComfortable() {
+    HouseModelCombinedNormalComfortable model = new HouseModelCombinedNormalComfortable();
+    dayLengthCompute(model);
+    return model;
   }
 
-  public CombinedNormalHouseModel createAcornuCombinedNormalHouseModel(
-      Double error) {
-    return createCombinedNormalHouseModel(HouseTypeCombinedNormal.ACORNU, error);
-  }
-
-  private CombinedNormalHouseModel createCombinedNormalHouseModel(
-      HouseTypeCombinedNormal type, Double error) {
-    return new CombinedNormalHouseModel(type, error);
-  }
-
-  public ConstantHouseModel createAffluentConstantHouseModel() {
-    return createConstantHouseModel(HouseTypeConstant.AFFLUENT);
-  }
-
-  public ConstantHouseModel createAdversityConstantHouseModel() {
-    return createConstantHouseModel(HouseTypeConstant.ADVERSITY);
-  }
-
-  public ConstantHouseModel createComfortableConstantHouseModel() {
-    return createConstantHouseModel(HouseTypeConstant.COMFORTABLE);
-  }
-
-  private ConstantHouseModel createConstantHouseModel(HouseTypeConstant type) {
-    return new ConstantHouseModel(1 + type.getMean() + random.nextGaussian()
-        * type.getStandardDeviation());
+  private void dayLengthCompute(HouseModelCombinedNormal model) {
+    model.compute(MathUtilities.generateSequence(0.0, DateTime.DAYLENGTH - 1.0,
+        DateTime.DAYLENGTH));
   }
 
   public static HouseModelFactory getFactory() {
-    return factory;
+    return instance;
   }
+
 }

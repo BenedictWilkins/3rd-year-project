@@ -9,33 +9,29 @@ package utilities;
 public class MathUtilities {
 
   /**
-   * Creates the corresponding normal distribution values from the given
-   * arguments.
+   * Normalises x - the returned values will be between 0 and 1.
    * 
-   * @param xvals
-   *          a series of values whose corresponding normal values should be
-   *          calculated
-   * @param mean
-   *          of the distribution
-   * @param std
-   *          of the distribution
-   * @return the 'y' values of the distribution
+   * @param x
+   *          to compute over
+   * @return normalised array
    */
-  public static Double[] normalProbabilityDistributionFunction(Double[] xvals,
-      Double mean, Double std) {
-    Double da = 2 * std * std;
-    Double ca = 1 / Math.sqrt(Math.PI * da);
-    Double[] yvals = new Double[xvals.length];
-    for (int i = 0; i < xvals.length; i++) {
-      yvals[i] = applyPDF(xvals[i], ca, da, mean);
+  public static Double[] normalise(Double[] x) {
+    Double min = min(x);
+    Double denom = max(x) - min;
+    Double[] result = new Double[x.length];
+    for (int i = 0; i < x.length; i++) {
+      result[i] = (x[i] - min) / denom;
     }
-    return yvals;
+    return result;
   }
 
-  private static Double applyPDF(Double x, Double ca, Double da, Double mean) {
-    return ca * Math.exp(-Math.pow(x - mean, 2) / da);
-  }
-
+  /**
+   * Finds the minimum value in x
+   * 
+   * @param x
+   *          to compute over
+   * @return min
+   */
   public static Double min(Double[] x) {
     Double min = x[0];
     for (Double d : x) {
@@ -46,6 +42,13 @@ public class MathUtilities {
     return min;
   }
 
+  /**
+   * Finds the maximum value in x
+   * 
+   * @param x
+   *          to compute over
+   * @return max
+   */
   public static Double max(Double[] x) {
     Double max = x[0];
     for (Double d : x) {
@@ -56,6 +59,13 @@ public class MathUtilities {
     return max;
   }
 
+  /**
+   * Computes the range of the given set of values.
+   * 
+   * @param x
+   *          to compute over
+   * @return the range
+   */
   public static Double range(Double[] x) {
     Double max = x[0];
     Double min = x[0];
@@ -163,8 +173,10 @@ public class MathUtilities {
    * Combines x1 and x2 into one continuous array in the order x1,x2.
    * 
    * @param x1
+   *          first array to combine
    * @param x2
-   * @return
+   *          second array to combine
+   * @return the result of combination
    */
   public static Double[] combine(Double[] x1, Double[] x2) {
     Double[] r = new Double[x1.length + x2.length];
@@ -174,70 +186,6 @@ public class MathUtilities {
     for (int i = 0; i < x2.length; i++) {
       r[i + x1.length] = x2[i];
     }
-    return r;
-  }
-
-  /**
-   * Creates a data distribution from a 2 normal distributions specified by the
-   * arguments. The distributions are combined and loop around the boundaries of
-   * the provided series. Each distribution should share an index among the
-   * argument arrays. for example: distributions 1 = means[0], sds[0], mult[0].
-   * The range, size and c are shared between all distributions. The
-   * distributions are combined additively.
-   * 
-   * @param means
-   *          an array of means, 1 element per distribution
-   * @param sds
-   *          an array of standard deviations, 1 element per distribution
-   * @param mult
-   *          an array of multipliers, 1 element per distributions. The
-   *          multiplier will be used to scale the given distribution
-   * @param c
-   *          a constant that will be added to all distributions.
-   * @param range
-   *          an array containing 2 elements that specifies the start and end of
-   *          the x axis (inclusive).
-   * @param size
-   *          the number of points to generate in the function - the points will
-   *          be taking at equally sized intervals between the start and end
-   *          range values (inclusive)
-   * @return a 2-dimensional array containing the series specified from range
-   *         and size at index [0][], and the computed values associated with
-   *         the each series value at index [1][]. The data is stored in
-   *         ascending order, with [0][0] being the smallest value in the
-   *         series.
-   */
-  public static Double[][] createCombinedLoopedNormalDataset(Double[] means,
-      Double[] sds, Double[] mult, Double c, Double[] range, Integer size) {
-    if (means.length != sds.length || means.length != mult.length
-        || means.length != range.length)
-      throw new IllegalArgumentException();
-
-    if (size % means.length != 0) {
-      // TODO do something to make sure that the data divides nicely
-    }
-    Double[] p = MathUtilities.generateSequence(range[0] + 1 - size / 2,
-        range[0], size / 2);
-    Double[] a = MathUtilities.generateSequence(range[1], range[1] - 1 + size
-        / 2, size / 2);
-
-    Double[] x = MathUtilities.generateSequence(range[0], range[1], size);
-    Double[] ap = MathUtilities.combine(a, p);
-
-    Double[] n1ap = MathUtilities.normalProbabilityDistributionFunction(ap,
-        means[0], sds[0]);
-    Double[] n2ap = MathUtilities.normalProbabilityDistributionFunction(ap,
-        means[1], sds[1]);
-
-    Double[] ny1 = MathUtilities.add(MathUtilities
-        .normalProbabilityDistributionFunction(x, means[0], sds[0]), n1ap);
-    Double[] ny2 = MathUtilities.add(MathUtilities
-        .normalProbabilityDistributionFunction(x, means[1], sds[1]), n2ap);
-    Double[][] r = new Double[2][size];
-    r[1] = MathUtilities.add(
-        MathUtilities.add(MathUtilities.multiply(ny1, mult[0]),
-            MathUtilities.multiply(ny2, mult[1])), c);
-    r[0] = x;
     return r;
   }
 }

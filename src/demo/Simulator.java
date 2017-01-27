@@ -12,6 +12,7 @@ import agent.SmartMeterAgentBrain;
 import agent.SmartMeterAgentMind;
 import agent.actions.TakeReadingAction;
 import environment.HouseEnvironment;
+
 import environment.HouseEnvironmentAppearance;
 import environment.HouseEnvironmentPhysics;
 import environment.HouseEnvironmentSpace;
@@ -20,7 +21,8 @@ import environment.NationalGridUniversePhysics;
 import environment.NationalGridUniverseSpace;
 import environment.communication.module.SimulationAddress;
 
-import housemodels.CombinedNormalHouseModel;
+import housemodels.House;
+import housemodels.HouseModelCombinedNormal;
 import housemodels.TimeDateTracker;
 
 import threading.AgentRunnable;
@@ -70,10 +72,10 @@ public class Simulator {
    * Constructor.
    * 
    * @param models
-   *          an array of {@link CombinedNormalHouseModel}s that should be used
+   *          an array of {@link HouseModelCombinedNormal}s that should be used
    *          in the each {@link HouseEnvironment} to place in the universe
    */
-  public Simulator(CombinedNormalHouseModel[] models) {
+  public Simulator(House[] models) {
     HOUSEACTIONS.add(TakeReadingAction.class);
     AgentThreadManager manager = new AgentThreadManager();
     NationalGridUniverse universe = createNationalGridUniverse(models);
@@ -95,16 +97,15 @@ public class Simulator {
    * Creates a new {@link NationalGridUniverse}.
    * 
    * @param models
-   *          an array of {@link CombinedNormalHouseModel}s that should be used
+   *          an array of {@link HouseModelCombinedNormal}s that should be used
    *          in the each {@link HouseEnvironment} to place in the universe
    * @return the new {@link NationalGridUniverse}
    */
-  public NationalGridUniverse createNationalGridUniverse(
-      CombinedNormalHouseModel[] models) {
+  public NationalGridUniverse createNationalGridUniverse(House[] models) {
     List<HouseEnvironment> houses = new ArrayList<HouseEnvironment>();
 
     int id = 0;
-    for (CombinedNormalHouseModel m : models) {
+    for (House m : models) {
       id++;
       houses.add(doHouseEnvironment(String.valueOf(id), m));
     }
@@ -143,12 +144,11 @@ public class Simulator {
    * @param name
    *          of the house
    * @param model
-   *          the {@link CombinedNormalHouseModel} to be used in the
+   *          the {@link HouseModelCombinedNormal} to be used in the
    *          {@link HouseEnvironment}
    * @return a new {@link HouseEnvironment}
    */
-  public HouseEnvironment doHouseEnvironment(String name,
-      CombinedNormalHouseModel model) {
+  public HouseEnvironment doHouseEnvironment(String name, House model) {
     HouseEnvironment house = createHouse(model);
     SmartMeterAgentBody agent = house.getSmartMeterAgent();
     ((CommunicationActuator<?, ?>) agent.getSmartMeterActuator())
@@ -159,7 +159,7 @@ public class Simulator {
     return house;
   }
 
-  private HouseEnvironment createHouse(CombinedNormalHouseModel model) {
+  private HouseEnvironment createHouse(House model) {
     Set<Body> agent = new HashSet<>();
     agent.add(createSmartMeterAgent());
     return new HouseEnvironment(new HouseEnvironmentSpace(model), HOUSEACTIONS,

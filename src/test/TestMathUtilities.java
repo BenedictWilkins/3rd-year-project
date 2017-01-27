@@ -42,16 +42,6 @@ public class TestMathUtilities {
   }
 
   @Test
-  public void testCreateCombinedLoopedNormalDataset() {
-    Double[][] result = MathUtilities.createCombinedLoopedNormalDataset(
-        new Double[] { 2.5, 7.5 }, new Double[] { 1.0, 1.0 }, new Double[] {
-            1.0, 1.0 }, 0.0, new Double[] { 0.0, 47.0 }, 48);
-    for (int j = 0; j < result[0].length; j++) {
-      // System.out.println(r[0][j] + "," + r[1][j]);
-    }
-  }
-
-  @Test
   public void testMin() {
     assertEquals(1,
         MathUtilities.min(MathUtilities.generateSequence(1.0, 10.0, 10)), 0);
