@@ -1,7 +1,9 @@
 package housemodels;
 
+import java.util.Arrays;
+
 import utilities.CombinedNormalDistribution;
-import utilities.DateTimeInterface;
+import utilities.DateTime;
 import utilities.MathFunctionClass;
 import utilities.NormalDistribution;
 import graph.DataFitter;
@@ -30,9 +32,9 @@ public abstract class HouseModelCombinedNormal implements
   }
 
   @Override
-  public Double getReading(DateTimeInterface dateTime) {
+  public Double getReading(DateTime dateTime) {
     // look at the time, check the model
-    Integer time = dateTime.getTime().intValue();
+    Integer time = HalfHourClock.getInstance().getHalfHourInDay(dateTime);
     if (time < data.length) {
       return data[time];
     } else {

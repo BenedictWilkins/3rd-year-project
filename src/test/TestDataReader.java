@@ -19,7 +19,7 @@ public class TestDataReader {
     DataFrame frame = dr.readFile(gmacornu, " ", true);
     Double[] data = frame.getColumn(1);
     System.out.println(data.length);
-    SeriesPlot plot = new SeriesPlot(data, "");
+    SeriesPlot plot = new SeriesPlot("", data, "");
     plot.pack();
     plot.setVisible(true);
   }

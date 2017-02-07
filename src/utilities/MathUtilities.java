@@ -1,5 +1,7 @@
 package utilities;
 
+import utilities.autowarn.AutoWarn;
+
 /**
  * A utility class containing useful math functions.
  * 
@@ -7,6 +9,28 @@ package utilities;
  *
  */
 public class MathUtilities {
+
+  /**
+   * Computes element-wise subtraction. (x - y)
+   * 
+   * @param x
+   *          to subtract from
+   * @param y
+   *          to subtract
+   * @return result of subtraction
+   */
+  public static Double[] subtract(Double[] x, Double[] y) {
+    if (x.length != y.length) {
+      throw new IllegalArgumentException(
+          "Cannot perform subtraction on different length input: " + x.length
+              + ", " + y.length);
+    }
+    Double[] result = new Double[x.length];
+    for (int i = 0; i < x.length; i++) {
+      result[i] = x[i] - y[i];
+    }
+    return result;
+  }
 
   /**
    * Normalises x - the returned values will be between 0 and 1.
@@ -112,6 +136,14 @@ public class MathUtilities {
     for (int i = 1; i < n - 1; i++) {
       r[i] = start + p;
       p += interval;
+    }
+    return r;
+  }
+
+  public static Double sum(Double[] x) {
+    Double r = 0.0;
+    for (Double d : x) {
+      r += d;
     }
     return r;
   }

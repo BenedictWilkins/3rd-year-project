@@ -1,5 +1,6 @@
 package graph;
 
+import housemodels.HalfHourClock;
 import housemodels.HouseModelCombinedNormalAcornU;
 import housemodels.HouseModelCombinedNormalAdversity;
 import housemodels.HouseModelCombinedNormalAffluent;
@@ -39,10 +40,10 @@ public class DataFitter {
   public static void main(String[] args) {
     DataFitter df = new DataFitter();
     df.fit(DataGroup.SEASON);
-    //df.fit(DataGroup.ACORNU);
-    //df.fit(DataGroup.ADVERSITY);
-    //df.fit(DataGroup.AFFLUENT);
-    //df.fit(DataGroup.COMFORTABLE);
+    // df.fit(DataGroup.ACORNU);
+    // df.fit(DataGroup.ADVERSITY);
+    // df.fit(DataGroup.AFFLUENT);
+    // df.fit(DataGroup.COMFORTABLE);
   }
 
   private XYPlot plot;
@@ -108,12 +109,13 @@ public class DataFitter {
   private enum DataGroup {
 
     AFFLUENT("./res/gmAffluent.txt", HouseModelCombinedNormalAffluent.class,
-        DateTime.DAYLENGTH), COMFORTABLE("./res/gmComfortable.txt",
-        HouseModelCombinedNormalComfortable.class, DateTime.DAYLENGTH), ADVERSITY(
+        HalfHourClock.DAYLENGTH), COMFORTABLE("./res/gmComfortable.txt",
+        HouseModelCombinedNormalComfortable.class, HalfHourClock.DAYLENGTH), ADVERSITY(
         "./res/gmAdversity.txt", HouseModelCombinedNormalAdversity.class,
-        DateTime.DAYLENGTH), ACORNU("./res/gmAcorn-u.txt",
-        HouseModelCombinedNormalAcornU.class, DateTime.DAYLENGTH), SEASON(
-        "./res/gmSeasonality.txt", SeasonModifier.class, DateTime.YEARLENGTH);
+        HalfHourClock.DAYLENGTH), ACORNU("./res/gmAcorn-u.txt",
+        HouseModelCombinedNormalAcornU.class, HalfHourClock.DAYLENGTH), SEASON(
+        "./res/gmSeasonality.txt", SeasonModifier.class,
+        HalfHourClock.YEARLENGTH);
 
     private String path;
     private MathFunctionClass<Double> function;

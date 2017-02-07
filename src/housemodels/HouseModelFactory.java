@@ -8,6 +8,11 @@ public class HouseModelFactory {
 
   private static final HouseModelFactory instance = new HouseModelFactory();
 
+  
+  
+  
+  
+  
   /**
    * Creates a new AcornU house model based on
    * {@link CombinedNormalDistribution}. The house model has default 48
@@ -61,8 +66,8 @@ public class HouseModelFactory {
   }
 
   private void dayLengthCompute(HouseModelCombinedNormal model) {
-    model.compute(MathUtilities.generateSequence(0.0, DateTime.DAYLENGTH - 1.0,
-        DateTime.DAYLENGTH));
+    model.compute(MathUtilities.generateSequence(0.0,
+        HalfHourClock.DAYLENGTH - 1.0, HalfHourClock.DAYLENGTH));
   }
 
   public static HouseModelFactory getFactory() {

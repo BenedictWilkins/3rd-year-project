@@ -9,7 +9,7 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.EnvironmentalAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Mind;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import utilities.DateTimeInterface;
+import utilities.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +52,8 @@ public class SmartMeterAgentMind extends GeneralAgentMind<SmartMeterAgentBrain> 
         .getReadings()
         .entrySet()
         .forEach(
-            (Entry<DateTimeInterface, Double> ent) -> System.out
-                .println("READING: " + ent.getValue() + " AT: " + ent.getKey()));
+            (Entry<DateTime, Double> ent) -> System.out.println("READING: "
+                + ent.getValue() + " AT: " + ent.getKey()));
   }
 
   @Override

@@ -12,7 +12,6 @@ import agent.SmartMeterAgentBrain;
 import agent.SmartMeterAgentMind;
 import agent.actions.TakeReadingAction;
 import environment.HouseEnvironment;
-
 import environment.HouseEnvironmentAppearance;
 import environment.HouseEnvironmentPhysics;
 import environment.HouseEnvironmentSpace;
@@ -20,11 +19,6 @@ import environment.NationalGridUniverse;
 import environment.NationalGridUniversePhysics;
 import environment.NationalGridUniverseSpace;
 import environment.communication.module.SimulationAddress;
-
-import housemodels.House;
-import housemodels.HouseModelCombinedNormal;
-import housemodels.TimeDateTracker;
-
 import threading.AgentRunnable;
 import threading.AgentThreadManager;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
@@ -32,6 +26,9 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Action;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Actuator;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
+import housemodels.HalfHourClock;
+import housemodels.House;
+import housemodels.HouseModelCombinedNormal;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -82,8 +79,8 @@ public class Simulator {
     for (HouseEnvironment h : universe.getHouseSubEnvironments()) {
       manager.addAgent(new AgentRunnable(h.getSmartMeterAgent().getMind()));
     }
-    Thread thread = new Thread(TimeDateTracker.getInstance());
-    TimeDateTracker.setInterval(TIMEGAP);
+    Thread thread = new Thread(HalfHourClock.getInstance());
+    HalfHourClock.getInstance().setRealTimeDelay(TIMEGAP);
     thread.start();
     try {
       Thread.sleep(100);

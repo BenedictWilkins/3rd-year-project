@@ -7,7 +7,7 @@ import agent.general.GeneralAgentBrain;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Brain;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import utilities.DateTimeInterface;
+import utilities.DateTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,7 +88,7 @@ public class SmartMeterAgentBrain extends
    *
    */
   public class SmartMeterAgentPerceptionWrapper {
-    private Map<DateTimeInterface, Double> readings = new HashMap<>();
+    private Map<DateTime, Double> readings = new HashMap<>();
     private Map<String, List<String>> messages = new HashMap<>();
 
     public SmartMeterAgentPerceptionWrapper() {
@@ -97,17 +97,17 @@ public class SmartMeterAgentBrain extends
     }
 
     public SmartMeterAgentPerceptionWrapper(
-        Map<DateTimeInterface, Double> readings,
+        Map<DateTime, Double> readings,
         Map<String, List<String>> messages) {
       this.readings = readings;
       this.messages = messages;
     }
 
-    public Map<DateTimeInterface, Double> getReadings() {
+    public Map<DateTime, Double> getReadings() {
       return readings;
     }
 
-    public void setReadings(Map<DateTimeInterface, Double> readings) {
+    public void setReadings(Map<DateTime, Double> readings) {
       this.readings = readings;
     }
 

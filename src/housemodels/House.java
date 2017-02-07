@@ -1,6 +1,6 @@
 package housemodels;
 
-import utilities.DateTimeInterface;
+import utilities.DateTime;
 
 public class House implements HouseModel {
 
@@ -25,7 +25,7 @@ public class House implements HouseModel {
     this.error = error;
   }
 
-  public Double getReading(DateTimeInterface dateTime) {
+  public Double getReading(DateTime dateTime) {
     return model.getReading(dateTime) + modifier.getModiferValue(dateTime)
         + ((Math.random() * error * 2) - error);
   }

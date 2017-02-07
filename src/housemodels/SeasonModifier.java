@@ -1,6 +1,6 @@
 package housemodels;
 
-import utilities.DateTimeInterface;
+import utilities.DateTime;
 import utilities.MathFunctionClass;
 import utilities.NormalDistribution;
 
@@ -51,8 +51,7 @@ public class SeasonModifier implements MathFunctionClass<Double> {
 
   /**
    * Generates a set of y values according to this {@link SeasonModifier}s
-   * function, addition and scale. The values produced by this modifiers
-   * function will be between 0.0 and 1.0.
+   * function, addition and scale.
    * 
    * @param xvalues
    *          to compute from
@@ -69,9 +68,8 @@ public class SeasonModifier implements MathFunctionClass<Double> {
     return data;
   }
 
-  public Double getModiferValue(DateTimeInterface dateTime) {
-    // look at the time, check the model
-    Integer date = dateTime.getDate().intValue();
+  public Double getModiferValue(DateTime dateTime) {
+    Integer date = dateTime.getYearDay() - 1;
     if (date < data.length) {
       return data[date];
     } else {

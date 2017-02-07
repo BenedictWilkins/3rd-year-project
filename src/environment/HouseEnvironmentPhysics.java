@@ -5,7 +5,7 @@ import agent.actions.CommunicationEvent;
 import agent.actions.GlobalResult;
 import agent.actions.TakeReadingAction;
 import agent.actions.TakeReadingResult;
-import housemodels.TimeDateTracker;
+import housemodels.HalfHourClock;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Action;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.ActionResult;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Event;
@@ -45,7 +45,7 @@ public class HouseEnvironmentPhysics implements
 
   @Override
   public Result perform(TakeReadingAction action, Space context) {
-    DateTime dt = TimeDateTracker.getDateTime().clone();
+    DateTime dt = HalfHourClock.getInstance().getDateTime().clone();
     Double result = ((HouseEnvironmentSpace) context).getReading(dt);
     return new TakeReadingResult(action.getActor(), result, dt,
         ActionResult.ACTION_DONE, null, null);
