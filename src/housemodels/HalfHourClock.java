@@ -33,7 +33,7 @@ public class HalfHourClock extends Clock {
   }
 
   public void setRealTimeDelay(int delay) {
-    realTimeDelay = delay;
+    super.setRealTimeDelay(delay);
   }
 
   public int getHalfHourInDay(DateTime dateTime) {

@@ -1,11 +1,13 @@
 package agent.actions;
 
+import agent.communication.MessagePayload;
 import environment.communication.module.Address;
+import machinelearning.agent.AbstractDataFrameRow;
+import machinelearning.agent.DataFrameRowReading;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.ActionResult;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.DefaultActionResult;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Actor;
-import utilities.DateTime;
 
 import java.util.List;
 
@@ -19,38 +21,12 @@ import java.util.List;
  */
 public class TakeReadingResult extends GlobalResult {
 
-  // the energy reading value
-  private Double reading = null;
-  private DateTime dateTime = null;
-
-  /**
-   * Constructor.
-   * 
-   * @param actor
-   *          the agent who performed the action
-   * @param reading
-   *          that was taken
-   * @param dateTime
-   *          that the reading was taken
-   * @param result
-   *          see: {@link ActionResult}
-   * @param failureReason
-   *          if not {@link ActionResult#ACTION_DONE}
-   * @param recipients
-   *          a list of agent {@link Address}es - to give this result to
-   */
-  public TakeReadingResult(Actor actor, Double reading, DateTime dateTime,
-      ActionResult result, Exception failureReason, List<Address> recipients) {
-    super(null, actor, result, failureReason, recipients);
-    this.reading = reading;
-    this.dateTime = dateTime;
-  }
-
   /**
    * Constructor.
    * 
    * @param payload
-   *          a message
+   *          a message containing a {@link AbstractDataFrameRow} that contains a time
+   *          value and a reading
    * @param actor
    *          the agent who performed the action
    * @param reading
@@ -64,12 +40,10 @@ public class TakeReadingResult extends GlobalResult {
    * @param recipients
    *          a list of agent {@link Address}es - to give this result to
    */
-  public TakeReadingResult(String payload, Actor actor, Double reading,
-      DateTime dateTime, ActionResult result, Exception failureReason,
+  public TakeReadingResult(MessagePayload<DataFrameRowReading> payload,
+      Actor actor, ActionResult result, Exception failureReason,
       List<Address> recipients) {
     super(payload, actor, result, failureReason, recipients);
-    this.reading = reading;
-    this.dateTime = dateTime;
   }
 
   /**
@@ -78,7 +52,7 @@ public class TakeReadingResult extends GlobalResult {
    * @return the reading
    */
   public Double getReading() {
-    return this.reading;
+    return ((DataFrameRowReading) this.getPayload().getPayload()).getReading();
   }
 
   /**
@@ -86,12 +60,13 @@ public class TakeReadingResult extends GlobalResult {
    * 
    * @return the date time for the reading
    */
-  public DateTime getDateTime() {
-    return this.dateTime;
+  public String getDateTime() {
+    return ((DataFrameRowReading) this.getPayload().getPayload()).getDateTime();
   }
 
   @Override
   public String toString() {
-    return super.toString() + ":" + this.reading;
+    return super.toString() + ":" + this.getPayload();
   }
+
 }

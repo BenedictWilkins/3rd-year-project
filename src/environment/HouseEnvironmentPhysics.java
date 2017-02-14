@@ -5,6 +5,7 @@ import agent.actions.CommunicationEvent;
 import agent.actions.GlobalResult;
 import agent.actions.TakeReadingAction;
 import agent.actions.TakeReadingResult;
+import agent.communication.ReadingPayload;
 import housemodels.HalfHourClock;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Action;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.ActionResult;
@@ -27,7 +28,8 @@ public class HouseEnvironmentPhysics implements
 
   @Override
   public Result attempt(Event event, Space space) {
-    System.out.println("PHYSICS ATTEMPTING EVENT: " + event.getAction());
+    System.out.println(this.getClass().getSimpleName() + " ATTEMPTING EVENT: "
+        + event.getAction());
     return event.getAction().attempt(this, space);
   }
 
@@ -47,8 +49,8 @@ public class HouseEnvironmentPhysics implements
   public Result perform(TakeReadingAction action, Space context) {
     DateTime dt = HalfHourClock.getInstance().getDateTime().clone();
     Double result = ((HouseEnvironmentSpace) context).getReading(dt);
-    return new TakeReadingResult(action.getActor(), result, dt,
-        ActionResult.ACTION_DONE, null, null);
+    return new TakeReadingResult(new ReadingPayload(dt.toString(), result),
+        action.getActor(), ActionResult.ACTION_DONE, null, null);
   }
 
   @Override
@@ -59,17 +61,17 @@ public class HouseEnvironmentPhysics implements
   // *********** REPORT ACTION METHODS *********** //
 
   @Override
-  public boolean isPossible(CommunicationAction action, Space context) {
+  public boolean isPossible(CommunicationAction<?> action, Space context) {
     return true;
   }
 
   @Override
-  public boolean isNecessary(CommunicationAction action, Space context) {
+  public boolean isNecessary(CommunicationAction<?> action, Space context) {
     return true;
   }
 
   @Override
-  public Result perform(CommunicationAction action, Space context) {
+  public Result perform(CommunicationAction<?> action, Space context) {
     ((HouseEnvironmentSpace) context).notifyObservers(new CommunicationEvent(
         action, null, action.getActor()));
 
@@ -78,7 +80,7 @@ public class HouseEnvironmentPhysics implements
   }
 
   @Override
-  public boolean succeeded(CommunicationAction action, Space context) {
+  public boolean succeeded(CommunicationAction<?> action, Space context) {
     return true;
   }
 }

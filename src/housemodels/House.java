@@ -38,4 +38,9 @@ public class House implements HouseModel {
     this.error = error;
   }
 
+  @Override
+  public String toString() {
+    return model.toString() + ":" + error;
+  }
+
 }

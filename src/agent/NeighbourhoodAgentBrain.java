@@ -1,13 +1,16 @@
 package agent;
 
-import agent.general.GeneralAgentBrain;
+import agent.SmartMeterAgentBrain.PerceptionWrapper;
+import agent.actions.GlobalResult;
+import agent.actions.PerceiveAction;
+import agent.communication.NetworkObjectPayload;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 
 import javax.xml.transform.Result;
 
 public class NeighbourhoodAgentBrain extends
-    GeneralAgentBrain<NeighbourhoodAgentMind, NeighbourhoodAgentBody> {
+    CommunicationAgentBrain<NeighbourhoodAgentMind, NeighbourhoodAgentBody> {
 
   public NeighbourhoodAgentBrain() {
     super(NeighbourhoodAgentMind.class, NeighbourhoodAgentBody.class);
@@ -30,11 +33,19 @@ public class NeighbourhoodAgentBrain extends
    *          Received from the body - to store
    */
   private void handleBodyMessage(Object arg) {
-    notifyObservers(arg, this.getMindclass());
+    if (NetworkObjectPayload.class.isAssignableFrom(arg.getClass())) {
+      super.addCommunicationPerception((NetworkObjectPayload) arg);
+    } else {
+      System.err.println(this.getClass() + " SHOULD NOT BE RECEIVING: " + arg);
+    }
   }
 
   private void handleMindMessage(Object arg) {
-    notifyObservers(arg, this.getBodyclass());
+    if (PerceiveAction.class.isAssignableFrom(arg.getClass())) {
+      // the mind is requesting the perceptions
+      notifyObservers(super.getCommunicationPerceptions(), this.getMindclass());
+    } else {
+      notifyObservers(arg, this.getBodyclass());
+    }
   }
-
 }

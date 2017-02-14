@@ -2,17 +2,14 @@ package agent;
 
 import agent.actions.GlobalResult;
 import agent.actions.PerceiveAction;
-import agent.actions.TakeReadingResult;
-import agent.general.GeneralAgentBrain;
+import agent.communication.NetworkObject;
+import agent.communication.NetworkObjectPayload;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Brain;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import utilities.DateTime;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.transform.Result;
 
@@ -24,13 +21,13 @@ import javax.xml.transform.Result;
  *
  */
 public class SmartMeterAgentBrain extends
-    GeneralAgentBrain<SmartMeterAgentMind, SmartMeterAgentBody> {
+    CommunicationAgentBrain<SmartMeterAgentMind, SmartMeterAgentBody> {
 
-  SmartMeterAgentPerceptionWrapper recentPerceptions = new SmartMeterAgentPerceptionWrapper();
-  SmartMeterAgentPerceptionWrapper allPerceptions = new SmartMeterAgentPerceptionWrapper();
+  private Set<GlobalResult> actionResults;
 
   public SmartMeterAgentBrain() {
     super(SmartMeterAgentMind.class, SmartMeterAgentBody.class);
+    this.actionResults = new HashSet<>();
   }
 
   @Override
@@ -49,74 +46,50 @@ public class SmartMeterAgentBrain extends
    *          Received from the body - to store
    */
   private void handleBodyMessage(Object arg) {
-    //System.out.println("STORING DATA");
-    if (!GlobalResult.class.isAssignableFrom(arg.getClass())) {
-      return;
-    }
-    GlobalResult result = (GlobalResult) arg;
-    if (result.getPayload() == null) {
-      // potentially as TakeReadingResult
-      if (TakeReadingResult.class.isAssignableFrom(arg.getClass())) {
-        TakeReadingResult trr = (TakeReadingResult) arg;
-        recentPerceptions.readings.put(trr.getDateTime(), trr.getReading());
-      }
-    } else {
-      List<String> ms;
-      if ((ms = recentPerceptions.messages.get(result.getActorId())) != null) {
-        ms.add(result.getPayload());
-      } else {
-        ms = new ArrayList<>();
-        ms.add(result.getPayload());
-        recentPerceptions.messages.put(result.getActorId(), ms);
-      }
+    if (NetworkObjectPayload.class.isAssignableFrom(arg.getClass())) {
+      super.addCommunicationPerception((NetworkObjectPayload) arg);
+    } else if (GlobalResult.class.isAssignableFrom(arg.getClass())) {
+      actionResults.add((GlobalResult) arg);
     }
   }
 
   private void handleMindMessage(Object arg) {
     if (PerceiveAction.class.isAssignableFrom(arg.getClass())) {
       // the mind is requesting the perceptions
-      notifyObservers(recentPerceptions, this.getMindclass());
+      notifyObservers(new PerceptionWrapper(
+          super.getCommunicationPerceptions(), this.actionResults),
+          this.getMindclass());
     } else {
       notifyObservers(arg, this.getBodyclass());
     }
   }
 
-  /**
-   * A wrapper class for the data received from the {@link Body}.
-   * 
-   * @author Benedict Wilkins
-   *
-   */
-  public class SmartMeterAgentPerceptionWrapper {
-    private Map<DateTime, Double> readings = new HashMap<>();
-    private Map<String, List<String>> messages = new HashMap<>();
+  public class PerceptionWrapper {
+    Set<NetworkObject> communicationPerceptions;
+    Set<GlobalResult> actionResults;
 
-    public SmartMeterAgentPerceptionWrapper() {
-      this.readings = new HashMap<>();
-      this.messages = new HashMap<>();
+    public PerceptionWrapper(Set<NetworkObject> communicationPerceptions,
+        Set<GlobalResult> actionResults) {
+      super();
+      this.communicationPerceptions = communicationPerceptions;
+      this.actionResults = actionResults;
     }
 
-    public SmartMeterAgentPerceptionWrapper(
-        Map<DateTime, Double> readings,
-        Map<String, List<String>> messages) {
-      this.readings = readings;
-      this.messages = messages;
+    public Set<NetworkObject> getCommunicationPerceptions() {
+      return communicationPerceptions;
     }
 
-    public Map<DateTime, Double> getReadings() {
-      return readings;
+    public void setCommunicationPerceptions(
+        Set<NetworkObject> communicationPerceptions) {
+      this.communicationPerceptions = communicationPerceptions;
     }
 
-    public void setReadings(Map<DateTime, Double> readings) {
-      this.readings = readings;
+    public Set<GlobalResult> getActionResults() {
+      return actionResults;
     }
 
-    public Map<String, List<String>> getMessages() {
-      return messages;
-    }
-
-    public void setMessages(Map<String, List<String>> messages) {
-      this.messages = messages;
+    public void setActionResults(Set<GlobalResult> actionResults) {
+      this.actionResults = actionResults;
     }
   }
 }

@@ -1,6 +1,6 @@
 package test;
 
-import graph.DataFrame;
+import machinelearning.agent.DataFrame;
 import graph.DataReader;
 import graph.SeriesPlot;
 
@@ -16,8 +16,9 @@ public class TestDataReader {
    */
   public static void main(String[] args) {
     DataReader dr = new DataReader();
-    DataFrame frame = dr.readFile(gmacornu, " ", true);
-    Double[] data = frame.getColumn(1);
+    DataFrame frame = dr.readFile(gmacornu, " ", true,
+        new Class<?>[] { Double.class });
+    Double[] data = (Double[]) frame.getColumn(1, Double.class).toArray();
     System.out.println(data.length);
     SeriesPlot plot = new SeriesPlot("", data, "");
     plot.pack();

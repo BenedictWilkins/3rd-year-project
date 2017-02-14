@@ -1,7 +1,8 @@
 package agent.actions;
 
-import environment.HouseEnvironment;
-import environment.HouseEnvironmentPhysics;
+import agent.CommunicationActuator;
+import agent.communication.MessagePayload;
+import agent.communication.NetworkObject;
 import environment.NationalGridUniversePhysicsInterface;
 import environment.communication.module.Address;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
@@ -14,37 +15,39 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 import java.util.List;
 
 /**
- * An {@link Action} that created any agent situated within a
- * {@link HouseEnvironment}. This action is specifically for taking a SmartMeter
- * reading. See: {@link HouseEnvironmentPhysics} for perform implementation
- * details.
+ * An {@link Action} that that an agent mind may produces signifying that it
+ * wishes to communicate with the outside environment. <br>
+ * See: {@link MessagePayload} and {@link NetworkObject} for details on
+ * communication message contents or payloads. An action of this kind should be
+ * directed to a {@link CommunicationActuator} to be handled accordingly.
  * 
  * @author Benedict Wilkins
  *
  */
-public class CommunicationAction extends AbstractAction {
+public class CommunicationAction<T> extends AbstractAction {
 
-  private String payload;
+  private MessagePayload<T> payload;
   private List<Address> recipients;
 
   /**
    * Constructor.
    * 
    * @param payload
-   *          the message that should be communicated
+   *          that is to be sent
+   * @param actor
+   *          the sending actor
+   * @param recipients
+   *          the receiving addresses
    */
-  public CommunicationAction(String payload, AbstractAgent actor, List<Address> recipients) {
+  public CommunicationAction(MessagePayload<T> payload, AbstractAgent actor,
+      List<Address> recipients) {
     super(actor);
     this.payload = payload;
     this.setRecipients(recipients);
   }
 
-  public String getPayload() {
+  public MessagePayload<T> getPayload() {
     return payload;
-  }
-
-  public void setPayload(String payload) {
-    this.payload = payload;
   }
 
   @Override

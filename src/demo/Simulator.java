@@ -1,6 +1,7 @@
 package demo;
 
 import agent.CommunicationActuator;
+import agent.CommunicationAgentBrain;
 import agent.CommunicationSensor;
 import agent.IpCommunicationActuator;
 import agent.IpCommunicationSensor;
@@ -26,6 +27,7 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Action;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Actuator;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
+import housemodel.combination.AdditiveCombine;
 import housemodels.HalfHourClock;
 import housemodels.House;
 import housemodels.HouseModelCombinedNormal;
@@ -63,7 +65,7 @@ public class Simulator {
    */
   public Set<HouseEnvironment> houses = new HashSet<>();
   private final SimulationAddress manageraddress = new SimulationAddress(
-      "manager");
+      "MANAGERADDRESS");
 
   /**
    * Constructor.
@@ -132,7 +134,8 @@ public class Simulator {
       actuators.add(new IpCommunicationActuator(SERVERNAME, SERVERPORT));
     }
     return new NeighbourhoodAgentBody(null, sensors, actuators,
-        new NeighbourhoodAgentMind(HOUSEACTIONS), new NeighbourhoodAgentBrain());
+        new NeighbourhoodAgentMind(new AdditiveCombine(), HOUSEACTIONS),
+        new NeighbourhoodAgentBrain());
   }
 
   /**

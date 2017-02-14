@@ -10,7 +10,6 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Event;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
-import utilities.MessageConstructor;
 
 /**
  * The {@link Physics} used by a {@link NationalGridUniverse}. This class
@@ -25,32 +24,32 @@ public class NationalGridUniversePhysics implements
 
   @Override
   public Result attempt(Event event, Space space) {
-    System.out.println("PHYSICS ATTEMPTING EVENT: " + event.getAction());
+    System.out.println(this.getClass().getSimpleName() + " ATTEMPTING EVENT: "
+        + event.getAction());
     return event.getAction().attempt(this, space);
   }
 
   // *********** REPORT ACTION METHODS *********** //
   @Override
-  public boolean isPossible(CommunicationAction action, Space context) {
+  public boolean isPossible(CommunicationAction<?> action, Space context) {
     return true;
   }
 
   @Override
-  public boolean isNecessary(CommunicationAction action, Space context) {
+  public boolean isNecessary(CommunicationAction<?> action, Space context) {
     return true;
   }
 
   @Override
-  public Result perform(CommunicationAction action, Space context) {
-    System.out.println("FORWARD THE REPORT!");
-    GlobalResult result = new GlobalResult(
-        MessageConstructor.constructMessage(action), action.getActor(),
-        ActionResult.ACTION_DONE, null, action.getRecipients());
+  public Result perform(CommunicationAction<?> action, Space context) {
+    GlobalResult result = new GlobalResult(action.getPayload(),
+        action.getActor(), ActionResult.ACTION_DONE, null,
+        action.getRecipients());
     return result;
   }
 
   @Override
-  public boolean succeeded(CommunicationAction action, Space context) {
+  public boolean succeeded(CommunicationAction<?> action, Space context) {
     return true;
   }
 

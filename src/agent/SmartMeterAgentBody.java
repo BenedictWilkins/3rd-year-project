@@ -1,5 +1,6 @@
 package agent;
 
+import agent.actions.CommunicationAction;
 import agent.actions.HouseEvent;
 import agent.actions.IpCommunicationAction;
 import agent.general.GeneralAgentBody;
@@ -151,7 +152,6 @@ public class SmartMeterAgentBody extends GeneralAgentBody<SmartMeterAgentBrain> 
   }
 
   private void handleBrainMessage(Object arg) {
-    // create an event and give it to the actuator
     brainHandler.handle(arg, this);
   }
 
@@ -196,12 +196,8 @@ public class SmartMeterAgentBody extends GeneralAgentBody<SmartMeterAgentBrain> 
   private class NormalBrainHandler implements BrainHandler {
     @Override
     public void handle(Object arg, SmartMeterAgentBody agent) {
-      AbstractAction action = (AbstractAction) arg;
-      HouseEvent event = new HouseEvent(action, System.currentTimeMillis(),
-          agent);
-      ((AbstractAction) arg).setActor(SmartMeterAgentBody.this);
-      SmartMeterAgentBody.this.notifyObservers(event,
-          CommunicationActuator.class);
+      SmartMeterAgentBody.this
+          .notifyObservers(arg, CommunicationActuator.class);
     }
   }
 

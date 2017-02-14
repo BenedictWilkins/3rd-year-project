@@ -15,21 +15,21 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
  *
  */
 public interface NationalGridUniversePhysicsInterface extends Physics {
-  
+
   public boolean isPossible(TakeReadingAction action, Space context);
 
-  public boolean isPossible(CommunicationAction action, Space context);
+  public boolean isPossible(CommunicationAction<?> action, Space context);
 
   public boolean isNecessary(TakeReadingAction action, Space context);
 
-  public boolean isNecessary(CommunicationAction action, Space context);
+  public boolean isNecessary(CommunicationAction<?> action, Space context);
 
   public Result perform(TakeReadingAction action, Space context);
 
-  public Result perform(CommunicationAction action, Space context);
+  public Result perform(CommunicationAction<?> action, Space context);
 
   public boolean succeeded(TakeReadingAction action, Space context);
 
-  public boolean succeeded(CommunicationAction action, Space context);
+  public boolean succeeded(CommunicationAction<?> action, Space context);
 
 }

@@ -10,4 +10,9 @@ public class HouseModelCombinedNormalAcornU extends HouseModelCombinedNormal {
         25.0, 7.0, 6.0, 0.05));
   }
   
+  @Override
+  public String toString() {
+    return "AcornU";
+  }
+  
 }

@@ -6,6 +6,7 @@ import environment.NationalGridUniversePhysicsInterface;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Action;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Actor;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 
@@ -19,6 +20,11 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
  *
  */
 public class TakeReadingAction extends AbstractAction {
+
+  public TakeReadingAction(Actor actor) {
+    super();
+    this.setActor(actor);
+  }
 
   @Override
   public String toString() {

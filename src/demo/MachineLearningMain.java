@@ -1,23 +1,57 @@
 package demo;
 
+import machinelearning.test.LearningTestCase;
+import machinelearning.test.LearningTestCaseMultiLayerPerceptron;
 import machinelearning.weka.WekaDataLoader;
 import utilities.MathUtilities;
 import weka.classifiers.Classifier;
 import weka.classifiers.evaluation.NumericPrediction;
 import weka.classifiers.functions.MultilayerPerceptron;
-import weka.classifiers.functions.SMOreg;
 import weka.classifiers.timeseries.WekaForecaster;
-import weka.core.Instance;
 import weka.core.Instances;
 import graph.SeriesPlot;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
+import javax.annotation.Generated;
 
 public class MachineLearningMain {
 
-  private static final int TRAINSIZE = 300;
-  private static final int TESTSIZE = 10;
+  private static final int TRAINSIZE = 100;
+  private static final int TESTSIZE = 5;
+
+  private static Logger logger = Logger.getLogger("AlgoLogger");
+  private static final String LOGPATH = "logs/algotest";
+  private static FileHandler fileHandler;
+
+  private static Map<Class<? extends Classifier>, InfoLogFormat> LOGMAP;
+
+  static {
+    LOGMAP = new HashMap<>();
+    LOGMAP.put(MultilayerPerceptron.class, new InfoLogFormat() {
+      @Override
+      public String getInfo(LearningTestCase testcase) {
+        LearningTestCaseMultiLayerPerceptron testCaseMlp = (LearningTestCaseMultiLayerPerceptron) testcase;
+        StringBuilder builder = new StringBuilder();
+        builder.append("MSE:" + testCaseMlp.getMse());
+        builder.append(", LR:" + testCaseMlp.getLearningRate());
+        builder.append(", M:" + testCaseMlp.getMomentum());
+        builder.append(", EP:" + testCaseMlp.getEpochs());
+        builder.append(", VS:" + testCaseMlp.getValidationSetSize());
+        return builder.toString();
+      }
+    });
+  }
 
   /**
    * Entry point for testing MachineLearning algorithms and data visualisation.
@@ -26,40 +60,119 @@ public class MachineLearningMain {
    *          none
    */
   public static void main(String[] args) {
+
+    // set up logger
+    try {
+      fileHandler = new FileHandler(LOGPATH + System.currentTimeMillis());
+      SimpleFormatter formatter = new SimpleFormatter() {
+        @Override
+        public synchronized String format(LogRecord record) {
+          if (record.getLevel() == Level.INFO) {
+            return record.getMessage() + System.lineSeparator();
+          } else {
+            return super.format(record);
+          }
+        }
+      };
+      fileHandler.setFormatter(formatter);
+      logger.addHandler(fileHandler);
+    } catch (SecurityException | IOException e) {
+      e.printStackTrace();
+    }
+
+    // test different algorithms/params
+    metaLearn("RandomHouses.csv");
+    for (Handler h : logger.getHandlers()) {
+      h.close();
+    }
+
+  }
+
+  public static void metaLearn(String fileName) {
     MachineLearningMain main = new MachineLearningMain();
     WekaDataLoader loader = new WekaDataLoader();
-    Instances instances = loader.load("AcornUData.csv");
+    Instances instances = loader.load(fileName);
+
     Instances train = new Instances(instances, 0, 48 * TRAINSIZE);
     Instances test = new Instances(instances, 48 * TRAINSIZE, 48 * TESTSIZE);
+    // log meta data:
+    logMetaData(fileName, instances.size(), train.size(), test.size());
 
-    // test
-    //SMOreg classifier = new SMOreg();
-    MultilayerPerceptron classifier = new MultilayerPerceptron();
-    classifier.setValidationSetSize(20);
+    // generate testCases
+    LearningTestCaseMultiLayerPerceptron[] tests = generateMultilayerPerceptronTestCases(
+        train, test, 1);
+    System.out.println("GENERATED TEST CASES: ");
+    for (LearningTestCaseMultiLayerPerceptron t : tests) {
+      System.out.println(t);
+    }
 
-    LearningExperimenter learner = main.new LearningExperimenter(classifier,
-        train, test);
+    LearningExperimenter best = null;
+    for (LearningTestCaseMultiLayerPerceptron t : tests) {
+     // t.getClassifier().setGUI(true);
+      System.out.println("HIDDEN LAYERS:" + t.getClassifier().getHiddenLayers());
+      train = new Instances(instances, 0, 48 * TRAINSIZE);
+      test = new Instances(instances, 48 * TRAINSIZE, 48 * TESTSIZE);
+      LearningExperimenter learner = main.new LearningExperimenter(
+          t.getClassifier(), train, test, true);
+      if (best != null) {
+        if (best.mse > learner.mse) {
+          best = learner;
+        }
+      } else {
+        best = learner;
+      }
+      t.setMse(learner.mse);
+      String toLog = LOGMAP.get(t.getClassifier().getClass()).getInfo(t);
+      logger.info(toLog);
+      System.gc();
+    }
+    System.out.println("DONE: log file saved to: " + LOGPATH + fileName);
+    // best.plot(best.toList(train), best.toList(test), best.lpred);
+  }
+
+  private static LearningTestCaseMultiLayerPerceptron[] generateMultilayerPerceptronTestCases(
+      Instances train, Instances test, int numtests) {
+    LearningTestCaseMultiLayerPerceptron[] tests = new LearningTestCaseMultiLayerPerceptron[numtests];
+    for (int i = 1; i <= numtests; i++) {
+      tests[i - 1] = new LearningTestCaseMultiLayerPerceptron(train, test,
+          null, null, i * 1000, null);
+    }
+    return tests;
+  }
+
+  private static void logMetaData(String fileName, Integer fileSize,
+      Integer trainSize, Integer testSize) {
+    StringBuilder builder = new StringBuilder();
+    builder.append("FILE LOADED: " + fileName + " SIZE: " + fileSize
+        + System.lineSeparator());
+    builder.append("TRAIN: " + trainSize + " TEST: " + testSize
+        + System.lineSeparator());
+    logger.info(builder.toString());
   }
 
   public class LearningExperimenter {
 
+    private Double mse = -1.0;
+    private List<Double> lpred;
+
     public LearningExperimenter(Classifier classifier, Instances train,
-        Instances test) {
+        Instances test, boolean plot) {
       try {
         // split instances into train and test
         WekaForecaster forecaster = constructForecaster(classifier, train);
         List<List<NumericPrediction>> predictions = forecaster.forecast(
             test.size(), System.out);
-        System.out.println(predictions.size());
-        List<Double> ltrain = toList(train);
+        // System.out.println(predictions.size());
         List<Double> ltest = toList(test);
-        List<Double> lpred = toList(predictions);
-        plot(ltrain, ltest, lpred);
-
+        lpred = toList(predictions);
+        if (plot) {
+          List<Double> ltrain = toList(train);
+          plot(ltrain, ltest, lpred);
+        }
+        mse = meanSquaredError(ltest, lpred);
       } catch (Exception e) {
         e.printStackTrace();
       }
-
     }
 
     private void plot(List<Double> train, List<Double> test,
@@ -88,7 +201,7 @@ public class MachineLearningMain {
         Instances instances) throws Exception {
       WekaForecaster forecaster = new WekaForecaster();
       forecaster.setFieldsToForecast(" Usage");
-      forecaster.setBaseForecaster(new MultilayerPerceptron());
+      forecaster.setBaseForecaster(classifier);
       forecaster.buildForecaster(instances, System.out);
       System.out.println("FORECASTER BUILT");
       forecaster.primeForecaster(instances);
@@ -96,10 +209,11 @@ public class MachineLearningMain {
       return forecaster;
     }
 
-    private Double MSE(List<Double> test, List<Double> predicted) {
-      return MathUtilities.sum(MathUtilities.subtract(
+    private Double meanSquaredError(List<Double> test, List<Double> predicted) {
+      Double[] sub = MathUtilities.subtract(
           predicted.toArray(new Double[predicted.size()]),
-          test.toArray(new Double[test.size()])));
+          test.toArray(new Double[test.size()]));
+      return MathUtilities.sum(MathUtilities.product(sub, sub)) / test.size();
     }
 
     private List<Double> toList(List<List<NumericPrediction>> predictions) {
@@ -120,4 +234,7 @@ public class MachineLearningMain {
 
   }
 
+  public interface InfoLogFormat {
+    public String getInfo(LearningTestCase testCase);
+  }
 }

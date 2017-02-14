@@ -1,19 +1,27 @@
 package agent;
 
-import agent.SmartMeterAgentBrain.SmartMeterAgentPerceptionWrapper;
+import agent.SmartMeterAgentBrain.PerceptionWrapper;
+import agent.actions.CommunicationAction;
+import agent.actions.GlobalResult;
 import agent.actions.PerceiveAction;
 import agent.actions.TakeReadingAction;
+import agent.communication.NetworkObject;
+import agent.communication.NetworkObjectPayload;
+import agent.communication.ReadingPayload;
+import agent.communication.SmartMeterReadingNetworkObject;
 import agent.general.GeneralAgentMind;
 import environment.communication.module.Address;
+import machinelearning.agent.DataFrame;
+import machinelearning.agent.DataFrameMetaTimeValue;
+import machinelearning.agent.DataFrameRowReading;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.EnvironmentalAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Mind;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import utilities.DateTime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -25,6 +33,10 @@ import java.util.Set;
  */
 public class SmartMeterAgentMind extends GeneralAgentMind<SmartMeterAgentBrain> {
 
+  private DataFrame recentPerception = new DataFrame(
+      DataFrameMetaTimeValue.getInstance());
+
+  // the address of this agents manager
   private Address manager;
 
   /**
@@ -42,40 +54,54 @@ public class SmartMeterAgentMind extends GeneralAgentMind<SmartMeterAgentBrain> 
 
   @Override
   public void perceive(Object perceptionWrapper) {
-    // System.out.println("I AM PERCEIVING...");
     notifyObservers(new PerceiveAction(), this.getBrainClass());
   }
 
-  private void perceiveContinue(SmartMeterAgentPerceptionWrapper perception) {
-    perception.getMessages();
-    perception
-        .getReadings()
-        .entrySet()
-        .forEach(
-            (Entry<DateTime, Double> ent) -> System.out.println("READING: "
-                + ent.getValue() + " AT: " + ent.getKey()));
+  private void perceiveContinue(PerceptionWrapper perception) {
+    perception.getActionResults().forEach(
+        (GlobalResult gr) -> recentPerception.addRow(((ReadingPayload) gr
+            .getPayload()).getPayload()));
   }
 
   @Override
   public EnvironmentalAction decide(Object... parameters) {
-    // System.out.println("I AM DECIDING...");
     return null;
   }
 
   @Override
   public void execute(EnvironmentalAction action) {
-    // System.out.println("I AM EXECUTING...");
     List<Address> recipients = new ArrayList<>();
     recipients.add(manager);
-    notifyObservers(new TakeReadingAction());
-    // notifyObservers(new CommunicationAction("Hello my name is: ", null,
-    // recipients), this.getBrainClass());
+    notifyObservers(new TakeReadingAction(this.getBody()));
+//    System.out.println(this.getBody().getId().toString() + ":"
+//        + Arrays.toString(recentPerception.getData().toArray()));
+    if (!recentPerception.getData().isEmpty()) {
+
+      notifyObservers(new CommunicationAction<NetworkObject>(
+          new NetworkObjectPayload(new SmartMeterReadingNetworkObject(
+              recentPerception.getData(), (String) this.getBody().getId())),
+          this.getBody(), recipients));
+    }
+    recentPerception.clear();
+
+    // try {
+    // ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
+    // ObjectOutputStream objectstream = new ObjectOutputStream(bytestream);
+    // objectstream.writeObject(new
+    // SmartMeterReadingNetworkObject(recentPerception.getData(), ));
+    // objectstream.flush();
+    // notifyObservers(new CommunicationAction<byte[]>(new ByteArrayPayload(
+    // bytestream.toByteArray()), null, recipients));
+    // recentPerception.clear();
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
   }
 
   @Override
   public void update(CustomObservable observable, Object arg) {
-    if (SmartMeterAgentPerceptionWrapper.class.isAssignableFrom(arg.getClass())) {
-      perceiveContinue((SmartMeterAgentPerceptionWrapper) arg);
+    if (PerceptionWrapper.class.isAssignableFrom(arg.getClass())) {
+      perceiveContinue((PerceptionWrapper) arg);
     }
   }
 }

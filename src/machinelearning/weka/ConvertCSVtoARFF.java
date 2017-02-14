@@ -32,7 +32,6 @@ public class ConvertCSVtoARFF implements FileConverter {
       CSVLoader loader = new CSVLoader();
       loader.setSource(new File(inputFile));
       Instances data = loader.getDataSet();
-
       ArffSaver saver = new ArffSaver();
       saver.setInstances(data);
       saver.setFile(new File(outputFile));

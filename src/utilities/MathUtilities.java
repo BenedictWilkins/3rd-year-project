@@ -11,6 +11,28 @@ import utilities.autowarn.AutoWarn;
 public class MathUtilities {
 
   /**
+   * Computes the element-wise product of x and y.
+   * 
+   * @param x
+   *          to product
+   * @param y
+   *          to product
+   * @return result of product
+   */
+  public static Double[] product(Double[] x, Double[] y) {
+    if (x.length != y.length) {
+      throw new IllegalArgumentException(
+          "Cannot perform product on different length input: " + x.length
+              + ", " + y.length);
+    }
+    Double[] result = new Double[x.length];
+    for (int i = 0; i < x.length; i++) {
+      result[i] = x[i] * y[i];
+    }
+    return result;
+  }
+
+  /**
    * Computes element-wise subtraction. (x - y)
    * 
    * @param x

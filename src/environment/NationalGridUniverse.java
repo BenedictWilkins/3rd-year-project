@@ -63,7 +63,6 @@ public class NationalGridUniverse extends AbstractEnvironment {
   public void update(CustomObservable observable, Object arg) {
     Event event = (Event) arg;
     Result result = event.attempt(getPhysics(), getState());
-    System.out.println("SEND: " + result);
     CustomObserver obs = observables.get(result.getRecipientsIds().get(0));
     // check where the message is going
     if (!HouseEnvironment.class.isAssignableFrom(obs.getClass())) {

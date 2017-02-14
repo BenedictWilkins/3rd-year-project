@@ -54,7 +54,7 @@ public class Clock implements Runnable {
   private int increment;
   private int real;
   private ClockRunnable run;
-  private boolean stop = false;
+  private boolean stop = true;
 
   /**
    * Constructor. Initialises a new {@link Clock}. This clock will count in
@@ -76,7 +76,12 @@ public class Clock implements Runnable {
     this.increment = increment;
     this.run = INCREMENTMAP.get(type);
     this.real = real;
+  }
 
+  protected void setRealTimeDelay(int delay) {
+    if (stop) {
+      this.real = delay;
+    }
   }
 
   public DateTime getCurrentDateTime() {
@@ -85,6 +90,7 @@ public class Clock implements Runnable {
 
   @Override
   public void run() {
+    this.stop = false;
     while (!stop) {
       try {
         // System.out.println(currentDateTime);
@@ -92,13 +98,13 @@ public class Clock implements Runnable {
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-      
+
       this.run.run(this);
-      //System.out.println(this.getCurrentDateTime());
+      // System.out.println(this.getCurrentDateTime());
     }
   }
 
-  private void stop() {
+  protected void stop() {
     this.stop = true;
   }
 

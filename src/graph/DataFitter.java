@@ -6,6 +6,7 @@ import housemodels.HouseModelCombinedNormalAdversity;
 import housemodels.HouseModelCombinedNormalAffluent;
 import housemodels.HouseModelCombinedNormalComfortable;
 import housemodels.SeasonModifier;
+import machinelearning.agent.DataFrame;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -69,7 +70,7 @@ public class DataFitter {
         this.index,
         createDataset(MathUtilities.generateSequence(0.0,
             (double) group.size - 1, group.size.intValue()), read(group)
-            .getColumn(1)));
+            .getColumn(1, Double.class).toArray(new Double[] {})));
     this.plot.setRenderer(this.index, new StandardXYItemRenderer());
 
     this.plot.setDataset(this.index, group.getData());
@@ -88,7 +89,8 @@ public class DataFitter {
 
   private DataFrame read(DataGroup group) {
     DataReader dr = new DataReader();
-    return dr.readFile(group.getPath(), " ", true);
+    return dr.readFile(group.getPath(), " ", true, new Class<?>[] {
+        String.class, Double.class, Double.class });
   }
 
   private GeneralXYDataset createDataset(Double[] xval, Double[] yval) {

@@ -1,5 +1,7 @@
 package agent;
 
+import agent.actions.GlobalResult;
+import agent.communication.NetworkObjectPayload;
 import agent.general.GeneralAgentSensor;
 import environment.AbstractEnvironment;
 import environment.NationalGridUniverse;
@@ -49,6 +51,19 @@ public class CommunicationSensor<B extends AbstractAgent, E extends AbstractEnvi
   }
 
   private void handleEnvironmentMessage(Object arg) {
-    notifyObservers(arg, this.getBodyclass());
+    /*
+     * check if it is a simulation message (NetworkObjectPayload) or a
+     * GlobalResult note that in a simulation the arg will always be a global
+     * result, however we want to simulate a network scenario so we should
+     * decompose the result into a NetworkObjectPayload if that is what it
+     * contains.
+     */
+    if (NetworkObjectPayload.class.isAssignableFrom(((GlobalResult) arg)
+        .getPayload().getClass())) {
+      // simulate network, notify with the networkobject payload
+      notifyObservers(((GlobalResult) arg).getPayload(), this.getBodyclass());
+    } else {
+      notifyObservers(arg, this.getBodyclass());
+    }
   }
 }

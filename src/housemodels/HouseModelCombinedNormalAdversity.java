@@ -9,4 +9,8 @@ public class HouseModelCombinedNormalAdversity extends HouseModelCombinedNormal 
         20.0, 14.0, 2.0, 0.06));
   }
 
+  @Override
+  public String toString() {
+    return "Adversity";
+  }
 }

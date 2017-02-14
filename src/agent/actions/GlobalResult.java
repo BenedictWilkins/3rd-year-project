@@ -1,5 +1,6 @@
 package agent.actions;
 
+import agent.communication.MessagePayload;
 import environment.communication.module.Address;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.ActionResult;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.DefaultActionResult;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class GlobalResult extends DefaultActionResult {
 
-  private String payload;
+  private MessagePayload<?> payload;
 
   /**
    * Constructor. See: {@link DefaultActionResult}.
@@ -29,8 +30,8 @@ public class GlobalResult extends DefaultActionResult {
    * @param payload
    *          a message to send with the result
    */
-  public GlobalResult(String payload, Actor actor, ActionResult result,
-      Exception failureReason, List<Address> recipients) {
+  public GlobalResult(MessagePayload<?> payload, Actor actor,
+      ActionResult result, Exception failureReason, List<Address> recipients) {
     super(result, ((PhysicalBody) actor).getId().toString(), failureReason,
         convertAddressToString(recipients));
     this.payload = payload;
@@ -39,12 +40,12 @@ public class GlobalResult extends DefaultActionResult {
   @Override
   public String toString() {
     return this.getClass().getSimpleName() + ":" + this.getActionResult() + ":"
-        + this.getActorId() + System.lineSeparator()
+        + this.getActorId() + System.lineSeparator() + "    "
         + GeneralUtilities.collectionToString(this.getRecipientsIds())
-        + System.lineSeparator() + payload;
+        + System.lineSeparator() + "    " + payload;
   }
 
-  public String getPayload() {
+  public MessagePayload<?> getPayload() {
     return payload;
   }
 

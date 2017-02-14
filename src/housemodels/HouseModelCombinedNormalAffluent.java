@@ -10,4 +10,8 @@ public class HouseModelCombinedNormalAffluent extends HouseModelCombinedNormal {
         24.0, 5.0, 1.5, 0.0));
   }
 
+  @Override
+  public String toString() {
+    return "Affluent";
+  }
 }

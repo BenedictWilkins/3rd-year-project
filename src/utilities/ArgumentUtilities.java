@@ -1,5 +1,6 @@
 package utilities;
 
+
 /**
  * A utility class for checking function arguments.
  * 
@@ -19,7 +20,7 @@ public class ArgumentUtilities {
    * @throws IllegalArgumentException
    *           if any arguments are null
    */
-  public static void checkNullArgs(Object[] args)
+  public static void checkNullArgs(Object... args)
       throws IllegalArgumentException {
     if (args == null) {
       return;

@@ -19,9 +19,9 @@ public class Main {
    */
   public static void main(String[] args) {
     double error = 0.05;
-    House[] models = new House[2];
+    House[] models = new House[1];
     models[0] = HouseFactory.getFactory().createAffluentHouse(error);
-    models[1] = HouseFactory.getFactory().createAdversityHouse(error);
+    //models[1] = HouseFactory.getFactory().createAdversityHouse(error);
     new Simulator(models);
   }
 }

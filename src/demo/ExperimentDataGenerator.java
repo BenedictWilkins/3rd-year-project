@@ -1,16 +1,17 @@
 package demo;
 
-import housemodel.combination.Combine;
-import housemodels.HalfHourClock;
-import housemodels.House;
-import housemodels.HouseFactory;
 import utilities.DateTime;
 import utilities.Pair;
 import utilities.datawriter.DataWriter;
 import utilities.datawriter.FileFormatCSV;
+import graph.SeriesPlot;
+import housemodel.combination.AdditiveCombine;
+import housemodel.combination.Combine;
+import housemodels.HalfHourClock;
+import housemodels.House;
+import housemodels.HouseFactory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,19 +25,23 @@ import java.util.Random;
 public class ExperimentDataGenerator {
 
   private static final Map<Integer, Method> CREATEMETHODS;
+  private static final int PLOTRANGE = 100;
+  private static final int NUMRANDOMHOUSES = 30;
 
   static {
     Map<Integer, Method> methodMap = new HashMap<>();
-    Method[] methods = HouseFactory.class.getMethods();
+    List<Method> methods = Arrays.asList(HouseFactory.class.getMethods());
     Class<? extends Annotation> annotation = HouseFactory.CreateMethod.class;
-    for (int i = 0; i < methods.length; i++) {
-      if (methods[i].isAnnotationPresent(annotation)) {
+    int count = 0;
+    for (Method m : methods) {
+      if (m.isAnnotationPresent(annotation)) {
         // this method is used to create a house
-        methodMap.put(i, methods[i]);
+        methodMap.put(count, m);
+        count++;
       }
     }
     CREATEMETHODS = Collections.unmodifiableMap(methodMap);
-    //System.out.println(Arrays.toString(CREATEMETHODS.values().toArray()));
+    System.out.println(Arrays.toString(CREATEMETHODS.values().toArray()));
   }
 
   /**
@@ -46,13 +51,21 @@ public class ExperimentDataGenerator {
    *          none
    */
   public static void main(String[] args) {
-    double error = 0;
+    double error = 0.0;
     DateTime start = new DateTime("2010-01-01 00:00:00");
-    DateTime end = new DateTime("2011-01-01 00:00:00");
+    DateTime end = new DateTime("2012-01-01 00:00:00");
 
     ExperimentDataGenerator gen = new ExperimentDataGenerator();
-    // generateAcornUDataset(gen, start, end, error);
-    generateRandomHouseCombination(5, error);
+    Collection<House> randomHouses = generateRandomHouseCombination(
+        NUMRANDOMHOUSES, error);
+    Experimenter exp = gen.new Experimenter();
+    // Pair<List<String>, List<Double>> data = exp.generateData(
+    // (List<House>) randomHouses, start, end, new AdditiveCombine());
+    // exp.plot(data.getO2().toArray(new Double[] {}), (List<House>)
+    // randomHouses);
+    exp.generateDataToFile(new DataWriter("RandomHouses.csv",
+        new FileFormatCSV(2)), (List<House>) randomHouses, start, end,
+        new AdditiveCombine());
   }
 
   /**
@@ -69,8 +82,7 @@ public class ExperimentDataGenerator {
       Collection<House> houses = new ArrayList<>();
       for (int i = 0; i < numHouses; i++) {
         Method next = CREATEMETHODS.get(rand.nextInt(CREATEMETHODS.size()));
-        System.out.println(next);
-        //houses.add((House) next.invoke(HouseFactory.getFactory(), error));
+        houses.add((House) next.invoke(HouseFactory.getFactory(), error));
       }
       return houses;
     } catch (Exception e) {
@@ -79,24 +91,13 @@ public class ExperimentDataGenerator {
     return null;
   }
 
-  private static void generateAcornUDataset(ExperimentDataGenerator gen,
-      DateTime start, DateTime end, Double error) {
-    // acorn u generation
-    Experimenter acornu = gen.new Experimenter();
-    List<House> acornuhouse = new ArrayList<>();
-    acornuhouse.add(HouseFactory.getFactory().createAcornUHouse(error));
-    acornu.generateDataToFile(new DataWriter("AcornUData.csv",
-        new FileFormatCSV(2)), acornuhouse, start, end, null);
-    // combined experiment
-    gen.new Experimenter();
-  }
-
   public class Experimenter {
 
     public void generateDataToFile(DataWriter writer, List<House> houses,
         DateTime start, DateTime end, Combine com) {
       Pair<List<String>, List<Double>> data = generateData(houses, start, end,
           com);
+      this.plot(data.getO2().toArray(new Double[] {}), (List<House>) houses);
       ArrayList<String> readings = new ArrayList<>();
       readings.add("Date Time");
       readings.add("Usage");
@@ -112,7 +113,7 @@ public class ExperimentDataGenerator {
      * Generates data from each {@link House} given by houses from the start
      * {@link DateTime} (inclusive) to the end {@link DateTime} (exclusive),
      * combining the reading from each house using the given
-     * {@link Combine#combined(List)} method. If a single house is desired, com
+     * {@link Combine#combine(List)} method. If a single house is desired, com
      * should be null.
      * 
      * @param houses
@@ -139,17 +140,33 @@ public class ExperimentDataGenerator {
         for (House h : houses) {
           singleReadings.add(h.getReading(start));
         }
-        combinedReadings.add(com.combined(singleReadings));
+        combinedReadings.add(com.combine(singleReadings));
         dates.add(start.toString());
         start.setMinute(start.getMinute() + HalfHourClock.TIMEINCREMENT);
       }
       return new Pair<List<String>, List<Double>>(dates, combinedReadings);
     }
+
+    public void plot(Double[] data, List<House> houses) {
+      // count house types
+      Map<String, Integer> counter = new HashMap<>();
+      for (House h : houses) {
+        if (!counter.containsKey(h.toString())) {
+          counter.put(h.toString(), 1);
+        } else {
+          counter.replace(h.toString(), counter.get(h.toString()) + 1);
+        }
+      }
+      SeriesPlot plot = new SeriesPlot(counter.toString(), Arrays.copyOfRange(
+          data, 0, PLOTRANGE * 48), "COMBINED HOUSES");
+      // SeriesPlot plot = new SeriesPlot(counter.toString(), data,
+      // "COMBINED HOUSES");
+    }
   }
 
   class NullCombine implements Combine {
     @Override
-    public Double combined(List<Double> readings) {
+    public Double combine(List<Double> readings) {
       return readings.get(0);
     }
   }

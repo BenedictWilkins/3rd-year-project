@@ -3,6 +3,6 @@ package housemodel.combination;
 import java.util.List;
 
 public interface Combine {
-  public Double combined(List<Double> readings);
+  public Double combine(List<Double> readings);
 }
 
