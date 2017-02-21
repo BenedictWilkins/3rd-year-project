@@ -5,8 +5,8 @@ import utilities.Pair;
 import utilities.datawriter.DataWriter;
 import utilities.datawriter.FileFormatCSV;
 import graph.SeriesPlot;
-import housemodel.combination.AdditiveCombine;
-import housemodel.combination.Combine;
+import housemodel.combination.AdditiveCombinator;
+import housemodel.combination.Combinator;
 import housemodels.HalfHourClock;
 import housemodels.House;
 import housemodels.HouseFactory;
@@ -65,7 +65,7 @@ public class ExperimentDataGenerator {
     // randomHouses);
     exp.generateDataToFile(new DataWriter("RandomHouses.csv",
         new FileFormatCSV(2)), (List<House>) randomHouses, start, end,
-        new AdditiveCombine());
+        new AdditiveCombinator());
   }
 
   /**
@@ -94,7 +94,7 @@ public class ExperimentDataGenerator {
   public class Experimenter {
 
     public void generateDataToFile(DataWriter writer, List<House> houses,
-        DateTime start, DateTime end, Combine com) {
+        DateTime start, DateTime end, Combinator com) {
       Pair<List<String>, List<Double>> data = generateData(houses, start, end,
           com);
       this.plot(data.getO2().toArray(new Double[] {}), (List<House>) houses);
@@ -113,7 +113,7 @@ public class ExperimentDataGenerator {
      * Generates data from each {@link House} given by houses from the start
      * {@link DateTime} (inclusive) to the end {@link DateTime} (exclusive),
      * combining the reading from each house using the given
-     * {@link Combine#combine(List)} method. If a single house is desired, com
+     * {@link Combinator#combine(List)} method. If a single house is desired, com
      * should be null.
      * 
      * @param houses
@@ -128,7 +128,7 @@ public class ExperimentDataGenerator {
      *         {@link List} of combined readings mapped by index.
      */
     public Pair<List<String>, List<Double>> generateData(List<House> houses,
-        DateTime start, DateTime end, Combine com) {
+        DateTime start, DateTime end, Combinator<Double, Double> com) {
       List<Double> combinedReadings = new ArrayList<>();
       List<String> dates = new ArrayList<>();
       if (com == null) {
@@ -164,10 +164,10 @@ public class ExperimentDataGenerator {
     }
   }
 
-  class NullCombine implements Combine {
+  class NullCombine implements Combinator<Double, Double> {
     @Override
-    public Double combine(List<Double> readings) {
-      return readings.get(0);
+    public Double combine(Collection<Double> readings) {
+      return ((List<Double>) readings).get(0);
     }
   }
 }

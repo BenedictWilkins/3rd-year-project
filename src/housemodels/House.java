@@ -1,32 +1,33 @@
 package housemodels;
 
+import housemodel.threshold.ModelModifier;
 import utilities.DateTime;
 
 public class House implements HouseModel {
 
-  private HouseModel model;
-  private SeasonModifier modifier;
+  private HouseModel house;
+  private SeasonModel season;
   private Double error;
 
   /**
    * Constructor.
    * 
-   * @param model
+   * @param house
    *          house model to uses (daily)
-   * @param modifier
+   * @param season
    *          seasonal model to use (yearly)
    * @param error
    *          artificial error added to data takes the form: (random(0,1) * 2 *
    *          error) - error
    */
-  public House(HouseModel model, SeasonModifier modifier, Double error) {
-    this.model = model;
-    this.modifier = modifier;
+  public House(HouseModel house, SeasonModel season, Double error) {
+    this.house = house;
+    this.season = season;
     this.error = error;
   }
 
   public Double getReading(DateTime dateTime) {
-    return model.getReading(dateTime) + modifier.getModiferValue(dateTime)
+    return house.getReading(dateTime) + season.getModiferValue(dateTime)
         + ((Math.random() * error * 2) - error);
   }
 
@@ -40,7 +41,16 @@ public class House implements HouseModel {
 
   @Override
   public String toString() {
-    return model.toString() + ":" + error;
+    return house.toString() + ":" + error;
   }
 
+  @Override
+  public Double[] compute(Double[] args) {
+    return house.compute(args);
+  }
+
+  @Override
+  public void modifyModel(ModelModifier modifier) {
+    house.modifyModel(modifier);
+  }
 }

@@ -1,5 +1,6 @@
 package threading;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -11,14 +12,14 @@ import java.util.Set;
  *
  */
 public class AgentThreadManager {
-  private final ThreadStateDecide threadStateDecide = new ThreadStateDecide();
-  private final ThreadStateExecute threadStateExecute = new ThreadStateExecute();
-  private final ThreadStatePerceive threadStatePerceive = new ThreadStatePerceive();
+  protected final ThreadStateDecide threadStateDecide = new ThreadStateDecide();
+  protected final ThreadStateExecute threadStateExecute = new ThreadStateExecute();
+  protected final ThreadStatePerceive threadStatePerceive = new ThreadStatePerceive();
 
-  private boolean simulationStarted = false;
+  protected boolean simulationStarted = false;
 
-  private Set<Thread> activeThreads;
-  private Set<AgentRunnable> runnables;
+  protected Set<Thread> activeThreads;
+  protected Set<AgentRunnable> runnables;
 
   public AgentThreadManager() {
     this.activeThreads = new HashSet<>();
@@ -34,6 +35,7 @@ public class AgentThreadManager {
    */
   public void start(long cycleTime) {
     this.simulationStarted = true;
+    System.out.println(Arrays.toString(runnables.toArray()));
     while (this.simulationStarted) {
       doPerceive();
       doDecide();
@@ -46,15 +48,15 @@ public class AgentThreadManager {
     }
   }
 
-  public void doPerceive() {
+  protected void doPerceive() {
     doPhase(this.threadStatePerceive);
   }
 
-  public void doDecide() {
+  protected void doDecide() {
     doPhase(this.threadStateDecide);
   }
 
-  private void doExecute() {
+  protected void doExecute() {
     doPhase(this.threadStateExecute);
   }
 
@@ -113,7 +115,6 @@ public class AgentThreadManager {
       throw new IllegalThreadStateException(
           "Cannot add a new agent at runtime.");
     }
-
     this.runnables.add(runnable);
   }
 }

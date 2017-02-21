@@ -13,7 +13,7 @@ import agent.general.GeneralAgentMind;
 import environment.communication.module.Address;
 import machinelearning.agent.DataFrame;
 import machinelearning.agent.DataFrameMetaTimeValue;
-import machinelearning.agent.DataFrameRowReading;
+import machinelearning.agent.DataFrameRow;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.EnvironmentalAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Mind;
@@ -31,7 +31,7 @@ import java.util.Set;
  * @author Benedict Wilkins
  *
  */
-public class SmartMeterAgentMind extends GeneralAgentMind<SmartMeterAgentBrain> {
+public class SmartMeterAgentMind extends GeneralAgentMind {
 
   private DataFrame recentPerception = new DataFrame(
       DataFrameMetaTimeValue.getInstance());
@@ -46,9 +46,9 @@ public class SmartMeterAgentMind extends GeneralAgentMind<SmartMeterAgentBrain> 
    *          a list of all possible {@link AbstractAction}s this agent can
    *          perform.
    */
-  public SmartMeterAgentMind(
+  public SmartMeterAgentMind(Class<? extends SmartMeterAgentBrain> brainclass,
       Set<Class<? extends AbstractAction>> possibleActions, Address manager) {
-    super(SmartMeterAgentBrain.class, possibleActions);
+    super(brainclass, possibleActions);
     this.manager = manager;
   }
 
@@ -61,6 +61,9 @@ public class SmartMeterAgentMind extends GeneralAgentMind<SmartMeterAgentBrain> 
     perception.getActionResults().forEach(
         (GlobalResult gr) -> recentPerception.addRow(((ReadingPayload) gr
             .getPayload()).getPayload()));
+    // System.out.println(Arrays.toString(recentPerception.getData().toArray()));
+    System.out.println("COM: "
+        + Arrays.toString(perception.communicationPerceptions.toArray()));
   }
 
   @Override
@@ -73,14 +76,14 @@ public class SmartMeterAgentMind extends GeneralAgentMind<SmartMeterAgentBrain> 
     List<Address> recipients = new ArrayList<>();
     recipients.add(manager);
     notifyObservers(new TakeReadingAction(this.getBody()));
-//    System.out.println(this.getBody().getId().toString() + ":"
-//        + Arrays.toString(recentPerception.getData().toArray()));
+    // System.out.println(this.getBody().getId().toString() + ":"
+    // + Arrays.toString(recentPerception.getData().toArray()));
     if (!recentPerception.getData().isEmpty()) {
-
+      List<DataFrameRow> toSend = new ArrayList<>();
+      toSend.addAll(recentPerception.getData());
       notifyObservers(new CommunicationAction<NetworkObject>(
-          new NetworkObjectPayload(new SmartMeterReadingNetworkObject(
-              recentPerception.getData(), (String) this.getBody().getId())),
-          this.getBody(), recipients));
+          new NetworkObjectPayload(new SmartMeterReadingNetworkObject(toSend,
+              (String) this.getBody().getId())), this.getBody(), recipients));
     }
     recentPerception.clear();
 

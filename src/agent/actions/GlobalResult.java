@@ -10,6 +10,7 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.entities.PhysicalBody;
 import utilities.GeneralUtilities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,16 +34,16 @@ public class GlobalResult extends DefaultActionResult {
   public GlobalResult(MessagePayload<?> payload, Actor actor,
       ActionResult result, Exception failureReason, List<Address> recipients) {
     super(result, ((PhysicalBody) actor).getId().toString(), failureReason,
-        convertAddressToString(recipients));
+        convertAddressToString((recipients != null) ? recipients
+            : new ArrayList<Address>()));
     this.payload = payload;
   }
 
   @Override
   public String toString() {
     return this.getClass().getSimpleName() + ":" + this.getActionResult() + ":"
-        + this.getActorId() + System.lineSeparator() + "    "
-        + GeneralUtilities.collectionToString(this.getRecipientsIds())
-        + System.lineSeparator() + "    " + payload;
+        + this.getActorId() + "  "
+        + Arrays.toString(this.getRecipientsIds().toArray()) + "  " + payload;
   }
 
   public MessagePayload<?> getPayload() {

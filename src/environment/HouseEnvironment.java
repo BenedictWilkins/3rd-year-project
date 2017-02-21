@@ -2,7 +2,11 @@ package environment;
 
 import agent.CommunicationSensor;
 import agent.SmartMeterAgentBody;
+import agent.actions.CommunicationAction;
+import agent.actions.GlobalResult;
 import agent.actions.HouseEvent;
+import agent.actions.TakeReadingAction;
+import agent.communication.NetworkObject;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.appearances.Appearance;
@@ -11,6 +15,8 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -23,15 +29,24 @@ import java.util.Set;
  */
 public class HouseEnvironment extends AbstractEnvironment {
 
+  public static final Set<Class<? extends AbstractAction>> HOUSEACTIONS;
+
+  static {
+    Set<Class<? extends AbstractAction>> actions = new HashSet<>();
+    actions.add(TakeReadingAction.class);
+    actions.add(CommunicationAction.class);
+    HOUSEACTIONS = Collections.unmodifiableSet(actions);
+  }
+
   /**
    * Constructor. See
    * {@link AbstractEnvironment#AbstractEnvironment(Space, Set, Set, Physics, Boolean, Appearance)}
    */
-  public HouseEnvironment(HouseEnvironmentSpace state,
-      Set<Class<? extends AbstractAction>> admissibleActions, Set<Body> bodies,
+  public HouseEnvironment(HouseEnvironmentSpace state, Set<Body> bodies,
       Physics physics, Boolean bounded, HouseEnvironmentAppearance appearance) {
-    super(state, admissibleActions, bodies, physics, bounded, appearance);
-    bodies.forEach((Body body) -> this.getAppearance().setName((String)body.getId()));
+    super(state, HOUSEACTIONS, bodies, physics, bounded, appearance);
+    bodies.forEach((Body body) -> this.getAppearance().setName(
+        (String) body.getId()));
   }
 
   /**
@@ -53,7 +68,10 @@ public class HouseEnvironment extends AbstractEnvironment {
   public void update(CustomObservable observable, Object arg) {
     HouseEvent event = (HouseEvent) arg;
     Result result = event.attempt(getPhysics(), getState());
-    notifyObservers(result, CommunicationSensor.class);
+    if (!NetworkObject.class.isAssignableFrom(((GlobalResult) result)
+        .getPayload().getPayload().getClass())) {
+      notifyObservers(result, CommunicationSensor.class);
+    }
   }
 
   @Override

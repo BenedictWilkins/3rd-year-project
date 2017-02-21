@@ -5,21 +5,21 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgentMind;
 
 import java.util.Set;
 
-public abstract class GeneralAgentMind<B extends GeneralAgentBrain<?, ?>>
-    extends AbstractAgentMind {
+public abstract class GeneralAgentMind extends AbstractAgentMind {
 
-  private Class<B> brainclass;
+  private Class<?> brainclass;
+  private GeneralAgentBody body;
   private Set<Class<? extends AbstractAction>> possibleActions;
-  private GeneralAgentBody<?> body;
+
   private boolean realised = false;
 
-  protected GeneralAgentMind(Class<B> brainclass,
+  protected GeneralAgentMind(Class<? extends GeneralAgentBrain> brainclass,
       Set<Class<? extends AbstractAction>> possibleActions) {
     this.possibleActions = possibleActions;
     this.brainclass = brainclass;
   }
 
-  protected final Class<B> getBrainClass() {
+  protected final Class<?> getBrainClass() {
     return brainclass;
   }
 
@@ -27,11 +27,11 @@ public abstract class GeneralAgentMind<B extends GeneralAgentBrain<?, ?>>
     return possibleActions;
   }
 
-  protected GeneralAgentBody<?> getBody() {
+  protected GeneralAgentBody getBody() {
     return body;
   }
 
-  protected void setBody(GeneralAgentBody<?> generalAgentBody) {
+  protected void setBody(GeneralAgentBody generalAgentBody) {
     if (!realised) {
       this.body = generalAgentBody;
     } else {

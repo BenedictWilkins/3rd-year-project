@@ -5,7 +5,7 @@ import housemodels.HouseModelCombinedNormalAcornU;
 import housemodels.HouseModelCombinedNormalAdversity;
 import housemodels.HouseModelCombinedNormalAffluent;
 import housemodels.HouseModelCombinedNormalComfortable;
-import housemodels.SeasonModifier;
+import housemodels.SeasonModel;
 import machinelearning.agent.DataFrame;
 
 import org.jfree.chart.ChartFactory;
@@ -116,7 +116,7 @@ public class DataFitter {
         "./res/gmAdversity.txt", HouseModelCombinedNormalAdversity.class,
         HalfHourClock.DAYLENGTH), ACORNU("./res/gmAcorn-u.txt",
         HouseModelCombinedNormalAcornU.class, HalfHourClock.DAYLENGTH), SEASON(
-        "./res/gmSeasonality.txt", SeasonModifier.class,
+        "./res/gmSeasonality.txt", SeasonModel.class,
         HalfHourClock.YEARLENGTH);
 
     private String path;

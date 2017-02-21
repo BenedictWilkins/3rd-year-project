@@ -1,15 +1,13 @@
 package housemodels;
 
-import java.util.Arrays;
-
 import utilities.CombinedNormalDistribution;
 import utilities.DateTime;
-import utilities.MathFunctionClass;
 import utilities.NormalDistribution;
 import graph.DataFitter;
+import housemodel.threshold.ModelModifier;
 
 public abstract class HouseModelCombinedNormal implements
-    MathFunctionClass<Double>, HouseModel {
+    HouseModel {
 
   /**
    * The values supplied to these housing groups come from fitting 2 normal
@@ -42,5 +40,10 @@ public abstract class HouseModelCombinedNormal implements
           + " CANNOT HANDLE TIME VALUE GIVEN: " + dateTime);
       return null;
     }
+  }
+  
+  @Override
+  public void modifyModel(ModelModifier modifier) {
+    // TODO Auto-generated method stub
   }
 }

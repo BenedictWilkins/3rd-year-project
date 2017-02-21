@@ -1,22 +1,22 @@
 package environment;
 
-import agent.NeighbourhoodAgentBody;
+import agent.actions.CommunicationAction;
+import agent.actions.CommunicationEvent;
+import agent.actions.TakeReadingAction;
+import agent.general.GeneralAgentBody;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Event;
-import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.appearances.Appearance;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgent;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Environment;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObserver;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -30,7 +30,14 @@ public class NationalGridUniverse extends AbstractEnvironment {
   // a list of all house environments
   private List<HouseEnvironment> houseSubEnvironments;
 
-  private Map<String, CustomObserver> observables;
+  public static final Set<Class<? extends AbstractAction>> UNIVERSEACTIONS;
+
+  static {
+    Set<Class<? extends AbstractAction>> actions = new HashSet<>();
+    actions.add(TakeReadingAction.class);
+    actions.add(CommunicationAction.class);
+    UNIVERSEACTIONS = Collections.unmodifiableSet(actions);
+  }
 
   /**
    * Constructor. See:
@@ -39,10 +46,10 @@ public class NationalGridUniverse extends AbstractEnvironment {
    * @param houseSubEnvironments
    *          a list of {@link HouseEnvironment}s.
    */
-  public NationalGridUniverse(Space state,
-      Set<Class<? extends AbstractAction>> admissibleActions, Set<Body> bodies,
-      Physics physics, List<HouseEnvironment> houseSubEnvironments) {
-    super(state, admissibleActions, bodies, physics, false,
+  public NationalGridUniverse(Space state, Set<Body> bodies,
+      NationalGridUniversePhysics physics,
+      List<HouseEnvironment> houseSubEnvironments) {
+    super(state, UNIVERSEACTIONS, bodies, physics, false,
         new NationalGridUniverseAppearance("UNIVERSE",
             getAppearances(houseSubEnvironments)));
     this.houseSubEnvironments = (houseSubEnvironments != null) ? houseSubEnvironments
@@ -51,24 +58,14 @@ public class NationalGridUniverse extends AbstractEnvironment {
       ((HouseEnvironmentSpace) e.getState()).addObserver(this);
     }
     // set up the observable map for ease of message passing
-    observables = new HashMap<>();
-    this.houseSubEnvironments.forEach((HouseEnvironment house) -> observables
-        .put(house.getAppearance().getName(), house));
-    this.getBodies().forEach(
-        (Body body) -> observables.put(body.getId().toString(),
-            (AbstractAgent) body));
+    physics.setUpCommunication(houseSubEnvironments, bodies);
   }
 
   @Override
   public void update(CustomObservable observable, Object arg) {
     Event event = (Event) arg;
-    Result result = event.attempt(getPhysics(), getState());
-    CustomObserver obs = observables.get(result.getRecipientsIds().get(0));
-    // check where the message is going
-    if (!HouseEnvironment.class.isAssignableFrom(obs.getClass())) {
-      // send it to a manager
-      ((NeighbourhoodAgentBody)obs).getSensors().get(0).update(this, result);
-    }
+    event.attempt(getPhysics(), getState());
+    // TODO?
   }
 
   @Override

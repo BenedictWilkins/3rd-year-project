@@ -2,22 +2,22 @@ package agent.general;
 
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgentBrain;
 
-public abstract class GeneralAgentBrain<M extends GeneralAgentMind<?>, B extends GeneralAgentBody<?>>
-    extends AbstractAgentBrain {
+public abstract class GeneralAgentBrain extends AbstractAgentBrain {
 
-  private Class<M> mindclass;
-  private Class<B> bodyclass;
+  private Class<?> mindclass;
+  private Class<?> bodyclass;
 
-  public GeneralAgentBrain(Class<M> mindclass, Class<B> bodyclass) {
+  public GeneralAgentBrain(Class<? extends GeneralAgentMind> mindclass,
+      Class<? extends GeneralAgentBody> bodyclass) {
     this.mindclass = mindclass;
     this.bodyclass = bodyclass;
   }
 
-  public Class<M> getMindclass() {
+  public final Class<?> getMindclass() {
     return mindclass;
   }
 
-  public Class<B> getBodyclass() {
+  public final Class<?> getBodyclass() {
     return bodyclass;
   }
 }

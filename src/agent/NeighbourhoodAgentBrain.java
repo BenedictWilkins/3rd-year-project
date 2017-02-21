@@ -1,20 +1,20 @@
 package agent;
 
-import agent.SmartMeterAgentBrain.PerceptionWrapper;
-import agent.actions.GlobalResult;
 import agent.actions.PerceiveAction;
+import agent.communication.NetworkObject;
 import agent.communication.NetworkObjectPayload;
+import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 
-import javax.xml.transform.Result;
+import java.util.Set;
 
-public class NeighbourhoodAgentBrain extends
-    CommunicationAgentBrain<NeighbourhoodAgentMind, NeighbourhoodAgentBody> {
+public class NeighbourhoodAgentBrain extends CommunicationAgentBrain {
 
-  public NeighbourhoodAgentBrain() {
-    super(NeighbourhoodAgentMind.class, NeighbourhoodAgentBody.class);
-    // TODO Auto-generated constructor stub
+  public NeighbourhoodAgentBrain(
+      Class<? extends NeighbourhoodAgentMind> mindclass,
+      Class<? extends NeighbourhoodAgentBody> bodyclass) {
+    super(mindclass, bodyclass);
   }
 
   @Override
@@ -34,7 +34,13 @@ public class NeighbourhoodAgentBrain extends
    */
   private void handleBodyMessage(Object arg) {
     if (NetworkObjectPayload.class.isAssignableFrom(arg.getClass())) {
+      // System.out.println("RECEIVED: " + arg);
       super.addCommunicationPerception((NetworkObjectPayload) arg);
+      // System.out
+      // .println("HANDLEBODY: " + Arrays
+      // .toString(((SmartMeterReadingNetworkObject) ((NetworkObjectPayload)
+      // arg)
+      // .getPayload()).getData().toArray()));
     } else {
       System.err.println(this.getClass() + " SHOULD NOT BE RECEIVING: " + arg);
     }
@@ -43,9 +49,27 @@ public class NeighbourhoodAgentBrain extends
   private void handleMindMessage(Object arg) {
     if (PerceiveAction.class.isAssignableFrom(arg.getClass())) {
       // the mind is requesting the perceptions
-      notifyObservers(super.getCommunicationPerceptions(), this.getMindclass());
+      notifyObservers(
+          new PerceptionWrapper(super.getClearCommunicationPerceptions()),
+          this.getMindclass());
     } else {
       notifyObservers(arg, this.getBodyclass());
+    }
+  }
+
+  protected class PerceptionWrapper {
+    private Set<NetworkObject> messages;
+
+    private PerceptionWrapper(Set<NetworkObject> messages) {
+      this.messages = messages;
+    }
+
+    public Set<NetworkObject> getMessages() {
+      return messages;
+    }
+
+    public void setMessages(Set<NetworkObject> messages) {
+      this.messages = messages;
     }
   }
 }

@@ -1,39 +1,50 @@
 package agent;
 
-import agent.SmartMeterAgentBrain.PerceptionWrapper;
-import agent.actions.GlobalResult;
+import agent.NeighbourhoodAgentBrain.PerceptionWrapper;
+import agent.actions.CommunicationAction;
 import agent.actions.PerceiveAction;
 import agent.communication.NetworkObject;
 import agent.communication.NetworkObjectPayload;
-import agent.communication.ReadingPayload;
 import agent.communication.SmartMeterReadingNetworkObject;
 import agent.general.GeneralAgentMind;
-import machinelearning.agent.AbstractDataFrameRow;
+import environment.communication.module.Address;
 import machinelearning.agent.DataFrame;
 import machinelearning.agent.DataFrameMetaTimeValue;
-import machinelearning.agent.DataFrameRow;
+import machinelearning.agent.DataFrameRowReading;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.EnvironmentalAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import housemodel.combination.Combine;
+import housemodel.combination.ReadingCombinator;
 
-import java.util.Arrays;
+import housemodel.threshold.ModelModifier;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class NeighbourhoodAgentMind extends
-    GeneralAgentMind<NeighbourhoodAgentBrain> {
+public class NeighbourhoodAgentMind extends GeneralAgentMind {
 
-  private DataFrame data = new DataFrame(DataFrameMetaTimeValue.getInstance());
-  private Set<NetworkObject> recentPerception;
-  private Combine combine;
+  protected DataFrame data = new DataFrame(DataFrameMetaTimeValue.getInstance());
+  protected Set<NetworkObject> recentPerception;
+  protected Set<NetworkObject> toForward;
+  protected ReadingCombinator combinator;
+  protected Address manager;
+  protected Set<Address> subordinates;
+  protected int sentIndex = 0;
+  protected int readingCount = 0;
 
-  public NeighbourhoodAgentMind(Combine combine,
-      Set<Class<? extends AbstractAction>> possibleActions) {
-    super(NeighbourhoodAgentBrain.class, possibleActions);
-    this.combine = combine;
+  public NeighbourhoodAgentMind(
+      Class<? extends NeighbourhoodAgentBrain> brainclass,
+      ReadingCombinator combinator,
+      Set<Class<? extends AbstractAction>> possibleActions, Address manager,
+      Set<Address> subordinates) {
+    super(brainclass, possibleActions);
+    this.combinator = combinator;
     this.recentPerception = new HashSet<>();
+    this.toForward = new HashSet<>();
+    this.manager = manager;
+    this.subordinates = subordinates;
   }
 
   @Override
@@ -41,30 +52,75 @@ public class NeighbourhoodAgentMind extends
     notifyObservers(new PerceiveAction(), this.getBrainClass());
   }
 
-  private void perceiveContinue(Set<?> perception) {
-    perception.forEach((Object obj) -> recentPerception
-        .add((NetworkObject) obj));
+  protected void perceiveContinue(PerceptionWrapper perception) {
+    recentPerception = perception.getMessages();
+
   }
 
   @Override
   public EnvironmentalAction decide(Object... parameters) {
-    // TODO Auto-generated method stub
+    // combine the most recent perceptions and add them to the store, also
+    // decide
+    Set<SmartMeterReadingNetworkObject> readings = new HashSet<>();
+    Set<NetworkObject> other = new HashSet<>();
+    this.recentPerception
+        .forEach((NetworkObject no) -> {
+          if (SmartMeterReadingNetworkObject.class.isAssignableFrom(no
+              .getClass())) {
+            readings.add((SmartMeterReadingNetworkObject) no);
+          } else {
+            other.add(no);
+          }
+        });
+    // combine the readings
+    List<DataFrameRowReading> combinedReadings = combinator.combine(readings);
+    // System.out.println(Arrays.toString(combinedReadings.toArray()));
+    for (DataFrameRowReading r : combinedReadings) {
+      data.addRow(r);
+      readingCount++;
+    }
+    // look at the list of other perceptions, check if there are any that should
+    // be forwarded
+    other.forEach((NetworkObject no) -> {
+      if (ModelModifier.class.isAssignableFrom(no.getClass())) {
+        toForward.add(no);
+      }
+    });
+    recentPerception.clear();
     return null;
   }
 
   @Override
   public void execute(EnvironmentalAction action) {
-    recentPerception.forEach((NetworkObject no) -> {
-      ((SmartMeterReadingNetworkObject)no).getData().forEach((DataFrameRow dfr) -> {
-        data.addRow(dfr);
-      });
+    // System.out.println(Arrays.toString(data.getData().toArray()));
+    forwardReadings();
+    forwardMessages();
+  }
+
+  // forwards any messages that have been received by a manager
+  private void forwardMessages() {
+    toForward.forEach((NetworkObject no) -> {
+      notifyObservers(new CommunicationAction<>(new NetworkObjectPayload(no),
+          this.getBody(), new ArrayList<Address>(subordinates)));
     });
+  }
+
+  // forwards the combined readings to its manager
+  private void forwardReadings() {
+    List<Address> recipients = new ArrayList<>();
+    recipients.add(manager);
+    notifyObservers(new CommunicationAction<NetworkObject>(
+        new NetworkObjectPayload(new SmartMeterReadingNetworkObject(data
+            .getData().subList(sentIndex, data.getData().size()), (String) this
+            .getBody().getId())), this.getBody(), recipients));
+    sentIndex += readingCount;
+    readingCount = 0;
   }
 
   @Override
   public void update(CustomObservable observable, Object arg) {
     if (PerceptionWrapper.class.isAssignableFrom(arg.getClass())) {
-      perceiveContinue((Set<?>) arg);
+      perceiveContinue((PerceptionWrapper) arg);
     }
   }
 
@@ -82,11 +138,5 @@ public class NeighbourhoodAgentMind extends
     // } catch (Exception e) {
     // e.printStackTrace();
     // }
-  }
-
-  private void addRecievedData(List<?> newdata) {
-    for (Object o : newdata) {
-      data.addRow((AbstractDataFrameRow) o);
-    }
   }
 }

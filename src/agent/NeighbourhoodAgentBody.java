@@ -2,6 +2,8 @@ package agent;
 
 import agent.actions.HouseEvent;
 import agent.general.GeneralAgentBody;
+import agent.general.GeneralAgentBrain;
+import agent.general.GeneralAgentMind;
 import environment.HouseEnvironment;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.appearances.AbstractAgentAppearance;
@@ -24,21 +26,17 @@ import java.util.List;
  * @author Benedict Wilkins
  *
  */
-public class NeighbourhoodAgentBody extends
-    GeneralAgentBody<NeighbourhoodAgentBrain> {
+public class NeighbourhoodAgentBody extends GeneralAgentBody {
 
   /**
    * Constructor. See:
-   * {@link AbstractAgent#AbstractAgent(AbstractAgentAppearance, 
-   * List, List, AbstractAgentMind, AbstractAgentBrain)}
+   * {@link AbstractAgent#AbstractAgent(AbstractAgentAppearance, List, List, AbstractAgentMind, AbstractAgentBrain)}
    * .
    */
   public NeighbourhoodAgentBody(AbstractAgentAppearance appearance,
       List<Sensor> sensors, List<Actuator> actuators,
       NeighbourhoodAgentMind mind, NeighbourhoodAgentBrain brain) {
-    super(appearance, sensors, actuators, mind, brain,
-        NeighbourhoodAgentBrain.class);
-    // TODO Auto-generated constructor stub
+    super(appearance, sensors, actuators, mind, brain);
   }
 
   @Override
@@ -52,9 +50,7 @@ public class NeighbourhoodAgentBody extends
   }
 
   private void handleBrainMessage(Object arg) {
-    AbstractAction action = (AbstractAction) arg;
-    HouseEvent event = new HouseEvent(action, System.currentTimeMillis(), this);
-    notifyObservers(event, CommunicationActuator.class);
+    notifyObservers(arg, CommunicationActuator.class);
   }
 
   private void handleSensorMessage(Object arg) {

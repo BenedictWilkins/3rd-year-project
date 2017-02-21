@@ -15,7 +15,7 @@ public class HouseFactory {
   private static final HouseModelFactory MODELFACTORY = HouseModelFactory
       .getFactory();
 
-  private static final SeasonModifier SEASONMODIFIER = new SeasonModifier();
+  private static final SeasonModel SEASONMODIFIER = new SeasonModel();
 
   static {
     SEASONMODIFIER.compute(MathUtilities.generateSequence(0.0,

@@ -1,11 +1,9 @@
 package agent;
 
-import agent.actions.CommunicationAction;
 import agent.actions.HouseEvent;
 import agent.actions.IpCommunicationAction;
 import agent.general.GeneralAgentBody;
 import environment.HouseEnvironment;
-import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.appearances.AbstractAgentAppearance;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractActuator;
@@ -27,7 +25,7 @@ import java.util.List;
  * @author Benedict Wilkins
  *
  */
-public class SmartMeterAgentBody extends GeneralAgentBody<SmartMeterAgentBrain> {
+public class SmartMeterAgentBody extends GeneralAgentBody {
 
   // changes depending what actuator/sensors are in use
   private BrainHandler brainHandler;
@@ -39,7 +37,7 @@ public class SmartMeterAgentBody extends GeneralAgentBody<SmartMeterAgentBrain> 
    */
   public SmartMeterAgentBody(List<Sensor> sensors, List<Actuator> actuators,
       SmartMeterAgentMind mind, SmartMeterAgentBrain brain) {
-    super(null, sensors, actuators, mind, brain, SmartMeterAgentBrain.class);
+    super(null, sensors, actuators, mind, brain);
     if (getIpCommunicationActuator() == null) {
       brainHandler = new NormalBrainHandler();
     } else {
@@ -63,92 +61,6 @@ public class SmartMeterAgentBody extends GeneralAgentBody<SmartMeterAgentBrain> 
         .isAssignableFrom(observable.getClass())) {
       handleSensorMessage(arg);
     }
-  }
-
-  /**
-   * Gets a specific component of the agent from the given list of components.
-   * 
-   * @param type
-   *          class of the component to find
-   * @param components
-   *          to search
-   * @return the component if found, null if not
-   */
-  private Object getComponent(Class<?> type, List<?> components) {
-    Iterator<?> iter = components.iterator();
-    while (iter.hasNext()) {
-      Object obj = iter.next();
-      if (type.isInstance(obj)) {
-        return obj;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Getter for a {@link Sensor}. See
-   * {@link SmartMeterAgentBody#getComponent(Class, List)}
-   * 
-   * @param sensorClass
-   *          the runtime class of the {@link Sensor}
-   * @return the {@link Sensor} if found, null if not
-   */
-  public Sensor getSensor(Class<? extends Sensor> sensorClass) {
-    return (Sensor) getComponent(sensorClass, getSensors());
-  }
-
-  /**
-   * Getter for a {@link Actuator}. See
-   * {@link SmartMeterAgentBody#getComponent(Class, List)}
-   * 
-   * @param actuatorClass
-   *          the runtime class of the {@link Actuator}
-   * @return the {@link Actuator} if found, null if not
-   */
-  public Actuator getActuator(Class<? extends Actuator> actuatorClass) {
-    return (Actuator) getComponent(actuatorClass, getActuators());
-  }
-
-  /**
-   * Getter for a {@link CommunicationActuator}. See
-   * {@link SmartMeterAgentBody#getActuator(Class)}
-   * 
-   * @return the {@link CommunicationActuator} if found, null if not
-   */
-  @SuppressWarnings("unchecked")
-  public CommunicationActuator<SmartMeterAgentBody, HouseEnvironment> getSmartMeterActuator() {
-    return (CommunicationActuator<SmartMeterAgentBody, HouseEnvironment>) getActuator(CommunicationActuator.class);
-  }
-
-  /**
-   * Getter for a {@link IpCommunicationActuator}. See
-   * {@link SmartMeterAgentBody#getActuator(Class)}
-   * 
-   * @return the {@link IpCommunicationActuator} if found, null if not
-   */
-  public IpCommunicationActuator getIpCommunicationActuator() {
-    return (IpCommunicationActuator) getActuator(IpCommunicationActuator.class);
-  }
-
-  /**
-   * Getter for a {@link CommunicationSensor}. See
-   * {@link SmartMeterAgentBody#getSensor(Class)}
-   * 
-   * @return the {@link CommunicationSensor} if found, null if not
-   */
-  @SuppressWarnings("unchecked")
-  public CommunicationSensor<SmartMeterAgentBody, HouseEnvironment> getSmartMeterSensor() {
-    return (CommunicationSensor<SmartMeterAgentBody, HouseEnvironment>) getSensor(CommunicationSensor.class);
-  }
-
-  /**
-   * Getter for a {@link IpCommunicationSensor}. See
-   * {@link SmartMeterAgentBody#getSensor(Class)}
-   * 
-   * @return the {@link IpCommunicationSensor} if found, null if not
-   */
-  public IpCommunicationSensor getIpCommunicationSensor() {
-    return (IpCommunicationSensor) getSensor(IpCommunicationSensor.class);
   }
 
   private void handleBrainMessage(Object arg) {

@@ -1,10 +1,9 @@
 package machinelearning.agent;
 
-
 public class DataFrameMetaTimeValue extends DataFrameMetaData {
 
   private static final long serialVersionUID = 1L;
-  
+
   private static final String[] HEADERS = new String[] { "Time", "Consumption" };
   private static final Class<?>[] COLUMNTYPES = new Class<?>[] { String.class,
       Double.class };
@@ -16,5 +15,21 @@ public class DataFrameMetaTimeValue extends DataFrameMetaData {
 
   public static DataFrameMetaTimeValue getInstance() {
     return instance;
+  }
+
+  public static Class<?> getTimeColumnType() {
+    return COLUMNTYPES[getTimeColumnIndex()];
+  }
+
+  public static Class<?> getValueColumnType() {
+    return COLUMNTYPES[getValueColumnIndex()];
+  }
+
+  public static Integer getTimeColumnIndex() {
+    return 0;
+  }
+
+  public static Integer getValueColumnIndex() {
+    return 1;
   }
 }

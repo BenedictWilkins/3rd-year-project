@@ -1,15 +1,28 @@
 package environment;
 
+import agent.CommunicationSensor;
+import agent.NeighbourhoodAgentBody;
 import agent.actions.CommunicationAction;
 import agent.actions.GlobalResult;
 import agent.actions.TakeReadingAction;
+import environment.communication.module.Address;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Action;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.ActionResult;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.DefaultActionResult;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Event;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgent;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
+import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
+import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObserver;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The {@link Physics} used by a {@link NationalGridUniverse}. This class
@@ -22,10 +35,25 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 public class NationalGridUniversePhysics implements
     NationalGridUniversePhysicsInterface {
 
+  private Map<String, CustomObserver> observables = null;
+
+  public void setUpCommunication(List<HouseEnvironment> houseSubEnvironments,
+      Set<Body> bodies) {
+    if (observables != null) {
+      throw new IllegalStateException("COMMUNICATION HAS ALREADY BEEN SET UP");
+    }
+    observables = new HashMap<>();
+    houseSubEnvironments.forEach((HouseEnvironment house) -> observables.put(
+        house.getAppearance().getName(), house));
+    bodies.forEach((Body body) -> observables.put(body.getId().toString(),
+        (AbstractAgent) body));
+  }
+
   @Override
   public Result attempt(Event event, Space space) {
-    System.out.println(this.getClass().getSimpleName() + " ATTEMPTING EVENT: "
-        + event.getAction());
+    // System.out.println(this.getClass().getSimpleName() +
+    // " ATTEMPTING EVENT: "
+    // + event.getAction());
     return event.getAction().attempt(this, space);
   }
 
@@ -42,9 +70,20 @@ public class NationalGridUniversePhysics implements
 
   @Override
   public Result perform(CommunicationAction<?> action, Space context) {
+
+    List<Address> recipients = action.getRecipients();
     GlobalResult result = new GlobalResult(action.getPayload(),
-        action.getActor(), ActionResult.ACTION_DONE, null,
-        action.getRecipients());
+        action.getActor(), ActionResult.ACTION_DONE, null, null);
+
+    recipients.forEach((Address a) -> {
+//      System.out.println("NATIONAL MESSAGE FROM: " + action.getActor()
+//          + " TO: " + a.getAdress());
+        CustomObserver obs = observables.get(a.getAdress());
+        result.setRecipientsIds(Arrays.asList(a.getAdress()));
+        ((NeighbourhoodAgentBody) obs).getSensor(CommunicationSensor.class)
+            .update((CustomObservable) action.getActor(), result);
+      });
+    result.setRecipientsIds(GlobalResult.convertAddressToString(recipients));
     return result;
   }
 

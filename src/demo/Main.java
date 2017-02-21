@@ -1,7 +1,7 @@
 package demo;
 
-import housemodels.House;
-import housemodels.HouseFactory;
+import agent.general.AgentStructure;
+import agent.general.AgentType;
 
 /**
  * Entry point into the system.
@@ -18,10 +18,19 @@ public class Main {
    *          none
    */
   public static void main(String[] args) {
-    double error = 0.05;
-    House[] models = new House[1];
-    models[0] = HouseFactory.getFactory().createAffluentHouse(error);
-    //models[1] = HouseFactory.getFactory().createAdversityHouse(error);
-    new Simulator(models);
+    AgentStructure[] smarts = createSmartMeterGroup(3);
+    AgentStructure neigh = new AgentStructure(AgentType.NEIGHBOURHOOD, smarts);
+    AgentStructure top = new AgentStructure(AgentType.PREDICTOR, neigh);
+    new Simulator(top);
+
+  }
+
+  public static AgentStructure[] createSmartMeterGroup(int size) {
+    AgentStructure[] astructs = new AgentStructure[size];
+    for (int i = 0; i < 3; i++) {
+      astructs[i] = new AgentStructure(AgentType.SMARTMETER,
+          new AgentStructure[] {});
+    }
+    return astructs;
   }
 }

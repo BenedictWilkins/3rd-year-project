@@ -1,3 +1,4 @@
+.csv
 .arff
 .csv
 .class
@@ -6,3 +7,5 @@
 .settings
 bin/
 res/
+logs/
+

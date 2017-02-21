@@ -4,7 +4,7 @@ import utilities.DateTime;
 import utilities.MathFunctionClass;
 import utilities.NormalDistribution;
 
-public class SeasonModifier implements MathFunctionClass<Double> {
+public class SeasonModel implements MathFunctionClass<Double> {
 
   protected static final Double[] PARAMCONFIG = new Double[] { 210.0, 60.0,
       -24.0, 0.3 };
@@ -19,7 +19,7 @@ public class SeasonModifier implements MathFunctionClass<Double> {
    * Constructor. Preset instance of this class based on the PARAMCONFIG and
    * FUNCTIONCONFIG static fields
    */
-  public SeasonModifier() {
+  public SeasonModel() {
     try {
       NormalDistribution function = FUNCTIONCONFIG.newInstance();
       function.setMean(PARAMCONFIG[0]);
@@ -42,7 +42,7 @@ public class SeasonModifier implements MathFunctionClass<Double> {
    * @param scale
    *          the modifier values
    */
-  public SeasonModifier(MathFunctionClass<Double> function, Double addition,
+  public SeasonModel(MathFunctionClass<Double> function, Double addition,
       Double scale) {
     this.function = function;
     this.addition = addition;
@@ -50,7 +50,7 @@ public class SeasonModifier implements MathFunctionClass<Double> {
   }
 
   /**
-   * Generates a set of y values according to this {@link SeasonModifier}s
+   * Generates a set of y values according to this {@link SeasonModel}s
    * function, addition and scale.
    * 
    * @param xvalues

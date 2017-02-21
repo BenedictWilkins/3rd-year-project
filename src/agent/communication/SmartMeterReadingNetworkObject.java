@@ -4,7 +4,8 @@ import agent.SmartMeterAgentMind;
 import machinelearning.agent.DataFrameRow;
 import machinelearning.agent.DataFrameRowReading;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * A class to represent the message that a {@link SmartMeterAgentMind
@@ -18,21 +19,21 @@ public class SmartMeterReadingNetworkObject implements NetworkObject {
 
   private static final long serialVersionUID = 1L;
 
-  private List<? extends DataFrameRow> data;
+  private Collection<? extends DataFrameRow> data;
   private String actorid;
 
-  public SmartMeterReadingNetworkObject(List<? extends DataFrameRow> list,
+  public SmartMeterReadingNetworkObject(Collection<? extends DataFrameRow> list,
       String actorid) {
     super();
     this.data = list;
     this.actorid = actorid;
   }
 
-  public List<? extends DataFrameRow> getData() {
+  public Collection<? extends DataFrameRow> getData() {
     return data;
   }
 
-  public void setData(List<DataFrameRowReading> data) {
+  public void setData(Collection<DataFrameRowReading> data) {
     this.data = data;
   }
 
@@ -42,6 +43,11 @@ public class SmartMeterReadingNetworkObject implements NetworkObject {
 
   public void setActorid(String actorid) {
     this.actorid = actorid;
+  }
+
+  @Override
+  public String toString() {
+    return this.actorid + Arrays.toString(this.data.toArray());
   }
 
 }

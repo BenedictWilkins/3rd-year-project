@@ -31,4 +31,9 @@ public class SimulationAddress implements Address {
     return this.id;
   }
 
+  @Override
+  public String toString() {
+    return this.id;
+  }
+
 }

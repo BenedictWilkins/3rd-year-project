@@ -2,10 +2,10 @@ package agent;
 
 import agent.actions.GlobalResult;
 import agent.communication.NetworkObjectPayload;
+import agent.general.GeneralAgentBody;
 import agent.general.GeneralAgentSensor;
 import environment.AbstractEnvironment;
 import environment.NationalGridUniverse;
-import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Event;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgent;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
@@ -17,37 +17,26 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
  * Extends: {@link GeneralAgentSensor}.
  * 
  * @author Benedict Wilkins
- *
- * @param <B>
- *          the type of the {@link AbstractAgent} associated with this
- *          {@link CommunicationSensor}.
- * @param <E>
- *          the type of the {@link AbstractEnvironment} that this
- *          {@link CommunicationSensor} will send {@link Event}s to.
  */
-public class CommunicationSensor<B extends AbstractAgent, E extends AbstractEnvironment>
-    extends GeneralAgentSensor<B, E> {
+public class CommunicationSensor
+
+extends GeneralAgentSensor {
 
   /**
-   * Constructor. Arguments should be the same class as the class parameters E
-   * and B.
-   * 
-   * @param bodyclass
-   *          {@link AbstractAgent} sub class associated with this
-   *          {@link CommunicationSensor}
-   * @param environmentclass
-   *          {@link AbstractEnvironment} sub class that this
-   *          {@link CommunicationSensor} will send {@link Event}s to
+   * Constructor.
    */
-  public CommunicationSensor(Class<B> bodyclass, Class<E> environmentclass) {
+  public CommunicationSensor(Class<? extends GeneralAgentBody> bodyclass,
+      Class<? extends AbstractEnvironment> environmentclass) {
     super(bodyclass, environmentclass);
   }
 
   @Override
   public void update(CustomObservable observable, Object arg) {
-    if (this.getEnvironmentclass().isAssignableFrom(observable.getClass())) {
-      handleEnvironmentMessage(arg);
-    }
+    //System.out.println("RECEIVED: " + arg + System.lineSeparator() + "FROM: "
+       // + observable);
+    // if (this.getEnvironmentclass().isAssignableFrom(observable.getClass())) {
+    handleEnvironmentMessage(arg);
+    // }
   }
 
   private void handleEnvironmentMessage(Object arg) {

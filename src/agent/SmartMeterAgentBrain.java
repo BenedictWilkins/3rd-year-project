@@ -8,6 +8,7 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Brain;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,18 +21,20 @@ import javax.xml.transform.Result;
  * @author Benedict Wilkins
  *
  */
-public class SmartMeterAgentBrain extends
-    CommunicationAgentBrain<SmartMeterAgentMind, SmartMeterAgentBody> {
+public class SmartMeterAgentBrain extends CommunicationAgentBrain {
 
   private Set<GlobalResult> actionResults;
 
-  public SmartMeterAgentBrain() {
-    super(SmartMeterAgentMind.class, SmartMeterAgentBody.class);
+  public SmartMeterAgentBrain(Class<? extends SmartMeterAgentMind> mindclass,
+      Class<? extends SmartMeterAgentBody> bodyclass) {
+    super(mindclass, bodyclass);
     this.actionResults = new HashSet<>();
   }
 
   @Override
   public void update(CustomObservable observable, Object arg) {
+    // System.out.println(this + " BRAIN: RECEIVED " + arg + " FROM: " +
+    // observable);
     if (this.getBodyclass().isAssignableFrom(observable.getClass())) {
       handleBodyMessage(arg);
     } else if (this.getMindclass().isAssignableFrom(observable.getClass())) {
@@ -56,12 +59,19 @@ public class SmartMeterAgentBrain extends
   private void handleMindMessage(Object arg) {
     if (PerceiveAction.class.isAssignableFrom(arg.getClass())) {
       // the mind is requesting the perceptions
-      notifyObservers(new PerceptionWrapper(
-          super.getCommunicationPerceptions(), this.actionResults),
-          this.getMindclass());
+      notifyObservers(
+          new PerceptionWrapper(super.getClearCommunicationPerceptions(),
+              this.getClearActionResults()), this.getMindclass());
     } else {
       notifyObservers(arg, this.getBodyclass());
     }
+  }
+  
+  public Set<GlobalResult> getClearActionResults() {
+    Set<GlobalResult> toReturn = new HashSet<>();
+    toReturn.addAll(actionResults);
+    actionResults.clear();
+    return toReturn;
   }
 
   public class PerceptionWrapper {
