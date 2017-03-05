@@ -36,7 +36,7 @@ public class EnvironmentFactory {
     ((CommunicationActuator) agent.getSmartMeterActuator())
         .addObserver(environment);
     environment.addObserver(agent.getSensors().get(0));
-    environment.getAppearance().setName(HOUSENAME + agent.getId().toString());
+    environment.getAppearance().setName(agent.getId().toString());
     return environment;
   }
 

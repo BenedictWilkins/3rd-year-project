@@ -1,6 +1,7 @@
 package housemodel.threshold;
 
 import agent.communication.NetworkObject;
+import utilities.MathematicalFunction;
 import housemodels.HouseModel;
 
 /**
@@ -16,4 +17,15 @@ import housemodels.HouseModel;
  *
  */
 public interface ModelModifier extends NetworkObject {
+
+  /**
+   * The method used to modify a function. In general no guarantee can be made
+   * that no alteration of the input function will occur.
+   * 
+   * @param function
+   *          to modify
+   * @return the modified function
+   */
+  public MathematicalFunction<?> modify(MathematicalFunction<?> function);
+
 }

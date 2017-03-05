@@ -1,16 +1,16 @@
 package housemodels;
 
 import utilities.DateTime;
-import utilities.MathFunctionClass;
+import utilities.MathematicalFunction;
 import utilities.NormalDistribution;
 
-public class SeasonModel implements MathFunctionClass<Double> {
+public class SeasonModel implements MathematicalFunction<Double> {
 
   protected static final Double[] PARAMCONFIG = new Double[] { 210.0, 60.0,
       -24.0, 0.3 };
   protected static final Class<NormalDistribution> FUNCTIONCONFIG = NormalDistribution.class;
 
-  private MathFunctionClass<Double> function;
+  private MathematicalFunction<Double> function;
   private Double[] data;
   private Double addition;
   private Double scale;
@@ -42,7 +42,7 @@ public class SeasonModel implements MathFunctionClass<Double> {
    * @param scale
    *          the modifier values
    */
-  public SeasonModel(MathFunctionClass<Double> function, Double addition,
+  public SeasonModel(MathematicalFunction<Double> function, Double addition,
       Double scale) {
     this.function = function;
     this.addition = addition;

@@ -28,8 +28,9 @@ public class HouseEnvironmentPhysics implements
 
   @Override
   public Result attempt(Event event, Space space) {
-//    System.out.println(this.getClass().getSimpleName() + " ATTEMPTING EVENT: "
-//        + event.getAction());
+    // System.out.println(this.getClass().getSimpleName() +
+    // " ATTEMPTING EVENT: "
+    // + event.getAction());
     return event.getAction().attempt(this, space);
   }
 
@@ -74,8 +75,8 @@ public class HouseEnvironmentPhysics implements
   public Result perform(CommunicationAction<?> action, Space context) {
     ((HouseEnvironmentSpace) context).notifyObservers(new CommunicationEvent(
         action, null, action.getActor()));
-    return new GlobalResult(action.getPayload(), action.getActor(),
-        ActionResult.ACTION_DONE, null, action.getRecipients());
+    return new GlobalResult(null, action.getActor(), ActionResult.ACTION_DONE,
+        null, null);
   }
 
   @Override

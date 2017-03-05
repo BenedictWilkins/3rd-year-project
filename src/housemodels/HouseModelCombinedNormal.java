@@ -5,9 +5,9 @@ import utilities.DateTime;
 import utilities.NormalDistribution;
 import graph.DataFitter;
 import housemodel.threshold.ModelModifier;
+import housemodel.threshold.ModelModifierCombinedNormal;
 
-public abstract class HouseModelCombinedNormal implements
-    HouseModel {
+public abstract class HouseModelCombinedNormal implements HouseModel {
 
   /**
    * The values supplied to these housing groups come from fitting 2 normal
@@ -41,9 +41,21 @@ public abstract class HouseModelCombinedNormal implements
       return null;
     }
   }
-  
+
   @Override
   public void modifyModel(ModelModifier modifier) {
-    // TODO Auto-generated method stub
+//  System.out.println("MODIFYING MODEL WITH: " + modifier);
+    if (ModelModifierCombinedNormal.class.isAssignableFrom(modifier.getClass())) {
+//      System.out.println("BEFORE: " + function.getNormal1().getScale() + ","
+//          + function.getNormal2().getScale());
+      this.function = ((ModelModifierCombinedNormal) modifier)
+          .modify(this.function);
+//      System.out.println("AFTER: " + function.getNormal1().getScale() + ","
+//          + function.getNormal2().getScale());
+      HouseModelFactory.getFactory().dayLengthCompute(this);
+    } else {
+      System.err.println("INVALID MODIFIER: " + modifier);
+    }
+
   }
 }

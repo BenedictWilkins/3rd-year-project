@@ -12,6 +12,7 @@ import machinelearning.agent.ForecastingModel;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.EnvironmentalAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
+import graph.SeriesPlot;
 import housemodel.combination.ReadingCombinator;
 import housemodel.threshold.ModelModifier;
 import housemodel.threshold.Threshold;
@@ -23,10 +24,15 @@ import java.util.Set;
 
 public class PredictorAgentMind extends NeighbourhoodAgentMind {
 
+  public static Boolean GUI = true;
+  private static String SERIESNAME = "Aggregated Consumption";
+
   protected ForecastingModel model;
   protected Threshold threshold;
   protected ModelModifier modifier;
   protected Boolean checkThreshold = false;
+
+  protected SeriesPlot plot;
 
   public PredictorAgentMind(
       Class<? extends NeighbourhoodAgentBrain> brainclass,
@@ -38,6 +44,9 @@ public class PredictorAgentMind extends NeighbourhoodAgentMind {
     this.model = model;
     this.threshold = threshold;
     this.modifier = modifier;
+    if (GUI) {
+      plot = new SeriesPlot(SERIESNAME, new Double[] {}, "AGGREGATED DATA");
+    }
   }
 
   @Override
@@ -64,8 +73,9 @@ public class PredictorAgentMind extends NeighbourhoodAgentMind {
         });
     for (DataFrameRowReading r : readings) {
       data.addRow(r);
+      plot.addToSeries(SERIESNAME, new Double[] { r.getReading() });
     }
-    System.out.println(Arrays.toString(data.getData().toArray()));
+    System.out.println(Arrays.toString(readings.toArray()));
   }
 
   @Override
@@ -73,7 +83,7 @@ public class PredictorAgentMind extends NeighbourhoodAgentMind {
     // decide if models should change, query the threshold
     if (data.getNumRows() > 0) {
       checkThreshold = this.threshold.checkThreshold(data);
-      System.out.println("THRESHOLD: " + checkThreshold);
+      //System.out.println("THRESHOLD: " + checkThreshold);
     }
     return null;
   }
@@ -83,7 +93,6 @@ public class PredictorAgentMind extends NeighbourhoodAgentMind {
     // forecast
     // model.trainModel(data);
     // model.getForecasts();
-
     // thresholding
     if (checkThreshold) {
       executeModelModification();

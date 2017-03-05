@@ -2,7 +2,7 @@ package utilities;
 
 import java.util.Arrays;
 
-public class CombinedNormalDistribution implements MathFunctionClass<Double> {
+public class CombinedNormalDistribution implements MathematicalFunction<Double> {
 
   private NormalDistribution normal1;
   private NormalDistribution normal2;
@@ -22,7 +22,6 @@ public class CombinedNormalDistribution implements MathFunctionClass<Double> {
     this.normal1 = normal1;
     this.normal2 = normal2;
     this.looped = looped;
-
   }
 
   @Override
@@ -79,5 +78,9 @@ public class CombinedNormalDistribution implements MathFunctionClass<Double> {
 
   public void setNormal2(NormalDistribution normal2) {
     this.normal2 = normal2;
+  }
+
+  public boolean isLooped() {
+    return this.looped;
   }
 }

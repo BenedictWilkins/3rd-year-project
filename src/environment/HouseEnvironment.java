@@ -4,16 +4,16 @@ import agent.CommunicationSensor;
 import agent.SmartMeterAgentBody;
 import agent.actions.CommunicationAction;
 import agent.actions.GlobalResult;
-import agent.actions.HouseEvent;
 import agent.actions.TakeReadingAction;
-import agent.communication.NetworkObject;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
+import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Event;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.appearances.Appearance;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
+import housemodel.threshold.ModelModifier;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,6 +28,10 @@ import java.util.Set;
  *
  */
 public class HouseEnvironment extends AbstractEnvironment {
+
+  // change this to change the chance of model modification, e.g. 0.5 = 50/50
+  // chance to modify
+  private static final Double MODIFYDECIDE = 0.1;
 
   public static final Set<Class<? extends AbstractAction>> HOUSEACTIONS;
 
@@ -66,12 +70,35 @@ public class HouseEnvironment extends AbstractEnvironment {
 
   @Override
   public void update(CustomObservable observable, Object arg) {
-    HouseEvent event = (HouseEvent) arg;
-    Result result = event.attempt(getPhysics(), getState());
-    if (!NetworkObject.class.isAssignableFrom(((GlobalResult) result)
-        .getPayload().getPayload().getClass())) {
-      notifyObservers(result, CommunicationSensor.class);
+    Result result = null;
+    if (Event.class.isAssignableFrom(arg.getClass())) {
+      Event event = (Event) arg;
+      result = event.attempt(getPhysics(), getState());
+
+    } else if (GlobalResult.class.isAssignableFrom(arg.getClass())) {
+      result = (Result) arg;
+      if (ModelModifier.class.isAssignableFrom(((GlobalResult) arg)
+          .getPayload().getPayload().getClass())) {
+        if (Math.random() < MODIFYDECIDE) {
+          modifyModel((ModelModifier) ((GlobalResult) arg).getPayload()
+              .getPayload());
+        }
+        result = null;
+      }
+    } else {
+      System.err.println(this + " RECEIVED BAD DATA IN UPDATE: " + arg);
     }
+    if (result != null) {
+      if (((GlobalResult) result).getPayload() != null) {
+        // System.out.println("PASSING: " + arg);
+        notifyObservers(result, CommunicationSensor.class);
+      }
+    }
+  }
+
+  private void modifyModel(ModelModifier modifier) {
+    HouseEnvironmentSpace space = (HouseEnvironmentSpace) this.getState();
+    space.modifyModel(modifier);
   }
 
   @Override

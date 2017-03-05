@@ -18,9 +18,9 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.EnvironmentalAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Mind;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
+import housemodel.threshold.ModelModifier;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +38,7 @@ public class SmartMeterAgentMind extends GeneralAgentMind {
 
   // the address of this agents manager
   private Address manager;
+  private List<DataFrameRow> toSend = new ArrayList<>();
 
   /**
    * Constructor.
@@ -61,31 +62,30 @@ public class SmartMeterAgentMind extends GeneralAgentMind {
     perception.getActionResults().forEach(
         (GlobalResult gr) -> recentPerception.addRow(((ReadingPayload) gr
             .getPayload()).getPayload()));
-    // System.out.println(Arrays.toString(recentPerception.getData().toArray()));
-    System.out.println("COM: "
-        + Arrays.toString(perception.communicationPerceptions.toArray()));
   }
 
   @Override
   public EnvironmentalAction decide(Object... parameters) {
+    // send data?
+    if (!recentPerception.getData().isEmpty()) {
+      toSend = new ArrayList<>();
+      toSend.addAll(recentPerception.getData());
+    }
+    recentPerception.clear();
+
     return null;
   }
 
   @Override
   public void execute(EnvironmentalAction action) {
-    List<Address> recipients = new ArrayList<>();
-    recipients.add(manager);
     notifyObservers(new TakeReadingAction(this.getBody()));
-    // System.out.println(this.getBody().getId().toString() + ":"
-    // + Arrays.toString(recentPerception.getData().toArray()));
-    if (!recentPerception.getData().isEmpty()) {
-      List<DataFrameRow> toSend = new ArrayList<>();
-      toSend.addAll(recentPerception.getData());
+    if (!toSend.isEmpty()) {
+      List<Address> recipients = new ArrayList<>();
+      recipients.add(manager);
       notifyObservers(new CommunicationAction<NetworkObject>(
           new NetworkObjectPayload(new SmartMeterReadingNetworkObject(toSend,
               (String) this.getBody().getId())), this.getBody(), recipients));
     }
-    recentPerception.clear();
 
     // try {
     // ByteArrayOutputStream bytestream = new ByteArrayOutputStream();

@@ -8,7 +8,6 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Brain;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,8 +32,8 @@ public class SmartMeterAgentBrain extends CommunicationAgentBrain {
 
   @Override
   public void update(CustomObservable observable, Object arg) {
-    // System.out.println(this + " BRAIN: RECEIVED " + arg + " FROM: " +
-    // observable);
+//    System.out.println(this + " BRAIN: RECEIVED " + arg + " FROM: "
+//        + observable);
     if (this.getBodyclass().isAssignableFrom(observable.getClass())) {
       handleBodyMessage(arg);
     } else if (this.getMindclass().isAssignableFrom(observable.getClass())) {

@@ -1,10 +1,10 @@
 package environment;
 
+import housemodel.threshold.ModelModifier;
+import housemodel.threshold.Modifiable;
 import housemodels.HouseModel;
-
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-
 import utilities.DateTime;
 
 /**
@@ -14,7 +14,7 @@ import utilities.DateTime;
  * @author Benedict Wilkins
  *
  */
-public class HouseEnvironmentSpace extends CustomObservable implements Space {
+public class HouseEnvironmentSpace extends CustomObservable implements Space, Modifiable {
 
   private HouseModel model;
 
@@ -28,7 +28,7 @@ public class HouseEnvironmentSpace extends CustomObservable implements Space {
   public HouseEnvironmentSpace(HouseModel model) {
     this.model = model;
   }
-
+  
   /**
    * Gets a reading from the {@link HouseModel}.
    * 
@@ -38,5 +38,10 @@ public class HouseEnvironmentSpace extends CustomObservable implements Space {
    */
   public Double getReading(DateTime dateTime) {
     return model.getReading(dateTime);
+  }
+
+  @Override
+  public void modifyModel(ModelModifier modifier) {
+    this.model.modifyModel(modifier);
   }
 }

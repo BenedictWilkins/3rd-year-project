@@ -1,7 +1,7 @@
 package housemodels;
 
 import utilities.DateTime;
-import utilities.MathFunctionClass;
+import utilities.MathematicalFunction;
 import housemodel.threshold.Modifiable;
 
 /**
@@ -10,7 +10,7 @@ import housemodel.threshold.Modifiable;
  * @author Benedict Wilkins
  *
  */
-public interface HouseModel extends MathFunctionClass<Double>, Modifiable {
+public interface HouseModel extends MathematicalFunction<Double>, Modifiable {
 
   /**
    * Gets a reading at a given {@link DateTime} dt.

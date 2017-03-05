@@ -104,6 +104,15 @@ public class Clock implements Runnable {
     }
   }
 
+  /**
+   * Forwards this clock by 1 tick (based on its increment and type). WARNING:
+   * this method may cause the clock to become out of sync, it ignores the real
+   * time update.
+   */
+  public void tick() {
+    this.run.run(this);
+  }
+
   protected void stop() {
     this.stop = true;
   }

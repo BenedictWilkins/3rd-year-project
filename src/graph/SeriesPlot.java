@@ -6,6 +6,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -15,6 +16,7 @@ import utilities.MathUtilities;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.Arrays;
 
 /**
  * A general plot for series data.
@@ -28,6 +30,8 @@ public class SeriesPlot extends ApplicationFrame {
 
   private XYPlot plot;
   private int index;
+  private XYSeries series;
+  private double max, min;
 
   /**
    * Plots the given data as a series.
@@ -49,14 +53,33 @@ public class SeriesPlot extends ApplicationFrame {
     this.plot = chart.getXYPlot();
     this.plot.setBackgroundPaint(Color.WHITE);
 
-    NumberAxis domain = (NumberAxis) this.plot.getDomainAxis();
-    domain.setRange(0, data.length);
-    NumberAxis range = (NumberAxis) this.plot.getRangeAxis();
-    range.setRange(MathUtilities.min(data), MathUtilities.max(data));
+    if (data.length > 0) {
+      NumberAxis domain = (NumberAxis) this.plot.getDomainAxis();
+      domain.setRange(0, data.length);
+      NumberAxis range = (NumberAxis) this.plot.getRangeAxis();
+      range.setRange((min = MathUtilities.min(data)),
+          (max = MathUtilities.max(data)));
+
+    }
 
     setContentPane(panel);
     this.setVisible(true);
     this.pack();
+  }
+
+  public void addToSeries(String series, Double[] add) {
+    int size = this.series.getItemCount();
+    for (int i = 0; i < add.length; i++) {
+      this.series.add(new XYDataItem(new Double(size + i), add[i]));
+    }
+    NumberAxis domain = (NumberAxis) this.plot.getDomainAxis();
+    domain.setRange(0, size + add.length);
+    NumberAxis range = (NumberAxis) this.plot.getRangeAxis();
+    double min = MathUtilities.min(add);
+    double max = MathUtilities.max(add);
+    this.min = (min < this.min) ? min : this.min;
+    this.max = (max > this.max) ? max : this.max;
+    range.setRange(this.min, this.max);
   }
 
   public void addSeries(String name, Double[] data, int start) {
@@ -71,6 +94,7 @@ public class SeriesPlot extends ApplicationFrame {
     for (int i = start; i < start + data.length; i++) {
       series.add(i, data[i - start]);
     }
+    this.series = series;
     return new XYSeriesCollection(series);
   }
 }

@@ -17,7 +17,7 @@ import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.ui.ApplicationFrame;
 
 import utilities.DateTime;
-import utilities.MathFunctionClass;
+import utilities.MathematicalFunction;
 import utilities.MathUtilities;
 
 import java.awt.Color;
@@ -120,11 +120,11 @@ public class DataFitter {
         HalfHourClock.YEARLENGTH);
 
     private String path;
-    private MathFunctionClass<Double> function;
+    private MathematicalFunction<Double> function;
     private Integer size;
 
     private DataGroup(String path,
-        Class<? extends MathFunctionClass<Double>> function, Integer size) {
+        Class<? extends MathematicalFunction<Double>> function, Integer size) {
       this.path = path;
       try {
         this.function = function.newInstance();

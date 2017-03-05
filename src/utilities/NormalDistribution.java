@@ -1,6 +1,6 @@
 package utilities;
 
-public class NormalDistribution implements MathFunctionClass<Double> {
+public class NormalDistribution implements MathematicalFunction<Double> {
 
   public Double getScale() {
     return scale;

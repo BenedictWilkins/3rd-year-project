@@ -5,6 +5,7 @@ import agent.NeighbourhoodAgentBody;
 import agent.actions.CommunicationAction;
 import agent.actions.GlobalResult;
 import agent.actions.TakeReadingAction;
+import agent.general.GeneralAgentBody;
 import environment.communication.module.Address;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Action;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.ActionResult;
@@ -46,7 +47,7 @@ public class NationalGridUniversePhysics implements
     houseSubEnvironments.forEach((HouseEnvironment house) -> observables.put(
         house.getAppearance().getName(), house));
     bodies.forEach((Body body) -> observables.put(body.getId().toString(),
-        (AbstractAgent) body));
+        ((GeneralAgentBody) body).getSensor(CommunicationSensor.class)));
   }
 
   @Override
@@ -76,12 +77,12 @@ public class NationalGridUniversePhysics implements
         action.getActor(), ActionResult.ACTION_DONE, null, null);
 
     recipients.forEach((Address a) -> {
-//      System.out.println("NATIONAL MESSAGE FROM: " + action.getActor()
-//          + " TO: " + a.getAdress());
-        CustomObserver obs = observables.get(a.getAdress());
+      // System.out.println("NATIONAL MESSAGE FROM: " + action.getActor()
+      // + " TO: " + a.getAdress());
         result.setRecipientsIds(Arrays.asList(a.getAdress()));
-        ((NeighbourhoodAgentBody) obs).getSensor(CommunicationSensor.class)
-            .update((CustomObservable) action.getActor(), result);
+        CustomObserver obs = observables.get(a.getAdress());
+
+        obs.update((CustomObservable) action.getActor(), result);
       });
     result.setRecipientsIds(GlobalResult.convertAddressToString(recipients));
     return result;

@@ -1,9 +1,9 @@
 package housemodel.threshold;
 
-import utilities.MathFunctionClass;
+import utilities.MathematicalFunction;
 
 /**
- * Should be implemented by any class whos {@link MathFunctionClass} is
+ * Should be implemented by any class whos {@link MathematicalFunction} is
  * modifiable.
  * 
  * @see
