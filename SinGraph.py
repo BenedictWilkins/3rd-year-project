@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+# Run to show the difference between shifting and shrinking a sinusoidal function.
+# Displayed as a graph.
+
 def plot1(x, sample):
     y1 = np.sin(2 * np.pi * 3 * x / sample) + 1
     y2 = np.sin(2 * np.pi * 3 * x / sample) * 0.5 + 1
@@ -12,8 +16,9 @@ def plot1(x, sample):
     plt.ylabel('Consumption')
     plt.show()
 
+
 def plot2(x, sample):
-    y1 = np.sin((2 * np.pi * 3 * x / sample) - (3*np.pi/4))
+    y1 = np.sin((2 * np.pi * 3 * x / sample) - (3 * np.pi / 4))
     y2 = np.sin(2 * np.pi * 3 * x / sample)
     y3 = y1 + y2 + 1
     plt.gca().set_color_cycle(['red', 'green', 'blue'])
@@ -25,9 +30,8 @@ def plot2(x, sample):
     plt.ylabel('Consumption')
     plt.show()
 
+
 sample = 500
 x = np.arange(sample)
 plot1(x, sample)
 plot2(x, sample)
-
-
