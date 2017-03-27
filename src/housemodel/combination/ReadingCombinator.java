@@ -28,6 +28,7 @@ public class ReadingCombinator implements
 
   // used to combine readings
   private Combinator<Double, Double> combinator;
+  private Integer expectedReadings = -1;
 
   /**
    * Constructor.
@@ -47,8 +48,7 @@ public class ReadingCombinator implements
     this.combinator = new AdditiveCombinator();
   }
 
-  @Override
-  public List<DataFrameRowReading> combine(
+  public Map<String, List<Double>> getDataFrameRowReadingsMap(
       Collection<SmartMeterReadingNetworkObject> readings) {
     Map<String, List<Double>> map = new HashMap<>();
     readings.forEach((SmartMeterReadingNetworkObject so) -> {
@@ -63,11 +63,51 @@ public class ReadingCombinator implements
         }
       });
     });
+    return map;
+  }
+
+  @Override
+  public List<DataFrameRowReading> combine(
+      Collection<SmartMeterReadingNetworkObject> readings) {
+    Map<String, List<Double>> map = getDataFrameRowReadingsMap(readings);
 
     List<DataFrameRowReading> result = new ArrayList<>();
+
     map.forEach((String dateTime, Collection<Double> values) -> {
+      if (checkReadingsSize(values)) {
+        insertAvg(values);
+      }
       result.add(new DataFrameRowReading(dateTime, combinator.combine(values)));
     });
     return result;
+  }
+
+  private boolean checkReadingsSize(Collection<Double> readings) {
+    return readings.size() < expectedReadings && expectedReadings > 0;
+  }
+
+  private void insertAvg(Collection<Double> readings) {
+    int missing = expectedReadings - readings.size();
+    System.out.println("MISSING READINGS: " + missing);
+    if (readings.size() > 0) {
+      double avg = 0;
+      for (Double d : readings) {
+        avg += d;
+      }
+      avg = avg / readings.size();
+      for (int i = 0; i < missing; i++) {
+        readings.add(avg);
+      }
+    } else {
+      System.err.println("NO READINGS RECEIVED?");
+    }
+  }
+
+  public Integer getExpectedReadings() {
+    return expectedReadings;
+  }
+
+  public void setExpectedReadings(Integer expectedReadings) {
+    this.expectedReadings = expectedReadings;
   }
 }

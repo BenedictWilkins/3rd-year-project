@@ -1,6 +1,6 @@
 package utilities;
 
-import utilities.autowarn.AutoWarn;
+import java.util.List;
 
 /**
  * A utility class containing useful math functions.
@@ -9,6 +9,23 @@ import utilities.autowarn.AutoWarn;
  *
  */
 public class MathUtilities {
+
+  /**
+   * Computers the MSE given a set of test values and predicted values
+   * 
+   * @param test
+   *          values
+   * @param predicted
+   *          values
+   * @return MSe
+   */
+  public static Double meanSquaredError(List<Double> test,
+      List<Double> predicted) {
+    Double[] sub = MathUtilities.subtract(
+        predicted.toArray(new Double[predicted.size()]),
+        test.toArray(new Double[test.size()]));
+    return MathUtilities.sum(MathUtilities.product(sub, sub)) / test.size();
+  }
 
   /**
    * Computes the element-wise product of x and y.

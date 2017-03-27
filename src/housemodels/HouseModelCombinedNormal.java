@@ -1,9 +1,9 @@
 package housemodels;
 
+import demo.DataFitter;
 import utilities.CombinedNormalDistribution;
 import utilities.DateTime;
 import utilities.NormalDistribution;
-import graph.DataFitter;
 import housemodel.threshold.ModelModifier;
 import housemodel.threshold.ModelModifierCombinedNormal;
 

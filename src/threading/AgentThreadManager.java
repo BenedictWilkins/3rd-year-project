@@ -12,6 +12,7 @@ import java.util.Set;
  *
  */
 public class AgentThreadManager {
+
   protected final ThreadStateDecide threadStateDecide = new ThreadStateDecide();
   protected final ThreadStateExecute threadStateExecute = new ThreadStateExecute();
   protected final ThreadStatePerceive threadStatePerceive = new ThreadStatePerceive();

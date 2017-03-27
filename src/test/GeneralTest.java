@@ -1,17 +1,19 @@
 package test;
 
+import utilities.MathUtilities;
 import graph.SeriesPlot;
-import agent.general.AgentStructure;
-import agent.general.AgentType;
 
 public class GeneralTest {
 
   public static void main(String[] args) throws InterruptedException {
-    SeriesPlot plot = new SeriesPlot("test", new Double[] {}, "TEST");
-    while (true) {
-      Thread.sleep(200);
-      plot.addToSeries("test", new Double[] { Math.random() });
+    SeriesPlot plot = new SeriesPlot("T1", MathUtilities.generateSequence(1.0,
+        10.0, 10), "TEST SERIES");
+    plot.addSeries("T2", MathUtilities.generateSequence(2.0, 5.0, 10), 5);
 
+    for (int i = 0; i < 10; i++) {
+      plot.addToSeries("T1", new Double[] { Math.random() * 10 });
+      Thread.sleep(200);
     }
+
   }
 }

@@ -1,0 +1,14 @@
+Agents: Predictor { 
+		Group {
+			Comfortable,
+			Affluent,
+			Adversity
+		},
+		Group {
+			Comfortable
+		}
+	}, Predictor {
+		Group {AcornU}
+	}
+Error: 0.0
+Timegap: 50

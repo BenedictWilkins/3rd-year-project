@@ -71,6 +71,12 @@ public class DataFrameMetaData implements Serializable {
     }
   }
 
+  /**
+   * Getter for the number of columns in the {@link DataFrame} represented by
+   * this {@link DataFrameMetaData}.
+   * 
+   * @return the number of columns
+   */
   public int getColumnsSize() {
     return headers.length;
   }

@@ -11,6 +11,8 @@ public interface ForecastingModel {
 
   public void trainModel(DataFrame data);
 
-  public DataFrame getForecasts();
+  public DataFrame getForecasts(int numsteps);
+  
+  public Object getModel();
   
 }

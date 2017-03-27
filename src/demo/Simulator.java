@@ -13,9 +13,10 @@ import agent.general.GeneralAgentBody;
 import environment.HouseEnvironment;
 import environment.communication.module.Address;
 import environment.communication.module.SimulationAddress;
-import machinelearning.agent.DataFrame;
 import machinelearning.agent.DataFrameMetaTimeValue;
 import machinelearning.agent.ForecastingModel;
+import machinelearning.agent.MultilayerPerceptronForecastingModel;
+import machinelearning.agent.SMOregForecastingModel;
 import threading.AgentRunnable;
 import threading.SimulationAgentThreadManager;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
@@ -54,10 +55,7 @@ public class Simulator {
   private static final Boolean IPCommunication = false;
 
   // The time between cycles (every half hour) in ms
-  private static final Integer TIMEGAP = 100;
-
-  private final SimulationAddress PREDICTORADDRESS = new SimulationAddress(
-      "PREDICTOR");
+  private Integer timegap = 0;
 
   private static final Map<Class<?>, String> RUNGROUPS;
   private static final List<String> ORDEREDRUNGROUPS;
@@ -75,39 +73,34 @@ public class Simulator {
     ORDEREDRUNGROUPS = Collections.unmodifiableList(orderedrungroups);
   }
 
-  private final House DEFAULTHOUSE = HouseFactory.getFactory()
-      .createAcornUHouse(0.0);
-  private final ModelModifier DEFAULTMODELMODIFIER = new ModelModifierMagnitudeCombinedNormal(
+  private static final House DEFAULTHOUSE = HouseFactory.getFactory()
+      .createAcornUHouse(0.2);
+  private static final ModelModifier DEFAULTMODELMODIFIER = new ModelModifierMagnitudeCombinedNormal(
       0.99);
-  private final Threshold DEFAULTTHREASHOLD = new MaximumThreshold(0.0,
+  private static final Threshold DEFAULTTHREASHOLD = new MaximumThreshold(0.0,
       DataFrameMetaTimeValue.getValueColumnIndex());
-  private final Combinator<Double, Double> DEFAULTCOMBINATOR = new AdditiveCombinator();
-  private final ForecastingModel DEFAULTFORECASTINGMODEL = new ForecastingModel() {
-    @Override
-    public void trainModel(DataFrame data) {
-      // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public DataFrame getForecasts() {
-      // TODO Auto-generated method stub
-      return null;
-    }
-  };
+  private static final Combinator<Double, Double> DEFAULTCOMBINATOR = new AdditiveCombinator();
+  private static final ForecastingModel PERCEPTRONNETWORK = new MultilayerPerceptronForecastingModel(
+      0.5, null, 5000, null);
+  private static final ForecastingModel SMOREG = new SMOregForecastingModel(
+      null, null, null);
 
   private final SimulationAgentThreadManager threadManager;
 
   private Set<Body> highAgents = new HashSet<>();
   private List<HouseEnvironment> houseEnvironments = new ArrayList<>();
 
-  public Simulator(AgentStructure structure) {
+  public Simulator(AgentStructure[] structure, Integer timegap) {
     AgentFactory.getInstance(); // this line is required!
+    this.timegap = timegap;
     // create thread manager
     threadManager = new SimulationAgentThreadManager(ORDEREDRUNGROUPS,
         HalfHourClock.getInstance());
-
-    recurseStructure(structure, PREDICTORADDRESS);
+    for (AgentStructure s : structure) {
+      recurseStructure(s, getNewAddress());
+    }
+    houseEnvironments.forEach((HouseEnvironment house) -> house
+        .setModifychance(0.0));
     EnvironmentFactory.getInstance().createUniverse(houseEnvironments,
         highAgents);
     startSimulation();
@@ -115,24 +108,23 @@ public class Simulator {
 
   private SimulationAddress recurseStructure(AgentStructure structure,
       Address manager) {
-    SimulationAddress id = new SimulationAddress(IDFactory.getInstance()
-        .createID());
+    SimulationAddress id = getNewAddress();
     Set<Address> subaddresses = new HashSet<>();
     for (AgentStructure as : structure.getSubordinates()) {
       subaddresses.add(recurseStructure(as, id));
     }
-    System.out.println(structure.getType() + ":" + id.getAdress());
+    System.out.println(structure.getType());
     if (structure.getType().equals(AgentType.SMARTMETER)) {
       houseEnvironments.add(EnvironmentFactory.getInstance()
-          .createHouseEnvironment(DEFAULTHOUSE,
+          .createHouseEnvironment(structure.getHouse(),
               createSmartMeterAgentFromStruct(structure, id, manager)));
     } else if (structure.getType().equals(AgentType.NEIGHBOURHOOD)) {
       highAgents.add(createNeighbourhoodAgentFromStruct(structure, id, manager,
           subaddresses, DEFAULTCOMBINATOR));
     } else if (structure.getType().equals(AgentType.PREDICTOR)) {
       highAgents.add(createPredictorAgentFromStruct(structure, id, manager,
-          subaddresses, DEFAULTCOMBINATOR, DEFAULTFORECASTINGMODEL,
-          DEFAULTTHREASHOLD, DEFAULTMODELMODIFIER));
+          subaddresses, DEFAULTCOMBINATOR, SMOREG, DEFAULTTHREASHOLD,
+          DEFAULTMODELMODIFIER));
     } else {
       System.err.println("UNSUPPORTED AGENT TYPE: " + structure.getType());
       return null;
@@ -184,11 +176,11 @@ public class Simulator {
           while (true) {
             String line = reader.readLine();
             char[] chars = line.toLowerCase().toCharArray();
-            if(chars[0] == 'p') {
-              //pause the simulation
+            if (chars[0] == 'p') {
+              // pause the simulation
               threadManager.pause();
-            } else if(chars[0] == 's') {
-              //restart the simulation
+            } else if (chars[0] == 's') {
+              // restart the simulation
               threadManager.unpause();
             }
           }
@@ -199,6 +191,10 @@ public class Simulator {
       }
     });
     inputThread.start();
-    threadManager.start(TIMEGAP);
+    threadManager.start(timegap);
+  }
+
+  private SimulationAddress getNewAddress() {
+    return new SimulationAddress(IDFactory.getInstance().createID());
   }
 }

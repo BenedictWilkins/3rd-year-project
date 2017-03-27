@@ -16,4 +16,13 @@ public abstract class ModelModifierShift implements ModelModifier {
 
   private static final long serialVersionUID = 1L;
 
+  private Double shift;
+
+  public ModelModifierShift(Double shift) {
+    this.shift = shift;
+  }
+
+  public Double getShift() {
+    return shift;
+  }
 }

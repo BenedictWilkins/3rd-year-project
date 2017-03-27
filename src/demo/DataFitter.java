@@ -1,5 +1,7 @@
-package graph;
+package demo;
 
+import graph.DataReader;
+import graph.GeneralXYDataset;
 import housemodels.HalfHourClock;
 import housemodels.HouseModelCombinedNormalAcornU;
 import housemodels.HouseModelCombinedNormalAdversity;
@@ -41,10 +43,10 @@ public class DataFitter {
   public static void main(String[] args) {
     DataFitter df = new DataFitter();
     df.fit(DataGroup.SEASON);
-    // df.fit(DataGroup.ACORNU);
-    // df.fit(DataGroup.ADVERSITY);
-    // df.fit(DataGroup.AFFLUENT);
-    // df.fit(DataGroup.COMFORTABLE);
+    df.fit(DataGroup.ACORNU);
+    df.fit(DataGroup.ADVERSITY);
+    df.fit(DataGroup.AFFLUENT);
+    df.fit(DataGroup.COMFORTABLE);
   }
 
   private XYPlot plot;
@@ -116,8 +118,7 @@ public class DataFitter {
         "./res/gmAdversity.txt", HouseModelCombinedNormalAdversity.class,
         HalfHourClock.DAYLENGTH), ACORNU("./res/gmAcorn-u.txt",
         HouseModelCombinedNormalAcornU.class, HalfHourClock.DAYLENGTH), SEASON(
-        "./res/gmSeasonality.txt", SeasonModel.class,
-        HalfHourClock.YEARLENGTH);
+        "./res/gmSeasonality.txt", SeasonModel.class, HalfHourClock.YEARLENGTH);
 
     private String path;
     private MathematicalFunction<Double> function;

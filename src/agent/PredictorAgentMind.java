@@ -6,7 +6,8 @@ import agent.communication.NetworkObject;
 import agent.communication.NetworkObjectPayload;
 import agent.communication.SmartMeterReadingNetworkObject;
 import environment.communication.module.Address;
-import machinelearning.agent.DataFrameRow;
+import machinelearning.agent.DataFrame;
+import machinelearning.agent.DataFrameMetaTimeValue;
 import machinelearning.agent.DataFrameRowReading;
 import machinelearning.agent.ForecastingModel;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
@@ -18,21 +19,29 @@ import housemodel.threshold.ModelModifier;
 import housemodel.threshold.Threshold;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PredictorAgentMind extends NeighbourhoodAgentMind {
 
   public static Boolean GUI = true;
-  private static String SERIESNAME = "Aggregated Consumption";
+  private static final String CONSUMPTIONNAME = "Aggregated Consumption";
+  private static final String PREDICTIONNAME = "Prediction";
+  private static final int NUMSTEPS = 10 * 48;
+  private int predcount = 0;
 
   protected ForecastingModel model;
   protected Threshold threshold;
   protected ModelModifier modifier;
   protected Boolean checkThreshold = false;
 
+  protected int predictedFrom = 0;
+  protected int cycleCounter = 0;
+  protected final int PREDICT = 20 * 48;
+
   protected SeriesPlot plot;
+  protected DataFrame forecasts;
 
   public PredictorAgentMind(
       Class<? extends NeighbourhoodAgentBrain> brainclass,
@@ -45,8 +54,9 @@ public class PredictorAgentMind extends NeighbourhoodAgentMind {
     this.threshold = threshold;
     this.modifier = modifier;
     if (GUI) {
-      plot = new SeriesPlot(SERIESNAME, new Double[] {}, "AGGREGATED DATA");
+      plot = new SeriesPlot(CONSUMPTIONNAME, new Double[] {}, "AGGREGATED DATA");
     }
+    this.forecasts = new DataFrame(DataFrameMetaTimeValue.getInstance());
   }
 
   @Override
@@ -56,26 +66,30 @@ public class PredictorAgentMind extends NeighbourhoodAgentMind {
 
   @Override
   protected void perceiveContinue(PerceptionWrapper perception) {
-    Set<DataFrameRowReading> readings = new HashSet<>();
+    List<SmartMeterReadingNetworkObject> readings = new ArrayList<>();
     Set<NetworkObject> other = new HashSet<>();
     this.recentPerception = perception.getMessages();
-    perception.getMessages().forEach(
-        (NetworkObject no) -> {
+    this.recentPerception
+        .forEach((NetworkObject no) -> {
           if (SmartMeterReadingNetworkObject.class.isAssignableFrom(no
               .getClass())) {
-            ((SmartMeterReadingNetworkObject) no).getData().forEach(
-                (DataFrameRow row) -> {
-                  readings.add((DataFrameRowReading) row);
-                });
+            readings.add((SmartMeterReadingNetworkObject) no);
           } else {
             other.add(no);
           }
         });
-    for (DataFrameRowReading r : readings) {
+    List<DataFrameRowReading> combinedReadings = combinator.combine(readings);
+    for (DataFrameRowReading r : combinedReadings) {
       data.addRow(r);
-      plot.addToSeries(SERIESNAME, new Double[] { r.getReading() });
+      if (GUI) {
+        plot.addToSeries(CONSUMPTIONNAME, new Double[] { r.getReading() });
+      }
     }
-    System.out.println(Arrays.toString(readings.toArray()));
+    if (GUI) {
+      if (data.getNumRows() > 1) {
+        plot.updateAxis(CONSUMPTIONNAME);
+      }
+    }
   }
 
   @Override
@@ -83,19 +97,32 @@ public class PredictorAgentMind extends NeighbourhoodAgentMind {
     // decide if models should change, query the threshold
     if (data.getNumRows() > 0) {
       checkThreshold = this.threshold.checkThreshold(data);
-      //System.out.println("THRESHOLD: " + checkThreshold);
+      // System.out.println("THRESHOLD: " + checkThreshold);
     }
     return null;
   }
 
   @Override
   public void execute(EnvironmentalAction action) {
-    // forecast
-    // model.trainModel(data);
-    // model.getForecasts();
-    // thresholding
+    cycleCounter++;
+    if (cycleCounter >= PREDICT) {
+      predictedFrom = predictedFrom + cycleCounter;
+      predict();
+      cycleCounter = 0;
+    }
     if (checkThreshold) {
       executeModelModification();
+    }
+  }
+
+  private void predict() {
+    // TODO make this more stream lined - real time training
+    model.trainModel(data);
+    DataFrame newForecasts = model.getForecasts(NUMSTEPS);
+    forecasts.appendDataFrame(newForecasts);
+    if (GUI) {
+      plot.addSeries(PREDICTIONNAME, newForecasts.getColumn(1, Double.class)
+          .toArray(new Double[] {}), predictedFrom);
     }
   }
 

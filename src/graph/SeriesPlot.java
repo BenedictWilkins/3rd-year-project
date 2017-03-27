@@ -16,7 +16,8 @@ import utilities.MathUtilities;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A general plot for series data.
@@ -30,8 +31,10 @@ public class SeriesPlot extends ApplicationFrame {
 
   private XYPlot plot;
   private int index;
-  private XYSeries series;
+  private Map<String, XYSeries> series;
   private double max, min;
+  private XYSeries baseSeries = null;
+  private static final int FRAMEWIDTH = Integer.MAX_VALUE;
 
   /**
    * Plots the given data as a series.
@@ -45,6 +48,7 @@ public class SeriesPlot extends ApplicationFrame {
    */
   public SeriesPlot(String name, Double[] data, String title) {
     super(title);
+    series = new HashMap<>();
     final XYDataset dataset = createSeries(name, data, 0);
     final JFreeChart chart = ChartFactory.createXYLineChart(title, "Time",
         "Value", dataset);
@@ -53,40 +57,48 @@ public class SeriesPlot extends ApplicationFrame {
     this.plot = chart.getXYPlot();
     this.plot.setBackgroundPaint(Color.WHITE);
 
+    NumberAxis range = (NumberAxis) this.plot.getRangeAxis();
     if (data.length > 0) {
       NumberAxis domain = (NumberAxis) this.plot.getDomainAxis();
       domain.setRange(0, data.length);
-      NumberAxis range = (NumberAxis) this.plot.getRangeAxis();
       range.setRange((min = MathUtilities.min(data)),
           (max = MathUtilities.max(data)));
-
     }
-
+    baseSeries = this.series.get(name);
     setContentPane(panel);
     this.setVisible(true);
     this.pack();
   }
 
-  public void addToSeries(String series, Double[] add) {
-    int size = this.series.getItemCount();
+  public void setAddOffset(int offset) {
+
+  }
+
+  public void addToSeries(String name, Double[] add) {
+    XYSeries series = this.series.get(name);
+    int size = series.getItemCount();
     for (int i = 0; i < add.length; i++) {
-      this.series.add(new XYDataItem(new Double(size + i), add[i]));
+      series.add(new XYDataItem(new Double(size + i), add[i]));
     }
-    NumberAxis domain = (NumberAxis) this.plot.getDomainAxis();
-    domain.setRange(0, size + add.length);
+  }
+
+  public void updateAxis(String seriesName) {
+    XYSeries series = this.series.get(seriesName);
     NumberAxis range = (NumberAxis) this.plot.getRangeAxis();
-    double min = MathUtilities.min(add);
-    double max = MathUtilities.max(add);
-    this.min = (min < this.min) ? min : this.min;
-    this.max = (max > this.max) ? max : this.max;
-    range.setRange(this.min, this.max);
+    range.setRange(series.getMinY(), series.getMaxY());
+    NumberAxis domain = (NumberAxis) this.plot.getDomainAxis();
+    domain.setRange(Math.max(0, series.getItemCount() - FRAMEWIDTH),
+        series.getItemCount());
   }
 
   public void addSeries(String name, Double[] data, int start) {
     this.index++;
     XYDataset newseries = createSeries(name, data, start);
     this.plot.setDataset(this.index, newseries);
-    this.plot.setRenderer(this.index, new StandardXYItemRenderer());
+    StandardXYItemRenderer render = new StandardXYItemRenderer();
+    render.setSeriesPaint(0, Color.BLUE);
+    this.plot.setRenderer(this.index, render);
+
   }
 
   public XYDataset createSeries(String name, Double[] data, int start) {
@@ -94,7 +106,8 @@ public class SeriesPlot extends ApplicationFrame {
     for (int i = start; i < start + data.length; i++) {
       series.add(i, data[i - start]);
     }
-    this.series = series;
+    this.series.put(name, series);
+
     return new XYSeriesCollection(series);
   }
 }

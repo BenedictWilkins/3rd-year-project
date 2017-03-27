@@ -31,7 +31,7 @@ public class HouseEnvironment extends AbstractEnvironment {
 
   // change this to change the chance of model modification, e.g. 0.5 = 50/50
   // chance to modify
-  private static final Double MODIFYDECIDE = 0.1;
+  private Double modifychance = 0.5; // default
 
   public static final Set<Class<? extends AbstractAction>> HOUSEACTIONS;
 
@@ -79,7 +79,7 @@ public class HouseEnvironment extends AbstractEnvironment {
       result = (Result) arg;
       if (ModelModifier.class.isAssignableFrom(((GlobalResult) arg)
           .getPayload().getPayload().getClass())) {
-        if (Math.random() < MODIFYDECIDE) {
+        if (Math.random() < modifychance) {
           modifyModel((ModelModifier) ((GlobalResult) arg).getPayload()
               .getPayload());
         }
@@ -105,4 +105,13 @@ public class HouseEnvironment extends AbstractEnvironment {
   public HouseEnvironmentAppearance getAppearance() {
     return (HouseEnvironmentAppearance) super.getAppearance();
   }
+
+  public Double getModifychance() {
+    return modifychance;
+  }
+
+  public void setModifychance(Double modifychance) {
+    this.modifychance = modifychance;
+  }
+
 }

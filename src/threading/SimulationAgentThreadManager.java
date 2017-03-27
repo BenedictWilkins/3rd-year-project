@@ -1,8 +1,7 @@
 package threading;
 
 import utilities.Clock;
-import utilities.Pair;
-import housemodels.HalfHourClock;
+import utilities.GeneralUtilities;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,8 +9,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class SimulationAgentThreadManager extends AgentThreadManager {
+  
+  //private static Double RUNLENGTH = 50.0;
+  private static final String LOGPATH = "logs/ThreadLog"
+      + System.currentTimeMillis();
+  private static boolean debug = false;
+  private static Logger logger;
+  static {
+    if(debug) {
+      logger = GeneralUtilities.getLogger(LOGPATH,
+          "THREADLOGGER");
+    }
+  }
+
 
   private Map<String, Set<AgentRunnable>> runnablesMap;
   private List<String> executionGroups;
@@ -32,13 +45,19 @@ public class SimulationAgentThreadManager extends AgentThreadManager {
   public synchronized void start(long cycleTime) {
     super.simulationStarted = true;
     System.out.println(Arrays.toString(runnables.toArray()));
-    while (this.simulationStarted) {
+    Long time = 0L;
+    while (this.simulationStarted ) {
+      if (debug) {
+        time = System.nanoTime();
+      }
       for (String s : executionGroups) {
-        // System.out.println(System.lineSeparator() + "RUN GROUP: " + s);
         super.runnables = runnablesMap.get(s);
         doPerceive();
         doDecide();
         doExecute();
+      }
+      if (debug) {
+        logger.info(String.valueOf((System.nanoTime() - time)));
       }
       try {
         Thread.sleep(cycleTime);
@@ -47,14 +66,18 @@ public class SimulationAgentThreadManager extends AgentThreadManager {
       }
       // update clock
       clock.tick();
-      if (paused) {
-        try {
-          System.out.println("PAUSED");
-          this.wait();
+      checkPause();
 
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
+    }
+  }
+
+  private synchronized void checkPause() {
+    if (paused) {
+      try {
+        System.out.println("PAUSED");
+        this.wait();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
       }
     }
   }

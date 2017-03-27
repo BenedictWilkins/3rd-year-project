@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * Used for loading data files of different formats into Weka: see:
- * {@link Instances}. This should be done using the
+ * {@link Instances}. 
  * 
  * @author Benedict Wilkins
  *

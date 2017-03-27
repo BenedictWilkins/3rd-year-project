@@ -15,10 +15,10 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.EnvironmentalAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 import housemodel.combination.ReadingCombinator;
-
 import housemodel.threshold.ModelModifier;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +45,7 @@ public class NeighbourhoodAgentMind extends GeneralAgentMind {
     this.toForward = new HashSet<>();
     this.manager = manager;
     this.subordinates = subordinates;
+    this.combinator.setExpectedReadings(subordinates.size());
   }
 
   @Override
@@ -61,7 +62,7 @@ public class NeighbourhoodAgentMind extends GeneralAgentMind {
   public EnvironmentalAction decide(Object... parameters) {
     // combine the most recent perceptions and add them to the store, also
     // decide
-    Set<SmartMeterReadingNetworkObject> readings = new HashSet<>();
+    List<SmartMeterReadingNetworkObject> readings = new ArrayList<>();
     Set<NetworkObject> other = new HashSet<>();
     this.recentPerception
         .forEach((NetworkObject no) -> {
@@ -72,6 +73,8 @@ public class NeighbourhoodAgentMind extends GeneralAgentMind {
             other.add(no);
           }
         });
+    // System.out.println("READINGS: " + Arrays.toString(readings.toArray()));
+
     // combine the readings
     List<DataFrameRowReading> combinedReadings = combinator.combine(readings);
     // System.out.println(Arrays.toString(combinedReadings.toArray()));

@@ -55,7 +55,7 @@ public class CombinedNormalDistribution implements MathematicalFunction<Double> 
     }
     Double[] result = Arrays.copyOfRange(com, half, args.length - half);
     for (int j = 0; j < result.length / 2; j++) {
-      result[j] = result[j] + com[half * 3 + j - 1];
+      result[j] = result[j] + com[half * 3 + j];
       result[half + j] = result[half + j] + com[j];
     }
     for (int j = 0; j < result.length; j++) {

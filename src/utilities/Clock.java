@@ -117,27 +117,27 @@ public class Clock implements Runnable {
     this.stop = true;
   }
 
-  private void incrementSecond() {
+  protected void incrementSecond() {
     currentDateTime.setSecond(currentDateTime.getSecond() + increment);
   }
 
-  private void incrementMinute() {
+  protected void incrementMinute() {
     currentDateTime.setMinute(currentDateTime.getMinute() + increment);
   }
 
-  private void incrementHour() {
+  protected void incrementHour() {
     currentDateTime.setHour(currentDateTime.getHour() + increment);
   }
 
-  private void incrementDay() {
+  protected void incrementDay() {
     currentDateTime.setHour(currentDateTime.getDay() + increment);
   }
 
-  private void incrementMonth() {
+  protected void incrementMonth() {
     currentDateTime.setHour(currentDateTime.getMonth() + increment);
   }
 
-  private void incrementYear() {
+  protected void incrementYear() {
     currentDateTime.setHour(currentDateTime.getYear() + increment);
   }
 

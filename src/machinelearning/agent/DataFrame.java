@@ -59,6 +59,10 @@ public class DataFrame implements Serializable {
     return builder.toString();
   }
 
+  public boolean isEmpty() {
+    return this.getNumRows() == 0;
+  }
+
   /**
    * Adds a new row to this {@link DataFrame}. A row may only be added if it
    * matches this {@link DataFrame}s structure i.e. the number of columns and
@@ -73,6 +77,16 @@ public class DataFrame implements Serializable {
   public void addRow(DataFrameRow row) throws IllegalArgumentException {
     checkRowSize(row);
     checkRowType(row);
+    data.add(row);
+  }
+
+  public void appendDataFrame(DataFrame frame) {
+    if (frame.getMetaData().equals(this.getMetaData())) {
+      frame.data.forEach((DataFrameRow r) -> addRowUnsafe(r));
+    }
+  }
+
+  private void addRowUnsafe(DataFrameRow row) {
     data.add(row);
   }
 
@@ -125,7 +139,8 @@ public class DataFrame implements Serializable {
   }
 
   /**
-   * Gets an entire row of this {@link DataFrame} as a {@link AbstractDataFrameRow}.
+   * Gets an entire row of this {@link DataFrame} as a
+   * {@link AbstractDataFrameRow}.
    * 
    * @param index
    *          of the row
@@ -157,8 +172,9 @@ public class DataFrame implements Serializable {
   }
 
   /**
-   * Checks the type of each {@link Object} in the given {@link AbstractDataFrameRow}
-   * given against the structure of this {@link DataFrame}.
+   * Checks the type of each {@link Object} in the given
+   * {@link AbstractDataFrameRow} given against the structure of this
+   * {@link DataFrame}.
    * 
    * @param row
    *          to check
@@ -176,8 +192,8 @@ public class DataFrame implements Serializable {
   }
 
   /**
-   * Checks the size of the {@link AbstractDataFrameRow} given against the structure of
-   * this {@link DataFrame}.
+   * Checks the size of the {@link AbstractDataFrameRow} given against the
+   * structure of this {@link DataFrame}.
    * 
    * @param row
    *          to check
@@ -199,5 +215,14 @@ public class DataFrame implements Serializable {
    */
   public void clear() {
     data.clear();
+  }
+
+  /**
+   * Getter for the meta data of this {@link DataFrame}.
+   * 
+   * @return the meta data
+   */
+  public DataFrameMetaData getMetaData() {
+    return this.meta;
   }
 }

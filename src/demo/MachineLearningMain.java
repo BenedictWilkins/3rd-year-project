@@ -23,16 +23,16 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import javax.annotation.Generated;
-
 public class MachineLearningMain {
 
   private static final int TRAINSIZE = 100;
   private static final int TESTSIZE = 5;
+  private static final String DATAPATH =  "RandomHouses.csv";
 
   private static Logger logger = Logger.getLogger("AlgoLogger");
   private static final String LOGPATH = "logs/algotest";
   private static FileHandler fileHandler;
+  
 
   private static Map<Class<? extends Classifier>, InfoLogFormat> LOGMAP;
 
@@ -81,7 +81,7 @@ public class MachineLearningMain {
     }
 
     // test different algorithms/params
-    metaLearn("RandomHouses.csv");
+    metaLearn(DATAPATH);
     for (Handler h : logger.getHandlers()) {
       h.close();
     }
@@ -108,7 +108,7 @@ public class MachineLearningMain {
 
     LearningExperimenter best = null;
     for (LearningTestCaseMultiLayerPerceptron t : tests) {
-     // t.getClassifier().setGUI(true);
+      t.getClassifier().setGUI(true);
       System.out.println("HIDDEN LAYERS:" + t.getClassifier().getHiddenLayers());
       train = new Instances(instances, 0, 48 * TRAINSIZE);
       test = new Instances(instances, 48 * TRAINSIZE, 48 * TESTSIZE);
@@ -200,7 +200,7 @@ public class MachineLearningMain {
     private WekaForecaster constructForecaster(Classifier classifier,
         Instances instances) throws Exception {
       WekaForecaster forecaster = new WekaForecaster();
-      forecaster.setFieldsToForecast(" Usage");
+      forecaster.setFieldsToForecast("EnergyUsage");
       forecaster.setBaseForecaster(classifier);
       forecaster.buildForecaster(instances, System.out);
       System.out.println("FORECASTER BUILT");

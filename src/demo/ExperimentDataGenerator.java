@@ -27,6 +27,7 @@ public class ExperimentDataGenerator {
   private static final Map<Integer, Method> CREATEMETHODS;
   private static final int PLOTRANGE = 100;
   private static final int NUMRANDOMHOUSES = 30;
+  private static final String FILEPATH = "RandomHouses.csv";
 
   static {
     Map<Integer, Method> methodMap = new HashMap<>();
@@ -63,7 +64,7 @@ public class ExperimentDataGenerator {
     // (List<House>) randomHouses, start, end, new AdditiveCombine());
     // exp.plot(data.getO2().toArray(new Double[] {}), (List<House>)
     // randomHouses);
-    exp.generateDataToFile(new DataWriter("RandomHouses.csv",
+    exp.generateDataToFile(new DataWriter(FILEPATH,
         new FileFormatCSV(2)), (List<House>) randomHouses, start, end,
         new AdditiveCombinator());
   }

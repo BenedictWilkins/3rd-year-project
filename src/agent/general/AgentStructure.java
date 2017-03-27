@@ -1,5 +1,7 @@
 package agent.general;
 
+import housemodels.House;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -7,9 +9,21 @@ import java.util.List;
 public class AgentStructure {
 
   private AgentType type;
+  private House house = null;
   private final List<AgentStructure> subordinates;
 
+  public AgentStructure(House house, AgentStructure... subordinates) {
+    this.subordinates = Collections.unmodifiableList(Arrays
+        .asList(subordinates));
+    this.type = AgentType.SMARTMETER;
+    this.house = house;
+  }
+
   public AgentStructure(AgentType type, AgentStructure... subordinates) {
+    if (AgentType.SMARTMETER.equals(type)) {
+      throw new IllegalArgumentException(AgentType.SMARTMETER
+          + " requires a house. Use alternative constructor.");
+    }
     this.subordinates = Collections.unmodifiableList(Arrays
         .asList(subordinates));
     this.type = type;
@@ -31,5 +45,13 @@ public class AgentStructure {
 
   public List<AgentStructure> getSubordinates() {
     return subordinates;
+  }
+
+  public House getHouse() {
+    return house;
+  }
+
+  public void setHouse(House house) {
+    this.house = house;
   }
 }

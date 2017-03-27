@@ -23,7 +23,7 @@ public class HalfHourClock extends Clock {
   private static Integer realTimeDelay = 100;
 
   private static HalfHourClock instance = new HalfHourClock(new DateTime(
-      "2016-01-01 00:00:00"));
+      "2013-01-01 00:00:00"));
 
   /**
    * Constructor.
@@ -40,6 +40,16 @@ public class HalfHourClock extends Clock {
     int hour = dateTime.getHour();
     int min = dateTime.getMinute();
     return (min >= 30) ? (hour * 2) + 1 : hour * 2;
+  }
+
+  public static DateTime next(DateTime dateTime) {
+    DateTime result = new DateTime(dateTime.toString());
+    result.setMinute(dateTime.getMinute() + TIMEINCREMENT);
+    return result;
+  }
+
+  public static void nextInPlace(DateTime dateTime) {
+    dateTime.setMinute(dateTime.getMinute() + TIMEINCREMENT);
   }
 
   public DateTime getDateTime() {

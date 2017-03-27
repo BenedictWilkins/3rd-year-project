@@ -30,7 +30,7 @@ public abstract class CommunicationAgentBrain extends GeneralAgentBrain {
     return this.comPerceptions;
   }
 
-  protected void addCommunicationPerception(NetworkObjectPayload arg) {
+  protected synchronized void addCommunicationPerception(NetworkObjectPayload arg) {
     // an agent should receive NetworkObjectPayloads from the body
     comPerceptions.add(((NetworkObjectPayload) arg).getPayload());
   }
