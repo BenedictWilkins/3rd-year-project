@@ -7,7 +7,7 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 
 /**
- * An {@link Sensor} that is to be used for IP communication. To receive
+ * A {@link Sensor} that is to be used for IP communication. To receive
  * messages from an {@link IpCommunicationActuator} of a different agent. <br/>
  * Extends: {@link AbstractSensor}
  * 

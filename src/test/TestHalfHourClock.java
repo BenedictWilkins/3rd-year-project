@@ -2,10 +2,15 @@ package test;
 
 import static org.junit.Assert.assertFalse;
 
+import housemodels.HalfHourClock;
 import org.junit.Test;
 
-import housemodels.HalfHourClock;
-
+/**
+ * JUnit test case for the {@link DataHalfHourClockFrame} class.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class TestHalfHourClock {
 
   @Test
@@ -17,7 +22,7 @@ public class TestHalfHourClock {
     Thread stopper = new Thread(new Runnable() {
       @Override
       public void run() {
-        //HalfHourClock.stop();
+        // HalfHourClock.stop();
       }
     });
     try {
@@ -34,15 +39,15 @@ public class TestHalfHourClock {
   public void testSetInterval() {
     HalfHourClock tracker = HalfHourClock.getInstance();
     Thread thread = new Thread(tracker);
-    //HalfHourClock.setInterval(500);
-    //HalfHourClock.reset();
+    // HalfHourClock.setInterval(500);
+    // HalfHourClock.reset();
     thread.start();
 
     Thread stopper = new Thread(new Runnable() {
       @Override
       public void run() {
-        //assertEquals(HalfHourClock.getTime(), 2);
-        //HalfHourClock.stop();
+        // assertEquals(HalfHourClock.getTime(), 2);
+        // HalfHourClock.stop();
       }
     });
     try {

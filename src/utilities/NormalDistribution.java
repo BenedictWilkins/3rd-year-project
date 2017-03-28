@@ -1,5 +1,11 @@
 package utilities;
 
+/**
+ * A {@link MathematicalFunction} that is a normal (Gaussian) distribution.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class NormalDistribution implements MathematicalFunction<Double> {
 
   public Double getScale() {

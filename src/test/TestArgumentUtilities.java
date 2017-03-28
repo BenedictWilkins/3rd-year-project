@@ -4,6 +4,12 @@ import org.junit.Test;
 
 import utilities.ArgumentUtilities;
 
+/**
+ * JUnit test case for {@link ArgumentUtilities}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class TestArgumentUtilities {
 
   @Test

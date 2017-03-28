@@ -5,6 +5,7 @@ import agent.SmartMeterAgentBody;
 import agent.actions.CommunicationAction;
 import agent.actions.GlobalResult;
 import agent.actions.TakeReadingAction;
+import housemodel.threshold.ModelModifier;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Event;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
@@ -13,7 +14,6 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import housemodel.threshold.ModelModifier;
 
 import java.util.Collections;
 import java.util.HashSet;

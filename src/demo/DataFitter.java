@@ -1,5 +1,6 @@
 package demo;
 
+import machinelearning.agent.DataFrame;
 import graph.DataReader;
 import graph.GeneralXYDataset;
 import housemodels.HalfHourClock;
@@ -8,7 +9,6 @@ import housemodels.HouseModelCombinedNormalAdversity;
 import housemodels.HouseModelCombinedNormalAffluent;
 import housemodels.HouseModelCombinedNormalComfortable;
 import housemodels.SeasonModel;
-import machinelearning.agent.DataFrame;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -18,9 +18,8 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.ui.ApplicationFrame;
 
-import utilities.DateTime;
-import utilities.MathematicalFunction;
 import utilities.MathUtilities;
+import utilities.MathematicalFunction;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -102,14 +101,15 @@ public class DataFitter {
     return data;
   }
 
+  //frame from graph
   private class FitterFrame extends ApplicationFrame {
     private static final long serialVersionUID = 1L;
-
     public FitterFrame() {
       super("FitterFrame");
     }
   }
 
+  //groups of house types, classes and file paths
   private enum DataGroup {
 
     AFFLUENT("./res/gmAffluent.txt", HouseModelCombinedNormalAffluent.class,

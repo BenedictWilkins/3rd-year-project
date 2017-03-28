@@ -20,6 +20,8 @@ public class TestDataFrame {
 
   // this is used as a trick to enable protected method testing
   private class DataFrameTestClass extends DataFrame {
+    private static final long serialVersionUID = 1L;
+
     public DataFrameTestClass(DataFrameMetaData meta) {
       super(meta);
     }
@@ -38,6 +40,8 @@ public class TestDataFrame {
   }
 
   private class DataFrameRowTest extends AbstractDataFrameRow {
+    private static final long serialVersionUID = 1L;
+
     public DataFrameRowTest(Object... objs) {
       super(objs);
     }

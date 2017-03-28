@@ -5,12 +5,25 @@ import agent.communication.NetworkObject;
 import agent.communication.NetworkObjectPayload;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Brain;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 
 import java.util.Set;
 
+/**
+ * The {@link Brain} implementation for a Neighbourhood Agent. See
+ * {@link NeighbourhoodAgentBody}. <br>
+ * Extends {@link CommunicationAgentBrain}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class NeighbourhoodAgentBrain extends CommunicationAgentBrain {
 
+  /**
+   * Constructor. See
+   * {@link CommunicationAgentBrain#CommunicationAgentBrain(Class, Class)}.
+   */
   public NeighbourhoodAgentBrain(
       Class<? extends NeighbourhoodAgentMind> mindclass,
       Class<? extends NeighbourhoodAgentBody> bodyclass) {
@@ -57,6 +70,13 @@ public class NeighbourhoodAgentBrain extends CommunicationAgentBrain {
     }
   }
 
+  /**
+   * A wrapper class for messages that have been received by a
+   * {@link NeighbourhoodAgentBrain}.
+   * 
+   * @author Benedict Wilkins
+   *
+   */
   protected class PerceptionWrapper {
     private Set<NetworkObject> messages;
 

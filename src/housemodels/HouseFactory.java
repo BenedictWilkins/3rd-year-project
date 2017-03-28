@@ -9,6 +9,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 
+/**
+ * Factory class for {@link House}. Capable of creating each of the 4 house
+ * types using the defined {@link CreateMethod}s.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class HouseFactory {
 
   private static final HouseFactory INSTANCE = new HouseFactory();

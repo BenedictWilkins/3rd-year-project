@@ -3,7 +3,9 @@ package machinelearning.agent;
 import java.util.Arrays;
 
 /**
- * A single row in a {@link DataFrame}.
+ * Abstract class for a single row in a {@link DataFrame}. <br>
+ * Known subclasses: {@link DataFrameRowReading}, {@link DataFrameRowDefault}. <br>
+ * Implements: {@link DataFrameRow}.
  * 
  * @author Benedict Wilkins
  *

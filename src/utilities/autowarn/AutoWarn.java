@@ -1,10 +1,25 @@
 package utilities.autowarn;
 
+/**
+ * A class that provides warnings to the user. <br>
+ * Known subclasses: {@link AutoWarnContinue}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class AutoWarn {
 
   private String warning;
   private Exception exception;
 
+  /**
+   * Constructor.
+   * 
+   * @param warning
+   *          to give
+   * @param exception
+   *          that comes with the warning (may be null)
+   */
   public AutoWarn(String warning, Exception exception) {
     super();
     this.warning = warning;

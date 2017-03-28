@@ -2,7 +2,7 @@ package graph;
 
 import machinelearning.agent.AbstractDataFrameRow;
 import machinelearning.agent.DataFrame;
-import machinelearning.agent.DefaultDataFrameRow;
+import machinelearning.agent.DataFrameRowDefault;
 import utilities.ArgumentUtilities;
 
 import java.io.BufferedReader;
@@ -125,7 +125,7 @@ public class DataReader {
     for (int i = 0; i < split.length; i++) {
       data[i] = CONVERTMAP.get(types[i]).convert(split[i]);
     }
-    return new DefaultDataFrameRow(data);
+    return new DataFrameRowDefault(data);
   }
 
   // type determination will be done here

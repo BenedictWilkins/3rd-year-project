@@ -1,9 +1,7 @@
 package environment;
 
 import agent.actions.CommunicationAction;
-import agent.actions.CommunicationEvent;
 import agent.actions.TakeReadingAction;
-import agent.general.GeneralAgentBody;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Event;
 import uk.ac.rhul.cs.dice.gawl.interfaces.appearances.Appearance;

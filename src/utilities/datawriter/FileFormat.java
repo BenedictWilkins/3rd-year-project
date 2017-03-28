@@ -1,5 +1,12 @@
 package utilities.datawriter;
 
+/**
+ * A concrete implementation of this Interface should be able to constuct a
+ * formatted file from a {@link String} array.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public interface FileFormat {
 
   /**

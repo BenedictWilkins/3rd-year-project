@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A general plot for series data.
+ * A general plot for series data. Is capable of supporting multiple plot lines.
+ * The plot automatically adjusts its bounds based on incoming data.
  * 
  * @author Benedict Wilkins
  *
@@ -32,7 +33,8 @@ public class SeriesPlot extends ApplicationFrame {
   private XYPlot plot;
   private int index;
   private Map<String, XYSeries> series;
-  private double max, min;
+  private double max;
+  private double min;
   private XYSeries baseSeries = null;
   private static final int FRAMEWIDTH = Integer.MAX_VALUE;
 

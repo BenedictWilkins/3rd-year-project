@@ -1,5 +1,6 @@
 package agent.actions;
 
+import agent.SmartMeterAgentBody;
 import environment.HouseEnvironment;
 import environment.HouseEnvironmentPhysics;
 import environment.NationalGridUniversePhysicsInterface;
@@ -11,16 +12,22 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 
 /**
- * An {@link Action} that created any agent situated within a
- * {@link HouseEnvironment}. This action is specifically for taking a SmartMeter
- * reading. See: {@link HouseEnvironmentPhysics} for perform implementation
- * details.
+ * An {@link Action} that created any agent ({@link SmartMeterAgentBody})
+ * situated within a {@link HouseEnvironment} . This action is specifically for
+ * taking an energy reading. See: {@link HouseEnvironmentPhysics} for perform
+ * implementation details.
  * 
  * @author Benedict Wilkins
  *
  */
 public class TakeReadingAction extends AbstractAction {
 
+  /**
+   * Constructor.
+   * 
+   * @param actor
+   *          the {@link SmartMeterAgentBody} that is taking the {@link Action}
+   */
   public TakeReadingAction(Actor actor) {
     super();
     this.setActor(actor);

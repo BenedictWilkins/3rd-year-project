@@ -1,7 +1,14 @@
 package housemodels;
 
+import utilities.CombinedNormalDistribution;
 import utilities.NormalDistribution;
-
+/**
+ * Affluent house type whose underlying model is {@link CombinedNormalDistribution}.
+ * See {@link HouseModelCombinedNormal}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class HouseModelCombinedNormalAffluent extends HouseModelCombinedNormal {
 
 

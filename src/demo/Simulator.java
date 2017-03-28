@@ -11,17 +11,9 @@ import agent.general.AgentType;
 import agent.general.EnvironmentFactory;
 import agent.general.GeneralAgentBody;
 import environment.HouseEnvironment;
+import environment.NationalGridUniverse;
 import environment.communication.module.Address;
 import environment.communication.module.SimulationAddress;
-import machinelearning.agent.DataFrameMetaTimeValue;
-import machinelearning.agent.ForecastingModel;
-import machinelearning.agent.MultilayerPerceptronForecastingModel;
-import machinelearning.agent.SMOregForecastingModel;
-import threading.AgentRunnable;
-import threading.SimulationAgentThreadManager;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Mind;
-import utilities.IDFactory;
 import housemodel.combination.AdditiveCombinator;
 import housemodel.combination.Combinator;
 import housemodel.threshold.MaximumThreshold;
@@ -31,6 +23,15 @@ import housemodel.threshold.Threshold;
 import housemodels.HalfHourClock;
 import housemodels.House;
 import housemodels.HouseFactory;
+import machinelearning.agent.DataFrameMetaTimeValue;
+import machinelearning.agent.ForecastingModel;
+import machinelearning.agent.MultilayerPerceptronForecastingModel;
+import machinelearning.agent.SMOregForecastingModel;
+import threading.AgentRunnable;
+import threading.SimulationAgentThreadManager;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Mind;
+import utilities.IDFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -73,6 +74,7 @@ public class Simulator {
     ORDEREDRUNGROUPS = Collections.unmodifiableList(orderedrungroups);
   }
 
+  // default values for simulation
   private static final House DEFAULTHOUSE = HouseFactory.getFactory()
       .createAcornUHouse(0.2);
   private static final ModelModifier DEFAULTMODELMODIFIER = new ModelModifierMagnitudeCombinedNormal(
@@ -90,6 +92,15 @@ public class Simulator {
   private Set<Body> highAgents = new HashSet<>();
   private List<HouseEnvironment> houseEnvironments = new ArrayList<>();
 
+  /**
+   * Constructor. Creates the {@link NationalGridUniverse}, all agents and
+   * environments and starts the simulation.
+   * 
+   * @param structure
+   *          of the agents in the simulation
+   * @param timegap
+   *          speed of the simulation (milliseconds between cycles)
+   */
   public Simulator(AgentStructure[] structure, Integer timegap) {
     AgentFactory.getInstance(); // this line is required!
     this.timegap = timegap;

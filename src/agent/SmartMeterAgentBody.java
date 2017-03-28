@@ -3,7 +3,6 @@ package agent;
 import agent.actions.HouseEvent;
 import agent.actions.IpCommunicationAction;
 import agent.general.GeneralAgentBody;
-import environment.HouseEnvironment;
 import uk.ac.rhul.cs.dice.gawl.interfaces.appearances.AbstractAgentAppearance;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractActuator;
@@ -15,7 +14,6 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Brain;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**

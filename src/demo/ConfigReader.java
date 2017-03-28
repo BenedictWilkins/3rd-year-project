@@ -1,27 +1,34 @@
 package demo;
 
-import org.jfree.util.StringUtils;
-
-import utilities.Pair;
 import agent.general.AgentStructure;
 import agent.general.AgentType;
+import environment.NationalGridUniverse;
 import housemodels.House;
 import housemodels.HouseFactory;
-import housemodels.HouseModelFactory;
+
+import utilities.Pair;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class that reads the configuration file for the system. It can generate the
+ * {@link AgentStructure} hierarchy from a text file, which is then given to
+ * {@link NationalGridUniverse}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class ConfigReader {
 
+  // keyword maps for interpreting the config file
   private static Map<String, StringBuilder> KEYWORDS = new HashMap<>();
   private static String TIMEGAP = "timegap", AGENTS = "agents",
       ERROR = "error", PREDICTOR = "predictor", GROUP = "group",
@@ -44,6 +51,14 @@ public class ConfigReader {
   private BufferedReader reader;
   private Double error;
 
+  /**
+   * Constructor.
+   * 
+   * @param filepath
+   *          of the config file
+   * @throws IOException
+   *           if something goes wrong interpreting the config file
+   */
   public ConfigReader(String filepath) throws IOException {
     File file = new File(filepath);
     if (file.exists()) {
@@ -72,6 +87,11 @@ public class ConfigReader {
     }
   }
 
+  /**
+   * Gets the agent hierarchy.
+   * 
+   * @return an array of agents that are the top of the agent hierarchy
+   */
   public AgentStructure[] getAgentStructure() {
     this.error = Double.valueOf(KEYWORDS.get(ERROR).toString());
     String input = KEYWORDS.get(AGENTS).toString();
@@ -102,7 +122,7 @@ public class ConfigReader {
         agents.add(AGENTKEYWORDMAP.get(p.getO1()).getAgent(
             recurseStructure(p.getO2())));
       }
-      return agents.toArray(new AgentStructure[]{});
+      return agents.toArray(new AgentStructure[] {});
     } else {
       String[] shouses = input.split(",");
       House[] houses = new House[shouses.length];
@@ -162,7 +182,9 @@ public class ConfigReader {
     public House getHouse(Double error);
   }
 
-  public final static void doHouseGetters() {
+  // **** BELOW SETS UP KEYWORD MAPS ****//
+
+  private static final void doHouseGetters() {
     HOUSEKEYWORDMAP.put(ACORNU, new HouseGetter() {
       @Override
       public House getHouse(Double error) {

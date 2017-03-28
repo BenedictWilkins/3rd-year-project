@@ -2,6 +2,13 @@ package test;
 
 import graph.SeriesPlot;
 
+/**
+ * Test class for the {@link SeriesPlot} class. Specifically for plotting
+ * multiple lines.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class TestMultipleDatasetPlot {
 
   /**

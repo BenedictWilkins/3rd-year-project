@@ -24,7 +24,8 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 public class CommunicationActuator extends GeneralAgentActuator {
 
   /**
-   * Constructor.
+   * Constructor. See
+   * {@link GeneralAgentActuator#GeneralAgentActuator(Class, Class)}
    */
   public CommunicationActuator(Class<? extends GeneralAgentBody> bodyclass,
       Class<? extends AbstractEnvironment> environmentclass) {
@@ -40,7 +41,7 @@ public class CommunicationActuator extends GeneralAgentActuator {
    */
   @Override
   public void update(CustomObservable observable, Object arg) {
-    
+
     if (this.getBodyclass().isAssignableFrom(observable.getClass())) {
       handleBodyMessage((AbstractAction) arg);
     }

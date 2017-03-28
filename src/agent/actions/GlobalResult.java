@@ -7,7 +7,6 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.actions.DefaultActionResult;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Actor;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.PhysicalBody;
-import utilities.GeneralUtilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;

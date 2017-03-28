@@ -1,11 +1,7 @@
 package agent;
 
-import agent.actions.HouseEvent;
 import agent.general.GeneralAgentBody;
-import agent.general.GeneralAgentBrain;
-import agent.general.GeneralAgentMind;
-import environment.HouseEnvironment;
-import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
+import environment.NationalGridUniverse;
 import uk.ac.rhul.cs.dice.gawl.interfaces.appearances.AbstractAgentAppearance;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgent;
@@ -18,9 +14,9 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
 import java.util.List;
 
 /**
- * The {@link Body} implementation for a Neighbourhood Agent - an agent that
- * resides in outside an {@link HouseEnvironment} and acts as the manager
- * agent/data receiver. <br>
+ * The {@link Body} implementation for a Neighbourhood Agent (also known as a
+ * Group agent) - an agent that resides in the {@link NationalGridUniverse} and
+ * acts as the manager agent/data receiver for the {@link SmartMeterAgent}s. <br>
  * Extends: {@link GeneralAgentBody}.
  * 
  * @author Benedict Wilkins
@@ -30,7 +26,8 @@ public class NeighbourhoodAgentBody extends GeneralAgentBody {
 
   /**
    * Constructor. See:
-   * {@link AbstractAgent#AbstractAgent(AbstractAgentAppearance, List, List, AbstractAgentMind, AbstractAgentBrain)}
+   * {@link AbstractAgent#
+   * AbstractAgent(AbstractAgentAppearance, List, List, AbstractAgentMind, AbstractAgentBrain)}
    * .
    */
   public NeighbourhoodAgentBody(AbstractAgentAppearance appearance,

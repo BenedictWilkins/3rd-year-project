@@ -1,12 +1,16 @@
 package utilities.test;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 import utilities.Clock;
 import utilities.DateTime;
 
+/**
+ * JUnit test case for {@link Clock}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class TestClock {
 
   @Test

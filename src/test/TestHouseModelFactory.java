@@ -6,6 +6,12 @@ import housemodels.HouseModelFactory;
 
 import org.junit.Test;
 
+/**
+ * JUnit test case for the {@link HouseModelFactory} class.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class TestHouseModelFactory {
 
   @Test

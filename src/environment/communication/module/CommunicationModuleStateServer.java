@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * The client state of a {@link CommunicationModule}. <br>
- * extends {@link CommunicationModuleState}.
+ * Extends {@link CommunicationModuleState}.
  * 
  * @author Benedict Wilkins
  *

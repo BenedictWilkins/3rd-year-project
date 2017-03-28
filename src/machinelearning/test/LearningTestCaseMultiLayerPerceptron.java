@@ -3,9 +3,32 @@ package machinelearning.test;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.core.Instances;
 
+/**
+ * A concrete extension of {@link AbstractWekaLearningTestCase} specifically for
+ * the {@link MultilayerPerceptron} classifier.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class LearningTestCaseMultiLayerPerceptron extends
-    AbstractLearningTestCase {
+    AbstractWekaLearningTestCase {
 
+  /**
+   * Constructor. See {@link MultilayerPerceptron} for details on parameters.
+   * 
+   * @param train
+   *          to train on
+   * @param test
+   *          to test performance with
+   * @param learningRate
+   *          {@link MultilayerPerceptron} parameter
+   * @param momentum
+   *          {@link MultilayerPerceptron} parameter
+   * @param epochs
+   *          {@link MultilayerPerceptron} parameter
+   * @param validation
+   *          {@link MultilayerPerceptron} parameter
+   */
   public LearningTestCaseMultiLayerPerceptron(Instances train, Instances test,
       Double learningRate, Double momentum, Integer epochs, Integer validation) {
     super(new MultilayerPerceptron(), train, test);

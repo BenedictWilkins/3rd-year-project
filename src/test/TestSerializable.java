@@ -1,9 +1,10 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
+
+import machinelearning.agent.AbstractDataFrameRow;
 import machinelearning.agent.DataFrame;
 import machinelearning.agent.DataFrameMetaData;
-import machinelearning.agent.AbstractDataFrameRow;
 
 import org.junit.Test;
 
@@ -15,23 +16,37 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * JUnit test case for testing serialisation. Specifically for
+ * {@link AbstractDataFrameRow}
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class TestSerializable {
 
   private final String testString = "TEST SERIALISABLE!";
 
-  
+  /**
+   * Concrete extension of {@link AbstractDataFrameRow} used for testing.
+   * 
+   * @author Benedict Wilkins
+   *
+   */
   private class DataFrameRowTest extends AbstractDataFrameRow {
+
+    private static final long serialVersionUID = 1L;
+
     public DataFrameRowTest(Object... objs) {
       super(objs);
     }
   }
-  
+
   @Test
   public void testByteArrayInOut() {
     Object result = testSerializable(testString);
     assertEquals("Test: String is Serializable", testString, result);
   }
-  
 
   @Test
   public void testDataFrameRow() {
@@ -59,8 +74,10 @@ public class TestSerializable {
           .nextDouble()));
     }
     Object result = testSerializable(test.getData());
-    List<AbstractDataFrameRow> resultFrame = (List<AbstractDataFrameRow>)result;
-    assertEquals("Test: DataFrameRow is Serializable", test.getData(), resultFrame);
+    @SuppressWarnings("unchecked")
+    List<AbstractDataFrameRow> resultFrame = (List<AbstractDataFrameRow>) result;
+    assertEquals("Test: DataFrameRow is Serializable", test.getData(),
+        resultFrame);
   }
 
   private Object testSerializable(Object test) {

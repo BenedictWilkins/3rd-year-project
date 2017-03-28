@@ -3,7 +3,14 @@ package machinelearning.test;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 
-public abstract class AbstractLearningTestCase implements LearningTestCase {
+/**
+ * Abstract implementation of {@link LearningTestCase} specifically for Weka
+ * {@link Classifier}s.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
+public abstract class AbstractWekaLearningTestCase implements LearningTestCase {
 
   private Classifier classifier;
   private Instances train;
@@ -11,8 +18,18 @@ public abstract class AbstractLearningTestCase implements LearningTestCase {
 
   private Double mse = -1.0;
 
-  protected AbstractLearningTestCase(Classifier classifier, Instances train,
-      Instances test) {
+  /**
+   * Constructor.
+   * 
+   * @param classifier
+   *          to test
+   * @param train
+   *          to train on
+   * @param test
+   *          to test performance with
+   */
+  protected AbstractWekaLearningTestCase(Classifier classifier,
+      Instances train, Instances test) {
     this.test = test;
     this.train = train;
     this.classifier = classifier;

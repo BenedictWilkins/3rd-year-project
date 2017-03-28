@@ -1,10 +1,10 @@
 package housemodel.threshold;
 
+import machinelearning.agent.DataFrame;
+
 import utilities.MathUtilities;
 
 import java.util.List;
-
-import machinelearning.agent.DataFrame;
 
 /**
  * A concrete implementation of a {@link Threshold}. Whose threshold is a single

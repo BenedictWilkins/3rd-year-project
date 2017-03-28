@@ -1,7 +1,7 @@
 package machinelearning.weka;
 
 /**
- * Any class whos job is to convert between file types should implement this
+ * Any class whose job is to convert between file types should implement this
  * interface.
  * 
  * @author Benedict Wilkins

@@ -4,6 +4,14 @@ import utilities.DateTime;
 import utilities.MathematicalFunction;
 import utilities.NormalDistribution;
 
+/**
+ * A class similar to {@link HouseModel} that represents the yearly trend
+ * (rather than daily). <br>
+ * Implements {@link MathematicalFunction}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class SeasonModel implements MathematicalFunction<Double> {
 
   protected static final Double[] PARAMCONFIG = new Double[] { 210.0, 60.0,
@@ -16,8 +24,9 @@ public class SeasonModel implements MathematicalFunction<Double> {
   private Double scale;
 
   /**
-   * Constructor. Preset instance of this class based on the PARAMCONFIG and
-   * FUNCTIONCONFIG static fields
+   * Constructor. Preset instance of this class based on the
+   * {@link SeasonModel#PARAMCONFIG} and {@link SeasonModel#FUNCTIONCONFIG}
+   * static fields.
    */
   public SeasonModel() {
     try {
@@ -68,6 +77,14 @@ public class SeasonModel implements MathematicalFunction<Double> {
     return data;
   }
 
+  /**
+   * Get the value that will be used when adding yearly seasonality to some data
+   * (each time step has its own value).
+   * 
+   * @param dateTime
+   *          to get yearly seasonal modifying value
+   * @return the modifying value
+   */
   public Double getModiferValue(DateTime dateTime) {
     Integer date = dateTime.getYearDay() - 1;
     if (date < data.length) {

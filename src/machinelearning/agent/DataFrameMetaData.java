@@ -7,7 +7,8 @@ import java.util.Arrays;
  * A description of an instance of {@link DataFrame}. This class contains
  * information about the columns (meta data) including their headers and types.
  * By implication the size of the type and header arguments should be precisely
- * equal.
+ * equal. <br>
+ * Known subclasses: {@link DataFrameMetaTimeValue}.
  * 
  * @author Benedict Wilkins
  *

@@ -3,6 +3,13 @@ package utilities.datawriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * An abstract implementation of {@link FileFormat}. This class handles valid
+ * file extensions using regex.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public abstract class AbstractFileFormat implements FileFormat {
 
   private static final String FILEEXTENSIONFORMAT = "\\*\\.[a-zA-Z]+";

@@ -2,6 +2,13 @@ package utilities.autowarn;
 
 import java.io.IOException;
 
+/**
+ * An extension of {@link Questioner} that is specifically looking for a yes/no
+ * answer. (and so a yes/no question should be given).
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class YesNoQuestioner extends Questioner {
 
   private static final String[] ANSWERS = { "yes", "no" };
@@ -9,6 +16,16 @@ public class YesNoQuestioner extends Questioner {
   private Runnable yes;
   private Runnable no;
 
+  /**
+   * Constructor.
+   * 
+   * @param question
+   *          to ask (with yes/no answer)
+   * @param yes
+   *          the runnable to run if the answer is yes
+   * @param no
+   *          the runnable to run if the answer is no
+   */
   public YesNoQuestioner(String question, Runnable yes, Runnable no) {
     super(question);
     this.yes = yes;

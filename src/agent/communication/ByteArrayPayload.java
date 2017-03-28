@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 
 /**
  * A {@link MessagePayload} whose payload is a byte array. This class will be
- * used to send Objects that have been serialised by {@link ObjectOutputStream}
+ * used to send {@link Object}s that have been serialised by {@link ObjectOutputStream}
  * using {@link ByteArrayInputStream}.
  * 
  * @author Benedict Wilkins

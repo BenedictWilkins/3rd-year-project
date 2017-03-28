@@ -1,7 +1,17 @@
 package utilities.autowarn;
 
+import utilities.datawriter.DataWriter;
+
 import java.io.IOException;
 
+/**
+ * An extension of {@link AutoWarn} specifically for asking the user whether
+ * they want to continue after the warning has been given. See
+ * {@link DataWriter}. Also see {@link Questioner}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class AutoWarnContinue extends AutoWarn {
 
   private static final String QUESTION = "Continue?";

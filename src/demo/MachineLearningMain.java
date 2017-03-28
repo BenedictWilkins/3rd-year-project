@@ -1,15 +1,16 @@
 package demo;
 
+import graph.SeriesPlot;
 import machinelearning.test.LearningTestCase;
 import machinelearning.test.LearningTestCaseMultiLayerPerceptron;
 import machinelearning.weka.WekaDataLoader;
+
 import utilities.MathUtilities;
 import weka.classifiers.Classifier;
 import weka.classifiers.evaluation.NumericPrediction;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.timeseries.WekaForecaster;
 import weka.core.Instances;
-import graph.SeriesPlot;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,16 +24,31 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+/**
+ * This class is used for testing forecasting algorithms automatically. To do
+ * this create a new {@link LearningTestCase} set up to contain all the user
+ * defined parameters (i.e. what should be tested). Then define a method that
+ * generates test cases. The algorithm will then be trained using each test case
+ * on some generated data (see {@link ExperimentDataGenerator}). <br>
+ * NOTE: Only the {@link LearningTestCaseMultiLayerPerceptron} currently works!
+ * some changes to this class still need to be made for full testing automation.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class MachineLearningMain {
 
+  // size of the training set
   private static final int TRAINSIZE = 100;
+  // size of the test set
   private static final int TESTSIZE = 5;
-  private static final String DATAPATH =  "RandomHouses.csv";
+  // path to data file
+  private static final String DATAPATH = "RandomHouses.csv";
 
+  // logger used to display results of the test.
   private static Logger logger = Logger.getLogger("AlgoLogger");
   private static final String LOGPATH = "logs/algotest";
   private static FileHandler fileHandler;
-  
 
   private static Map<Class<? extends Classifier>, InfoLogFormat> LOGMAP;
 
@@ -88,6 +104,13 @@ public class MachineLearningMain {
 
   }
 
+  /**
+   * Trains the {@link LearningTestCaseMultiLayerPerceptron}s. (this method will
+   * be altered to support any {@link LearningTestCase}.
+   * 
+   * @param fileName
+   *          of the data file to use
+   */
   public static void metaLearn(String fileName) {
     MachineLearningMain main = new MachineLearningMain();
     WekaDataLoader loader = new WekaDataLoader();
@@ -109,7 +132,8 @@ public class MachineLearningMain {
     LearningExperimenter best = null;
     for (LearningTestCaseMultiLayerPerceptron t : tests) {
       t.getClassifier().setGUI(true);
-      System.out.println("HIDDEN LAYERS:" + t.getClassifier().getHiddenLayers());
+      System.out
+          .println("HIDDEN LAYERS:" + t.getClassifier().getHiddenLayers());
       train = new Instances(instances, 0, 48 * TRAINSIZE);
       test = new Instances(instances, 48 * TRAINSIZE, 48 * TESTSIZE);
       LearningExperimenter learner = main.new LearningExperimenter(
@@ -150,11 +174,30 @@ public class MachineLearningMain {
     logger.info(builder.toString());
   }
 
+  /**
+   * Class that does the forecast testing. Currently only {@link WekaForecaster}
+   * are supported.
+   * 
+   * @author Benedict Wilkins
+   *
+   */
   public class LearningExperimenter {
 
     private Double mse = -1.0;
     private List<Double> lpred;
 
+    /**
+     * Constructor.
+     * 
+     * @param classifier
+     *          to test
+     * @param train
+     *          data
+     * @param test
+     *          data
+     * @param plot
+     *          true to plot the result, false otherwise
+     */
     public LearningExperimenter(Classifier classifier, Instances train,
         Instances test, boolean plot) {
       try {

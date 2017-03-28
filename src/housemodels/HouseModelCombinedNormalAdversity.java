@@ -1,7 +1,15 @@
 package housemodels;
 
+import utilities.CombinedNormalDistribution;
 import utilities.NormalDistribution;
 
+/**
+ * Adversity house type whose underlying model is
+ * {@link CombinedNormalDistribution}. See {@link HouseModelCombinedNormal}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class HouseModelCombinedNormalAdversity extends HouseModelCombinedNormal {
 
   public HouseModelCombinedNormalAdversity() {

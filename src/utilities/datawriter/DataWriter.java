@@ -7,6 +7,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+/**
+ * A file writer class that utilises {@link BufferedWriter}. It uses a
+ * {@link FileFormat} class to properly format and write to a file.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class DataWriter {
 
   private boolean warnExists = true;

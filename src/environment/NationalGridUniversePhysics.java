@@ -1,7 +1,6 @@
 package environment;
 
 import agent.CommunicationSensor;
-import agent.NeighbourhoodAgentBody;
 import agent.actions.CommunicationAction;
 import agent.actions.GlobalResult;
 import agent.actions.TakeReadingAction;
@@ -13,7 +12,6 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.actions.DefaultActionResult;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Event;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.Result;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Body;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.AbstractAgent;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.Space;
 import uk.ac.rhul.cs.dice.gawl.interfaces.environment.physics.Physics;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;

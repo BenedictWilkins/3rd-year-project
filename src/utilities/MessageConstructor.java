@@ -2,8 +2,18 @@ package utilities;
 
 import agent.actions.CommunicationAction;
 import agent.actions.GlobalResult;
+import agent.communication.NetworkObject;
+import agent.communication.NetworkObjectPayload;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.PhysicalBody;
 
+/**
+ * A class used to constructor and de-construct messages sent in the simulation.
+ * 
+ * @deprecated currently not in use. See {@link NetworkObject} and
+ *             {@link NetworkObjectPayload}.
+ * @author Benedict Wilkins
+ *
+ */
 public class MessageConstructor {
 
   private static final String MESSAGEDELIM = "|";

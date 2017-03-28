@@ -1,9 +1,15 @@
 package test;
 
-import machinelearning.agent.DataFrame;
 import graph.DataReader;
 import graph.SeriesPlot;
+import machinelearning.agent.DataFrame;
 
+/**
+ * Test class for {@link DataReader}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class TestDataReader {
 
   private static String gmacornu = "./res/gmAcorn-u.txt";

@@ -1,8 +1,8 @@
 package housemodels;
 
+import housemodel.threshold.Modifiable;
 import utilities.DateTime;
 import utilities.MathematicalFunction;
-import housemodel.threshold.Modifiable;
 
 /**
  * Interface for a house model. A house model is used to generate data.

@@ -32,8 +32,8 @@ public class SmartMeterAgentBrain extends CommunicationAgentBrain {
 
   @Override
   public void update(CustomObservable observable, Object arg) {
-//    System.out.println(this + " BRAIN: RECEIVED " + arg + " FROM: "
-//        + observable);
+    // System.out.println(this + " BRAIN: RECEIVED " + arg + " FROM: "
+    // + observable);
     if (this.getBodyclass().isAssignableFrom(observable.getClass())) {
       handleBodyMessage(arg);
     } else if (this.getMindclass().isAssignableFrom(observable.getClass())) {
@@ -65,7 +65,13 @@ public class SmartMeterAgentBrain extends CommunicationAgentBrain {
       notifyObservers(arg, this.getBodyclass());
     }
   }
-  
+
+  /**
+   * Gets and clears received {@link GlobalResult}s. (These results will contain
+   * energy readings)
+   * 
+   * @return a {@link Set} of {@link GlobalResult}s
+   */
   public Set<GlobalResult> getClearActionResults() {
     Set<GlobalResult> toReturn = new HashSet<>();
     toReturn.addAll(actionResults);
@@ -73,10 +79,24 @@ public class SmartMeterAgentBrain extends CommunicationAgentBrain {
     return toReturn;
   }
 
+  /**
+   * Wrapper class for this agents most recent perceptions.
+   * 
+   * @author Benedict Wilkins
+   *
+   */
   public class PerceptionWrapper {
     Set<NetworkObject> communicationPerceptions;
     Set<GlobalResult> actionResults;
 
+    /**
+     * Constructor.
+     * 
+     * @param communicationPerceptions
+     *          recently received {@link NetworkObject}s
+     * @param actionResults
+     *          recently received {@link GlobalResult}s
+     */
     public PerceptionWrapper(Set<NetworkObject> communicationPerceptions,
         Set<GlobalResult> actionResults) {
       super();

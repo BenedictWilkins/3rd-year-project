@@ -1,15 +1,15 @@
 package demo;
 
-import utilities.DateTime;
-import utilities.Pair;
-import utilities.datawriter.DataWriter;
-import utilities.datawriter.FileFormatCSV;
 import graph.SeriesPlot;
 import housemodel.combination.AdditiveCombinator;
 import housemodel.combination.Combinator;
 import housemodels.HalfHourClock;
 import housemodels.House;
 import housemodels.HouseFactory;
+import utilities.DateTime;
+import utilities.Pair;
+import utilities.datawriter.DataWriter;
+import utilities.datawriter.FileFormatCSV;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -22,6 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Generates data without the use of the agent system.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class ExperimentDataGenerator {
 
   private static final Map<Integer, Method> CREATEMETHODS;
@@ -64,9 +70,8 @@ public class ExperimentDataGenerator {
     // (List<House>) randomHouses, start, end, new AdditiveCombine());
     // exp.plot(data.getO2().toArray(new Double[] {}), (List<House>)
     // randomHouses);
-    exp.generateDataToFile(new DataWriter(FILEPATH,
-        new FileFormatCSV(2)), (List<House>) randomHouses, start, end,
-        new AdditiveCombinator());
+    exp.generateDataToFile(new DataWriter(FILEPATH, new FileFormatCSV(2)),
+        (List<House>) randomHouses, start, end, new AdditiveCombinator());
   }
 
   /**
@@ -114,8 +119,8 @@ public class ExperimentDataGenerator {
      * Generates data from each {@link House} given by houses from the start
      * {@link DateTime} (inclusive) to the end {@link DateTime} (exclusive),
      * combining the reading from each house using the given
-     * {@link Combinator#combine(List)} method. If a single house is desired, com
-     * should be null.
+     * {@link Combinator#combine(List)} method. If a single house is desired,
+     * com should be null.
      * 
      * @param houses
      *          to take readings from

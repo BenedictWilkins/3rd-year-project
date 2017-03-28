@@ -1,16 +1,28 @@
 package utilities.datawriter;
 
 /**
+ * A concrete extension of {@link AbstractFileFormat} specifically for CSV files
+ * (.csv extension). This {@link FileFormat} can construct a csv file from a
+ * {@link String} array using the {@link FileFormat#construct(String[])} method.
  * 
  * @author Benedict Wilkins
  *
  */
 public class FileFormatCSV extends AbstractFileFormat {
-
+  private static final String EXTENSION = "*.csv";
   private int numColumns = 0;
 
+  /**
+   * Constructor.
+   * 
+   * @param numColumns
+   *          of the csv file (> 0)
+   */
   public FileFormatCSV(int numColumns) {
-    super("*.csv");
+    super(EXTENSION);
+    if (numColumns <= 0) {
+      throw new IllegalArgumentException("Argument must be greater than 0");
+    }
     this.numColumns = numColumns;
   }
 

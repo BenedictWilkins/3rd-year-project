@@ -2,6 +2,13 @@ package utilities;
 
 import java.util.Arrays;
 
+/**
+ * A {@link MathematicalFunction} consisting of two {@link NormalDistribution}s
+ * combined together (may loop round boundaries or not).
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class CombinedNormalDistribution implements MathematicalFunction<Double> {
 
   private NormalDistribution normal1;

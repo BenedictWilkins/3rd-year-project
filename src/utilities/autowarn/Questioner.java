@@ -4,11 +4,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Class used to ask the user a question and receive an answer. Use the
+ * {@link Questioner#ask()} method to do this. <br>
+ * Known subclasses: {@link YesNoQuestioner}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class Questioner {
 
   private String question;
   private BufferedReader reader;
 
+  /**
+   * Constructor.
+   * 
+   * @param question
+   *          the question to ask the user.
+   */
   public Questioner(String question) {
     this.question = question;
     reader = new BufferedReader(new InputStreamReader(System.in));

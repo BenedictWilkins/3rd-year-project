@@ -1,5 +1,17 @@
 package environment.communication.module;
 
+import java.net.Socket;
+
+/**
+ * A {@link CommunicationModule} represents either a client
+ * {@link CommunicationModuleStateClient} or server
+ * {@link CommunicationModuleStateServer} depending on its
+ * {@link CommunicationModuleState}. This class is used for communicate via
+ * {@link Socket}s.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class CommunicationModule {
 
   private CommunicationModuleState state = null;

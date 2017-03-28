@@ -1,20 +1,39 @@
 package machinelearning.agent;
 
-import java.util.List;
-
 import weka.classifiers.evaluation.NumericPrediction;
+import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.functions.SMOreg;
 import weka.classifiers.functions.supportVector.Kernel;
 import weka.classifiers.functions.supportVector.RegOptimizer;
 import weka.classifiers.timeseries.WekaForecaster;
 import weka.core.Instances;
 
+import java.util.List;
+
+/**
+ * A concrete implementation of {@link AbstractWekaForecastingModel}
+ * specifically for the {@link WekaForecaster} used with the {@link SMOreg}
+ * classifier.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class SMOregForecastingModel extends AbstractWekaForecastingModel {
 
   private SMOreg model;
   private WekaForecaster forecaster;
   private String endTrainingTime = null;
 
+  /**
+   * Constructor. See {@link SMOreg} for details on parameters.
+   * 
+   * @param complexity
+   *          {@link SMOreg} parameter
+   * @param kernel
+   *          {@link SMOreg} parameter
+   * @param optimizer
+   *          {@link SMOreg} parameter
+   */
   public SMOregForecastingModel(Double complexity, Kernel kernel,
       RegOptimizer optimizer) {
     model = new SMOreg();

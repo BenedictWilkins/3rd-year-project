@@ -1,8 +1,8 @@
 package housemodel.threshold;
 
 import agent.communication.NetworkObject;
-import utilities.MathematicalFunction;
 import housemodels.HouseModel;
+import utilities.MathematicalFunction;
 
 /**
  * A concrete implementation of {@link ModelModifier} should define how a

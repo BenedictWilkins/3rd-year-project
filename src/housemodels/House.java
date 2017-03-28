@@ -1,8 +1,18 @@
 package housemodels;
 
+import environment.HouseEnvironment;
 import housemodel.threshold.ModelModifier;
 import utilities.DateTime;
 
+/**
+ * This class holds all information about a households behaviour. The
+ * {@link HouseModel} and {@link SeasonModel}. This is the class that should be
+ * queried for energy readings. All {@link HouseEnvironment}s contain exactly
+ * one {@link House}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class House implements HouseModel {
 
   private HouseModel house;

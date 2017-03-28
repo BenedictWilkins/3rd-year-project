@@ -4,6 +4,13 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+/**
+ * A {@link CommunicationMode} representing a sender. A sender may only send
+ * messages.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class CommunicationModeSender extends CommunicationMode {
 
   private Socket socket = null;

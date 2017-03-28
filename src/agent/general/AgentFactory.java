@@ -13,14 +13,14 @@ import environment.AbstractEnvironment;
 import environment.HouseEnvironment;
 import environment.NationalGridUniverse;
 import environment.communication.module.Address;
-import machinelearning.agent.ForecastingModel;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Agent;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Actuator;
-import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
 import housemodel.combination.Combinator;
 import housemodel.combination.ReadingCombinator;
 import housemodel.threshold.ModelModifier;
 import housemodel.threshold.Threshold;
+import machinelearning.agent.ForecastingModel;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.Agent;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Actuator;
+import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Sensor;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -32,6 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A factory class for the different agents in the system:
+ * {@link SmartMeterAgentMind SmartMeterAgent}, {@link NeighbourhoodAgentMind
+ * NeighbourhoodAgent} and {@link PredictorAgentMind PredictorAgent}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class AgentFactory {
 
   /**
@@ -66,7 +74,6 @@ public class AgentFactory {
 
   // singleton constructor
   private AgentFactory() {
-
   }
 
   /**
@@ -102,8 +109,8 @@ public class AgentFactory {
       Address managerAddress, Set<Address> subordinateAddresses,
       Combinator<Double, Double> combinator, ForecastingModel forecastingModel,
       Threshold threshold, ModelModifier modelModifier) {
-    List<Sensor> sensors = createCommunicationSensor(NeighbourhoodAgentBody.class,
-        NationalGridUniverse.class);
+    List<Sensor> sensors = createCommunicationSensor(
+        NeighbourhoodAgentBody.class, NationalGridUniverse.class);
     List<Actuator> actuators = createCommunicationActuator(
         NeighbourhoodAgentBody.class, NationalGridUniverse.class);
     PredictorAgentMind mind = new PredictorAgentMind(

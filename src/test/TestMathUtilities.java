@@ -6,6 +6,12 @@ import org.junit.Test;
 
 import utilities.MathUtilities;
 
+/**
+ * JUnit test case for the {@link MathUtilities} class.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class TestMathUtilities {
 
   @Test

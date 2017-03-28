@@ -11,7 +11,7 @@ import java.util.List;
 public class MathUtilities {
 
   /**
-   * Computers the MSE given a set of test values and predicted values
+   * Computers the MSE given a set of test values and predicted values.
    * 
    * @param test
    *          values

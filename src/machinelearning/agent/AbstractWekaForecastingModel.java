@@ -1,11 +1,11 @@
 package machinelearning.agent;
 
+import housemodels.HalfHourClock;
 import utilities.DateTime;
 import weka.classifiers.evaluation.NumericPrediction;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
-import housemodels.HalfHourClock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,6 @@ public abstract class AbstractWekaForecastingModel implements ForecastingModel {
       String endTrainingTime) {
     DataFrame frame = new DataFrame(DataFrameMetaTimeValue.getInstance());
     DateTime current = new DateTime(endTrainingTime);
-    List<Double> data = new ArrayList<>();
     for (List<NumericPrediction> l : forecasts) {
       HalfHourClock.nextInPlace(current);
       frame.addRow(new DataFrameRowReading(current.toString(), l.get(0)

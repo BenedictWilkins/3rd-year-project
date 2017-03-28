@@ -1,5 +1,15 @@
 package machinelearning.agent;
 
+/**
+ * An extension of {@link DataFrameMetaData} specifically for a
+ * {@link DataFrame} that contains only energy reading data. A {@link DataFrame}
+ * of this kind contains only DateTime (as {@link String}), and Value (as
+ * {@link Double}). Each row should be represented by
+ * {@link DataFrameRowReading}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class DataFrameMetaTimeValue extends DataFrameMetaData {
 
   private static final long serialVersionUID = 1L;

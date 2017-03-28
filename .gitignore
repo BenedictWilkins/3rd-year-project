@@ -1,9 +1,9 @@
-.csv
-.arff
-.class
-.classpath
-.project
-.settings
+*.csv
+*.arff
+*.class
+*.classpath
+*.project
+*.settings
 bin/
 res/
 logs/

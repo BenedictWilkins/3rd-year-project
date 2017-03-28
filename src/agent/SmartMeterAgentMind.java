@@ -18,7 +18,6 @@ import uk.ac.rhul.cs.dice.gawl.interfaces.actions.AbstractAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.actions.EnvironmentalAction;
 import uk.ac.rhul.cs.dice.gawl.interfaces.entities.agents.Mind;
 import uk.ac.rhul.cs.dice.gawl.interfaces.observer.CustomObservable;
-import housemodel.threshold.ModelModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +43,8 @@ public class SmartMeterAgentMind extends GeneralAgentMind {
    * Constructor.
    * 
    * @param possibleActions
-   *          a list of all possible {@link AbstractAction}s this agent can
-   *          perform.
+   *          the {@link Set} of all possible {@link AbstractAction}s this agent
+   *          can perform.
    */
   public SmartMeterAgentMind(Class<? extends SmartMeterAgentBrain> brainclass,
       Set<Class<? extends AbstractAction>> possibleActions, Address manager) {

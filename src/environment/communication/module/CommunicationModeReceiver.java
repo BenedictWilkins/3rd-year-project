@@ -5,8 +5,8 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 
 /**
- * A communication mode representing a reciever. A reciever may only recieve
- * messages.
+ * A {@link CommunicationMode} representing a receiver. A receiver may only
+ * receive messages.
  * 
  * @author Benedict Wilkins
  *

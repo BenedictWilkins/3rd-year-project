@@ -3,6 +3,14 @@ package housemodel.threshold;
 import utilities.CombinedNormalDistribution;
 import utilities.MathematicalFunction;
 
+/**
+ * A a concrete {@link ModelModifierMagnitude} specifically for
+ * {@link CombinedNormalDistribution}. <br>
+ * see also: {@link ModelModifierCombinedNormal}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class ModelModifierMagnitudeCombinedNormal extends
     ModelModifierMagnitude implements ModelModifierCombinedNormal {
 

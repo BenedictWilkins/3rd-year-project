@@ -70,12 +70,25 @@ public class Main {
     new Simulator(agentstructure, timegap);
   }
 
+  /**
+   * Creates the default agent structure, a single predictor and group agent and
+   * using {@link Main#houses1} for the smart meter agents.
+   * 
+   * @return agent structure
+   */
   public static AgentStructure[] createDefaultAgentStructure() {
     AgentStructure[] smarts = createSmartMeterGroup(houses1);
     AgentStructure neigh = new AgentStructure(AgentType.NEIGHBOURHOOD, smarts);
-    return new AgentStructure[] {new AgentStructure(AgentType.PREDICTOR, neigh)};
+    return new AgentStructure[] { new AgentStructure(AgentType.PREDICTOR, neigh) };
   }
 
+  /**
+   * Creates a group of {@link AgentStructure} of {@link AgentType#SMARTMETER}.
+   * 
+   * @param houses
+   *          that the agents are contained in
+   * @return the new group of {@link AgentStructure}s.
+   */
   public static AgentStructure[] createSmartMeterGroup(House[] houses) {
     System.out.println(Arrays.toString(houses));
     AgentStructure[] astructs = new AgentStructure[houses.length];

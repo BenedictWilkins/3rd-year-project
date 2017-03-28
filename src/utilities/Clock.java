@@ -1,7 +1,17 @@
 package utilities;
 
+import housemodels.HalfHourClock;
+
 import java.util.HashMap;
 
+/**
+ * Clock class that can run in a {@link Thread} as a {@link Runnable}. uses the
+ * {@link DateTime} class as a base.<br>
+ * known subclasses: {@link HalfHourClock}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class Clock implements Runnable {
 
   public final static int SECOND = 0, MINUTE = 1, HOUR = 2, DAY = 3, MONTH = 4,
@@ -64,7 +74,9 @@ public class Clock implements Runnable {
    * that pass. The clock will start when the run method is called.
    * 
    * @param currentDateTime
+   *          time to start at
    * @param increment
+   *          by how much the clock should increment on tick
    * @param type
    * @param real
    */

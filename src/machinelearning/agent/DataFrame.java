@@ -80,9 +80,17 @@ public class DataFrame implements Serializable {
     data.add(row);
   }
 
+  /**
+   * Appends an entire {@link DataFrame} to this one. The
+   * {@link DataFrameMetaData} must be the same. i.e. the structure and types
+   * must be the equal.
+   * 
+   * @param frame
+   *          to append
+   */
   public void appendDataFrame(DataFrame frame) {
     if (frame.getMetaData().equals(this.getMetaData())) {
-      frame.data.forEach((DataFrameRow r) -> addRowUnsafe(r));
+      frame.data.forEach((DataFrameRow row) -> addRowUnsafe(row));
     }
   }
 

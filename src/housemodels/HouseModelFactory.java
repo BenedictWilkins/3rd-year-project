@@ -1,9 +1,19 @@
 package housemodels;
 
 import utilities.CombinedNormalDistribution;
-import utilities.DateTime;
 import utilities.MathUtilities;
 
+/**
+ * Factory class for {@link HouseModel}s. Namely:
+ * {@link HouseModelCombinedNormal} and its concrete implementations:
+ * {@link HouseModelCombinedNormalAcornU AcornU},
+ * {@link HouseModelCombinedNormalAdversity Adversity},
+ * {@link HouseModelCombinedNormalAffluent Affluent} and
+ * {@link HouseModelCombinedNormalComfortable Comfortable}.
+ * 
+ * @author Benedict Wilkins
+ *
+ */
 public class HouseModelFactory {
 
   private static final HouseModelFactory instance = new HouseModelFactory();
